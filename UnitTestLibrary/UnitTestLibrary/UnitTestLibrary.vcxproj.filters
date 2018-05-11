@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Implementation">
+      <UniqueIdentifier>{46cdb9ec-6f6a-44f4-9ce5-87dabd4a3609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Implementation\hdr">
+      <UniqueIdentifier>{75f08e09-2594-4e6c-8d56-2bfa31fbe1f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Implementation\src">
+      <UniqueIdentifier>{0970afa1-cbe6-420a-8225-0642e5aaaef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures">
+      <UniqueIdentifier>{b667244e-5d38-4b90-bee4-7b13edc71e60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures\hdr">
+      <UniqueIdentifier>{3a2bc1a5-1904-4bdd-9f8a-595fdf2090dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures\src">
+      <UniqueIdentifier>{77ed9520-2012-4311-8bbc-d6f436d5472d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures\Interfaces">
+      <UniqueIdentifier>{44abdcbe-344f-425f-bda4-897d3cea4cde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Implementation\Interfaces">
+      <UniqueIdentifier>{8a6a581c-52a4-4ea0-b3ac-ae8293c833b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{51cd4764-36f4-4e39-a26b-1d620f595aed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UnitTestLogger.cpp">
+      <Filter>Implementation\src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTest.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTestResult.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTestRunner.cpp">
+      <Filter>Implementation\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestLoggerInterface.h">
+      <Filter>Implementation\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestRunnerInterface.h">
+      <Filter>Implementation\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\ResultEnums.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTest.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestResult.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestLogger.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestRunner.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestResultInterface.h">
+      <Filter>Data Structures\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestInterface.h">
+      <Filter>Data Structures\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Util\Types.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Util\Uncopyable.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Util\Unmovable.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

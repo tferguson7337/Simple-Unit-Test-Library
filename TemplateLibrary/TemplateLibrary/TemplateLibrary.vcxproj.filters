@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Unit Tests">
+      <UniqueIdentifier>{45e1cfa9-4f19-44da-a39d-3c3de2c7957c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{64b0a00a-2392-4f17-b9fe-770124d13184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Internal Data Structures">
+      <UniqueIdentifier>{a1c26f0b-d0b5-481d-a08f-9cbbbf9568a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures">
+      <UniqueIdentifier>{a7ec9c44-6946-44d0-b0eb-7c91c65fc4c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit Tests\Utilities">
+      <UniqueIdentifier>{8b469961-4f44-4ec6-b4b3-1a328795e0f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit Tests\hdr">
+      <UniqueIdentifier>{87ded15c-336e-41cf-b246-4ccf5654a459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit Tests\src">
+      <UniqueIdentifier>{d74ec81c-6321-4810-8d73-3485641431cb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExclusivePointerTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="DNodeTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TemplateLibrary\DNode.hpp">
+      <Filter>Internal Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TemplateLibrary\DynamicArray.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TemplateLibrary\Array.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicArrayTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="CopyMoveHelper.hpp">
+      <Filter>Unit Tests\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TemplateLibrary\Node.hpp">
+      <Filter>Internal Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="List.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="ListTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\TemplateLibrary\ExclusivePointer.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ExclusivePointerTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="DNodeTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="ArrayTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicArrayTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="RunTests.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="ListTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
