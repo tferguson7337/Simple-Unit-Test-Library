@@ -3,3 +3,5 @@
 \Release
 \.vs
 *.vcxproj.user
+*.db
+*.opendb
