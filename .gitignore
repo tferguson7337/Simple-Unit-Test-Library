@@ -13,3 +13,8 @@
 *.pdb
 *.obj
 *.idb
+*.exe
+*.last*
+*.iobj
+*.ipdb
+*.ilk
