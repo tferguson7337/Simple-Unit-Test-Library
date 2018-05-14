@@ -24,67 +24,67 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExclusivePointerTests.h">
+    <ClInclude Include="..\TemplateLibraryTests\ArrayTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="DNodeTests.h">
+    <ClInclude Include="..\TemplateLibraryTests\DNodeTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TemplateLibrary\DNode.hpp">
-      <Filter>Internal Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TemplateLibrary\DynamicArray.hpp">
-      <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\TemplateLibrary\Array.hpp">
-      <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="ArrayTests.h">
+    <ClInclude Include="..\TemplateLibraryTests\DynamicArrayTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicArrayTests.h">
+    <ClInclude Include="..\TemplateLibraryTests\ExclusivePointerTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="CopyMoveHelper.hpp">
+    <ClInclude Include="..\TemplateLibraryTests\ListTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\NodeTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\CopyMoveHelper.hpp">
       <Filter>Unit Tests\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TemplateLibrary\Node.hpp">
-      <Filter>Internal Data Structures</Filter>
+    <ClInclude Include="Array.hpp">
+      <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTests.h">
-      <Filter>Unit Tests\hdr</Filter>
+    <ClInclude Include="DynamicArray.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="ExclusivePointer.hpp">
+      <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="List.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="ListTests.h">
-      <Filter>Unit Tests\hdr</Filter>
+    <ClInclude Include="DNode.hpp">
+      <Filter>Internal Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Common\TemplateLibrary\ExclusivePointer.hpp">
-      <Filter>Data Structures</Filter>
+    <ClInclude Include="Node.hpp">
+      <Filter>Internal Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ExclusivePointerTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="DNodeTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\DNodeTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="ArrayTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\DynamicArrayTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicArrayTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\ExclusivePointerTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="RunTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\ListTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TemplateLibraryTests\NodeTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp">
       <Filter>Unit Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTests.cpp">
-      <Filter>Unit Tests\src</Filter>
-    </ClCompile>
-    <ClCompile Include="ListTests.cpp">
-      <Filter>Unit Tests\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
