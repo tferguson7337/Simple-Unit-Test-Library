@@ -16,8 +16,9 @@ UnitTestLogger<T>::UnitTestLogger(const std::basic_string<T>& file, bool console
 { }
 
 template <class T>
-UnitTestLogger<T>::UnitTestLogger(UnitTestLogger&& src) :
-    mConsoleStream(InitConsoleStream( ))
+UnitTestLogger<T>::UnitTestLogger(UnitTestLogger&& src) noexcept :
+    mConsoleStream(InitConsoleStream( )),
+    mPrintToConsole(true)
 {
     *this = std::move(src);
 }
@@ -42,13 +43,14 @@ UnitTestLogger<T>::~UnitTestLogger( )
 /// Operator Overload \\\
 
 template <class T>
-UnitTestLogger<T>& UnitTestLogger<T>::operator=(UnitTestLogger&& src)
+UnitTestLogger<T>& UnitTestLogger<T>::operator=(UnitTestLogger&& src) noexcept
 {
     mPrintToConsole = src.mPrintToConsole;
     mFileStream = std::move(src.mFileStream);
     mTargetFile = std::move(src.mTargetFile);
 
     src.mPrintToConsole = false;
+    src.mConsoleStream.flush( );
     src.mFileStream.close( );
     src.mTargetFile.clear( );
 

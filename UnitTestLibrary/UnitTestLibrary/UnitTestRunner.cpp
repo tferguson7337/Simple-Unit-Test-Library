@@ -10,14 +10,14 @@ template class UnitTestRunner<wchar_t>;
 /// Ctors \\\
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& log, bool consoleOut) :
+UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& log, bool consoleOut) noexcept :
     mLogger(log, consoleOut)
 {
 
 }
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(UnitTestRunner<T>&& src) :
+UnitTestRunner<T>::UnitTestRunner(UnitTestRunner<T>&& src) noexcept :
     mLogger(std::move(src.mLogger))
 {
     *this = std::move(src);
@@ -27,7 +27,7 @@ UnitTestRunner<T>::UnitTestRunner(UnitTestRunner<T>&& src) :
 /// Operator Overloads \\\
 
 template <class T>
-UnitTestRunner<T>& UnitTestRunner<T>::operator=(UnitTestRunner&& src)
+UnitTestRunner<T>& UnitTestRunner<T>::operator=(UnitTestRunner&& src) noexcept
 {
     mUnitTests = std::move(src.mUnitTests);
 

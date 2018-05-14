@@ -5,6 +5,7 @@
 
 /// Forward Declaration
 class UnitTestResult;
+class UnitTest;
 
 ///
 //
@@ -20,6 +21,10 @@ public:
     
     UnitTestInterface( ) = default;
     virtual ~UnitTestInterface( ) = default;
+
+    /// Move Assignment Overload \\\
+
+    virtual UnitTest& operator=(UnitTest&&) noexcept = 0;
 
     /// Getters \\\
 

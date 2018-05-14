@@ -6,6 +6,10 @@
 
 #include <list>
 
+/// Forward Declaration
+template <class T>
+class UnitTestRunner;
+
 ///
 //
 //  Class:      UnitTestRunnerInterface
@@ -19,6 +23,8 @@ class UnitTestRunnerInterface
 public:
     UnitTestRunnerInterface( ) = default;
     virtual ~UnitTestRunnerInterface( ) = default;
+
+    virtual UnitTestRunner<T>& operator=(UnitTestRunner<T>&&) noexcept = 0;
 
     virtual const std::list<UnitTest>& GetUnitTests( ) const = 0;
     virtual const std::basic_string<T>& GetLogFile( ) const = 0;

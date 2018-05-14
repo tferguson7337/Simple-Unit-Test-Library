@@ -6,6 +6,9 @@
 #include "ResultEnums.h"
 #include "Types.h"
 
+/// Forward Declaration
+class UnitTestResult;
+
 ///
 //
 //  Class:      UnitTestResultInterface
@@ -19,6 +22,8 @@ public:
     // Ctor / Dtor
     UnitTestResultInterface( ) = default;
     virtual ~UnitTestResultInterface( ) = default;
+
+    virtual UnitTestResult& operator=(UnitTestResult&&) noexcept = 0;
 
     /// Operator Overloads \\\
 

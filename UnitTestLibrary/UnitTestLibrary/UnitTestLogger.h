@@ -54,7 +54,7 @@ public:
     /// Ctors \\\
 
     UnitTestLogger(const std::basic_string<T>&, bool);
-    UnitTestLogger(UnitTestLogger&&);
+    UnitTestLogger(UnitTestLogger&&) noexcept;
 
     /// Dtor \\\
 
@@ -62,7 +62,7 @@ public:
 
     /// Operator Overload \\\
 
-    UnitTestLogger& operator=(UnitTestLogger&&);
+    UnitTestLogger& operator=(UnitTestLogger&&) noexcept;
 
     /// Getters \\\
 

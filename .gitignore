@@ -5,3 +5,11 @@
 *.vcxproj.user
 *.db
 *.opendb
+*.lib
+*.lib*
+*.log
+*.tlog
+*.native*
+*.pdb
+*.obj
+*.idb

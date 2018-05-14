@@ -4,7 +4,7 @@
 
 /// Ctors \\\
 
-UnitTestResult::UnitTestResult(Result r, const std::string& func, const std::string& file, uint64 l, const std::string& e) :
+UnitTestResult::UnitTestResult(Result r, const std::string& func, const std::string& file, uint64 l, const std::string& e) noexcept :
     mResult(r),
     mFuncName(func),
     mFileName(file),
@@ -18,15 +18,15 @@ UnitTestResult::UnitTestResult(Result r, const std::string& func, const std::str
 }
 
 // Move Ctor
-UnitTestResult::UnitTestResult(UnitTestResult&& src)
+UnitTestResult::UnitTestResult(UnitTestResult&& src) noexcept
 {
     *this = std::move(src);
-    src = std::move(UnitTestResult( ));
+    src = UnitTestResult( );
 }
 
 // Operator Overloads \\
 
-UnitTestResult& UnitTestResult::operator=(UnitTestResult&& src)
+UnitTestResult& UnitTestResult::operator=(UnitTestResult&& src) noexcept
 {
     mResult = src.mResult;
     mLineNum = src.mLineNum;

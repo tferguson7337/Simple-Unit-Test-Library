@@ -29,10 +29,10 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestResult(Result = Result::NotRun, const std::string& = "", const std::string& = "", uint64 = 0, const std::string& = "");
+    UnitTestResult(Result = Result::NotRun, const std::string& = "", const std::string& = "", uint64 = 0, const std::string& = "") noexcept;
 
     // Move Ctor
-    UnitTestResult(UnitTestResult&&);
+    UnitTestResult(UnitTestResult&&) noexcept;
 
     /// Dtor \\\
 
@@ -40,7 +40,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestResult& operator=(UnitTestResult&&);
+    UnitTestResult& operator=(UnitTestResult&&) noexcept;
     explicit operator bool( ) const;
 
     /// Getters \\\

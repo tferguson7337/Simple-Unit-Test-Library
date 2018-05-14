@@ -30,7 +30,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ResultEnums.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTest.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTestResult.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\UnitTestInterface.h">
+      <Filter>Data Structures\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\UnitTestResultInterface.h">
+      <Filter>Data Structures\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTestLogger.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTestRunner.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\UnitTestLoggerInterface.h">
+      <Filter>Implementation\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\UnitTestRunnerInterface.h">
+      <Filter>Implementation\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Util\Types.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Util\Uncopyable.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Util\Unmovable.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="UnitTestLogger.cpp">
+      <Filter>Implementation\src</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTestRunner.cpp">
       <Filter>Implementation\src</Filter>
     </ClCompile>
     <ClCompile Include="UnitTest.cpp">
@@ -39,46 +80,5 @@
     <ClCompile Include="UnitTestResult.cpp">
       <Filter>Data Structures\src</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTestRunner.cpp">
-      <Filter>Implementation\src</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestLoggerInterface.h">
-      <Filter>Implementation\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestRunnerInterface.h">
-      <Filter>Implementation\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\ResultEnums.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTest.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestResult.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestLogger.h">
-      <Filter>Implementation\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestRunner.h">
-      <Filter>Implementation\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestResultInterface.h">
-      <Filter>Data Structures\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestInterface.h">
-      <Filter>Data Structures\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\Util\Types.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\Util\Uncopyable.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\Util\Unmovable.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

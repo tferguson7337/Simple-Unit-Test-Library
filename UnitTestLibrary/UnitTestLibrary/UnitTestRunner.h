@@ -15,8 +15,8 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestRunner(const std::basic_string<T>& = std::basic_string<T>( ), bool = true);
-    UnitTestRunner(UnitTestRunner&&);
+    UnitTestRunner(const std::basic_string<T>& = std::basic_string<T>( ), bool = true) noexcept;
+    UnitTestRunner(UnitTestRunner&&) noexcept;
 
     /// Dtor \\\
 
@@ -24,7 +24,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestRunner& operator=(UnitTestRunner&&);
+    UnitTestRunner& operator=(UnitTestRunner&&) noexcept;
 
     /// Getters \\\
 

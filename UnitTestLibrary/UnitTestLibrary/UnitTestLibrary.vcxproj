@@ -19,24 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\Util\Types.h" />
+    <ClInclude Include="..\..\Common\Util\Uncopyable.h" />
+    <ClInclude Include="..\..\Common\Util\Unmovable.h" />
+    <ClInclude Include="Interface\UnitTestInterface.h" />
+    <ClInclude Include="Interface\UnitTestLoggerInterface.h" />
+    <ClInclude Include="Interface\UnitTestResultInterface.h" />
+    <ClInclude Include="Interface\UnitTestRunnerInterface.h" />
+    <ClInclude Include="ResultEnums.h" />
+    <ClInclude Include="UnitTest.h" />
+    <ClInclude Include="UnitTestLogger.h" />
+    <ClInclude Include="UnitTestResult.h" />
+    <ClInclude Include="UnitTestRunner.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="UnitTest.cpp" />
     <ClCompile Include="UnitTestLogger.cpp" />
     <ClCompile Include="UnitTestResult.cpp" />
     <ClCompile Include="UnitTestRunner.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Common\Util\Types.h" />
-    <ClInclude Include="..\..\..\Common\Util\Uncopyable.h" />
-    <ClInclude Include="..\..\..\Common\Util\Unmovable.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestInterface.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestLoggerInterface.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestResultInterface.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\Interface\UnitTestRunnerInterface.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\ResultEnums.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTest.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestLogger.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestResult.h" />
-    <ClInclude Include="..\..\..\Common\UTL\hdr\UnitTestRunner.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -95,8 +95,8 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
     <TargetName>UTestLibD$(PlatformArchitecture)</TargetName>
-    <OutDir>$(VisualStudioDir)\Common\UTL\</OutDir>
-    <CodeAnalysisRuleSet>..\..\TemplateLibrary\TemplateLibrary\CodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
+    <OutDir>$(ProjectDir)..\..\Common\UTL\</OutDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -104,9 +104,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>$(VisualStudioDir)\Common\UTL\</OutDir>
+    <OutDir>$(ProjectDir)..\..\Common\UTL\</OutDir>
     <TargetName>UTestLibD$(PlatformArchitecture)</TargetName>
-    <CodeAnalysisRuleSet>..\..\TemplateLibrary\TemplateLibrary\CodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -114,17 +114,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>UTestLib$(PlatformArchitecture)</TargetName>
-    <OutDir>$(VisualStudioDir)\Common\UTL\</OutDir>
-    <CodeAnalysisRuleSet>..\..\TemplateLibrary\TemplateLibrary\CodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
+    <OutDir>$(ProjectDir)..\..\Common\UTL\</OutDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(VisualStudioDir)\Common\UTL\</OutDir>
+    <OutDir>$(ProjectDir)..\..\Common\UTL\</OutDir>
     <TargetName>UTestLib$(PlatformArchitecture)</TargetName>
-    <CodeAnalysisRuleSet>..\..\TemplateLibrary\TemplateLibrary\CodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -144,7 +144,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Common\Util\;$(VisualStudioDir)\Common\UTL\hdr\;$(VisualStudioDir)\Common\UTL\hdr\Interface\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,7 +166,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Common\Util\;$(VisualStudioDir)\Common\UTL\hdr\;$(VisualStudioDir)\Common\UTL\hdr\Interface\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,7 +194,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Common\Util\;$(VisualStudioDir)\Common\UTL\hdr\;$(VisualStudioDir)\Common\UTL\hdr\Interface\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -225,7 +225,7 @@
       <UseFullPaths>true</UseFullPaths>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Common\Util\;$(VisualStudioDir)\Common\UTL\hdr\;$(VisualStudioDir)\Common\UTL\hdr\Interface\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
