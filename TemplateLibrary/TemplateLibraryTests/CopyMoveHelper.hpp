@@ -17,7 +17,7 @@ private:
 
 public:
     // Default Ctor
-    CopyMoveHelper() :
+    CopyMoveHelper() noexcept :
         mCopy(false),
         mMove(false)
     { }
@@ -29,7 +29,7 @@ public:
     { }
 
     // Move Ctor
-    CopyMoveHelper(CopyMoveHelper&&) :
+    CopyMoveHelper(CopyMoveHelper&&) noexcept :
         mCopy(false),
         mMove(true)
     { }
@@ -38,14 +38,14 @@ public:
     ~CopyMoveHelper( ) = default;
 
     // Copy Assignment
-    CopyMoveHelper& operator=(const CopyMoveHelper&)
+    CopyMoveHelper& operator=(const CopyMoveHelper&) noexcept
     {
         mCopy = true;
         return *this;
     }
 
     // Move Assignment
-    CopyMoveHelper& operator=(CopyMoveHelper&&)
+    CopyMoveHelper& operator=(CopyMoveHelper&&) noexcept
     {
         mMove = true;
         return *this;

@@ -22,7 +22,8 @@ namespace TTL
         { }
 
         // Move
-        DNode(DNode&& src) noexcept
+        DNode(DNode&& src) noexcept :
+            DNode( )
         {
             *this = std::move(src);
         }

@@ -8,8 +8,8 @@ namespace TTL
     class DynamicArray : public Array<T>
     {
     private:
-        uint64 mSize;
-        static const uint64 mDefaultCap = 8;
+        size_t mSize;
+        static const size_t mDefaultCap = 8;
 
         /// Private Helper \\\
 
@@ -23,7 +23,7 @@ namespace TTL
 
             ExclusivePointer<T[ ]> newArr(new T[mSize]);
 
-            for ( uint64 i = 0; i < mSize; i++ )
+            for ( size_t i = 0; i < mSize; i++ )
             {
                 newArr[i] = mArr[i];
             }
@@ -34,11 +34,11 @@ namespace TTL
 
         void Grow( )
         {
-            const uint64 newCap = (mCapacity == 0) ? mDefaultCap : ((mCapacity * 3) >> 1);
+            const size_t newCap = (mCapacity == 0) ? mDefaultCap : ((mCapacity * 3) >> 1);
 
             ExclusivePointer<T[ ]> newArr(new T[newCap]);
 
-            for ( uint64 i = 0; i < mSize; i++ )
+            for ( size_t i = 0; i < mSize; i++ )
             {
                 newArr[i] = mArr[i];
             }
@@ -57,7 +57,7 @@ namespace TTL
         { }
 
         // Capacity
-        explicit DynamicArray(uint64 cap) :
+        explicit DynamicArray(size_t cap) :
             Array(cap),
             mSize(0ull)
         { }
@@ -103,7 +103,7 @@ namespace TTL
 
         /// Subscript Overload \\\
 
-        inline T& operator[](uint64 index)
+        inline T& operator[](size_t index)
         {
             if ( index >= mSize )
             {
@@ -113,7 +113,7 @@ namespace TTL
             return mArr[index];
         }
 
-        inline const T& operator[](uint64 index) const
+        inline const T& operator[](size_t index) const
         {
             if ( index >= mSize )
             {
@@ -125,17 +125,17 @@ namespace TTL
 
         /// Getters \\\
 
-        static inline uint64 DefaultCapacity( ) noexcept
+        static inline size_t DefaultCapacity( ) noexcept
         {
             return mDefaultCap;
         }
 
-        inline uint64 Size( ) const noexcept
+        inline size_t Size( ) const noexcept
         {
             return mSize;
         }
 
-        inline uint64 Capacity( ) const noexcept
+        inline size_t Capacity( ) const noexcept
         {
             return mCapacity;
         }
@@ -158,13 +158,13 @@ namespace TTL
         /// Public Methods \\\
 
         // Subscript Wrapper
-        inline T& At(uint64 index)
+        inline T& At(size_t index)
         {
             return operator[](index);
         }
 
         // Subscript Wrapper
-        inline const T& At(uint64 index) const
+        inline const T& At(size_t index) const
         {
             return operator[](index);
         }

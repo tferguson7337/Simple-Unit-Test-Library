@@ -20,7 +20,8 @@ namespace TTL
         { }
 
         // Move
-        Node(Node&& src) noexcept
+        Node(Node&& src) noexcept :
+            Node( )
         {
             *this = std::move(src);
         }

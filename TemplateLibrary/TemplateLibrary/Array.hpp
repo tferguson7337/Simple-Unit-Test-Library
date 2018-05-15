@@ -11,37 +11,44 @@ namespace TTL
     {
     protected:
         ExclusivePointer<T[ ]> mArr;
-        uint64 mCapacity;
+        size_t mCapacity;
 
     public:
         /// Ctors \\\
 
-        // Default/Capacity
-        explicit Array(uint64 cap = 0ull) :
+        // Default
+        explicit Array( ) noexcept :
+            mCapacity(0),
+            mArr(nullptr)
+        { }
+
+        explicit Array(size_t cap) :
             mCapacity(cap),
-            mArr((cap > 0ull) ? new T[cap] : nullptr)
+            mArr((cap > 0) ? new T[cap] : nullptr)
         { }
 
         // Copy
-        Array(const Array& src)
+        Array(const Array& src) :
+            Array( )
         {
             *this = src;
         }
 
         // Move
-        Array(Array&& src) noexcept
+        Array(Array&& src) noexcept :
+            Array( )
         {
             *this = std::move(src);
         }
 
         /// Dtor \\\
 
-        ~Array( ) = default;
+        virtual ~Array( ) = default;
 
         /// Assignment Overloads \\\
-        
+            
         // Copy
-        inline Array& operator=(const Array& src)
+        virtual inline Array& operator=(const Array& src)
         {
             if ( src.Empty( ) )
             {
@@ -49,8 +56,8 @@ namespace TTL
             }
             else
             {
-                ExclusivePointer<T[]> newArr(new T[src.mCapacity]);
-                for ( uint64 i = 0ull; i < src.mCapacity; i++ )
+                ExclusivePointer<T[ ]> newArr(new T[src.mCapacity]);
+                for ( size_t i = 0; i < src.mCapacity; i++ )
                 {
                     newArr[i] = src.mArr[i];
                 }
@@ -63,32 +70,32 @@ namespace TTL
         }
 
         // Move
-        inline Array& operator=(Array&& src) noexcept
+        virtual inline Array& operator=(Array&& src) noexcept
         {
             mArr = std::move(src.mArr);
             mCapacity = src.mCapacity;
-            src.mCapacity = 0ull;
+            src.mCapacity = 0;
 
             return *this;
         }
 
         /// Subscript Overload \\\
 
-        inline T& operator[](uint64 index)
+        virtual inline T& operator[](size_t index)
         {
             if ( index >= mCapacity )
             {
-                throw std::out_of_range("TTL::Array<T>::operator[](uint64) - Attempted to access memory beyond array boundaries.");
+                throw std::out_of_range("TTL::Array<T>::operator[](size_t) - Attempted to access memory beyond array boundaries.");
             }
 
             return mArr[index];
         }
 
-        inline const T& operator[](uint64 index) const
+        virtual inline const T& operator[](size_t index) const
         {
             if ( index >= mCapacity )
             {
-                throw std::out_of_range("TTL::Array<T>::operator[](uint64) - Attempted to access memory beyond array boundaries.");
+                throw std::out_of_range("TTL::Array<T>::operator[](size_t) - Attempted to access memory beyond array boundaries.");
             }
 
             return mArr[index];
@@ -96,22 +103,22 @@ namespace TTL
 
         /// Getters \\\
 
-        inline uint64 Capacity( ) const noexcept
+        virtual inline uint64 Capacity( ) const noexcept
         {
             return mCapacity;
         }
 
-        inline bool Empty( ) const noexcept
+        virtual inline bool Empty( ) const noexcept
         {
             return mArr == nullptr;
         }
 
-        inline T* Data( ) noexcept
+        virtual inline T* Data( ) noexcept
         {
             return mArr.Get( );
         }
 
-        inline const T* Data( ) const noexcept
+        virtual inline const T* Data( ) const noexcept
         {
             return mArr.Get( );
         }
@@ -119,18 +126,18 @@ namespace TTL
         /// Public Methods \\\
 
         // Subscript Wrapper
-        inline T& At(uint64 index)
+        virtual inline T& At(size_t index)
         {
             return operator[](index);
         }
 
         // Subscript Wrapper
-        inline const T& At(uint64 index) const
+        virtual inline const T& At(size_t index) const
         {
             return operator[](index);
         }
 
-        inline void Clear( ) noexcept
+        virtual inline void Clear( ) noexcept
         {
             *this = Array( );
         }

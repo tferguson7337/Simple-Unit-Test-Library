@@ -39,8 +39,8 @@ UnitTestResult TTLTests::DynamicArray::DefaultConstructor( )
 {
     TTL::DynamicArray<uint64> emptyArr;
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_TEST_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(emptyArr.Size( ) == 0);
+    UTL_TEST_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_TEST_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_TEST_ASSERT(emptyArr.Empty( ) == true);
 
@@ -64,11 +64,11 @@ UnitTestResult TTLTests::DynamicArray::CapacityConstructor( )
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_TEST_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(emptyArr.Size( ) == 0);
+    UTL_TEST_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_TEST_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_TEST_ASSERT(emptyArr.Empty( ) == true);
-    UTL_TEST_ASSERT(arr.Size( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 0);
     UTL_TEST_ASSERT(arr.Capacity( ) == ARR_CAP);
     UTL_TEST_ASSERT(arr.Data( ) != nullptr);
     UTL_TEST_ASSERT(arr.Empty( ) == true);
@@ -92,14 +92,14 @@ UnitTestResult TTLTests::DynamicArray::CopyConstructor( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_CAP);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
     TTL::DynamicArray<uint64> copy(arr);
 
-    UTL_TEST_ASSERT(copy.Size( ) == 0ull);
+    UTL_TEST_ASSERT(copy.Size( ) == 0);
     UTL_TEST_ASSERT(copy.Capacity( ) == ARR_CAP);
     UTL_TEST_ASSERT(copy.Data( ) != nullptr);
     UTL_TEST_ASSERT(copy.Empty( ) == true);
@@ -130,7 +130,7 @@ UnitTestResult TTLTests::DynamicArray::MoveConstructor( )
     pArr = arr.Data( );
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_CAP);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Data( ) == pArr);
@@ -138,13 +138,13 @@ UnitTestResult TTLTests::DynamicArray::MoveConstructor( )
 
     TTL::DynamicArray<uint64> move(std::move(arr));
 
-    UTL_TEST_ASSERT(move.Size( ) == 0ull);
+    UTL_TEST_ASSERT(move.Size( ) == 0);
     UTL_TEST_ASSERT(move.Capacity( ) == ARR_CAP);
     UTL_TEST_ASSERT(move.Data( ) != nullptr);
     UTL_TEST_ASSERT(move.Data( ) == pArr);
     UTL_TEST_ASSERT(move.Empty( ) == true);
-    UTL_TEST_ASSERT(arr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(arr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 0);
+    UTL_SETUP_ASSERT(arr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(arr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
@@ -170,18 +170,18 @@ UnitTestResult TTLTests::DynamicArray::CopyAssignment( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_CAP);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
-    UTL_SETUP_ASSERT(copy.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(copy.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(copy.Size( ) == 0);
+    UTL_SETUP_ASSERT(copy.Capacity( ) == 0);
     UTL_SETUP_ASSERT(copy.Data( ) == nullptr);
-    UTL_SETUP_ASSERT(copy.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(copy.Size( ) == 0);
 
     copy = arr;
 
-    UTL_TEST_ASSERT(copy.Size( ) == 0ull);
+    UTL_TEST_ASSERT(copy.Size( ) == 0);
     UTL_TEST_ASSERT(copy.Capacity( ) == ARR_CAP);
     UTL_TEST_ASSERT(copy.Data( ) != nullptr);
     UTL_TEST_ASSERT(copy.Empty( ) == true);
@@ -213,25 +213,25 @@ UnitTestResult TTLTests::DynamicArray::MoveAssignment( )
     pArr = arr.Data( );
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_CAP);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Data( ) == pArr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
-    UTL_SETUP_ASSERT(move.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(move.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(move.Size( ) == 0);
+    UTL_SETUP_ASSERT(move.Capacity( ) == 0);
     UTL_SETUP_ASSERT(move.Data( ) == nullptr);
     UTL_SETUP_ASSERT(move.Empty( ) == true);
 
     move = std::move(arr);
 
-    UTL_TEST_ASSERT(move.Size( ) == 0ull);
+    UTL_TEST_ASSERT(move.Size( ) == 0);
     UTL_TEST_ASSERT(move.Capacity( ) == ARR_CAP);
     UTL_TEST_ASSERT(move.Data( ) != nullptr);
     UTL_TEST_ASSERT(move.Data( ) == pArr);
     UTL_TEST_ASSERT(move.Empty( ) == true);
-    UTL_TEST_ASSERT(arr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(arr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 0);
+    UTL_SETUP_ASSERT(arr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(arr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
@@ -243,7 +243,7 @@ UnitTestResult TTLTests::DynamicArray::MoveAssignment( )
 // Subscript Test
 UnitTestResult TTLTests::DynamicArray::Subscript( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     bool boundaryThrow = false;
     TTL::DynamicArray<uint64> emptyArr;
     TTL::DynamicArray<uint64> arr;
@@ -258,12 +258,12 @@ UnitTestResult TTLTests::DynamicArray::Subscript( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
+    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
 
@@ -280,7 +280,7 @@ UnitTestResult TTLTests::DynamicArray::Subscript( )
 
     boundaryThrow = false;
 
-    uint64 idx = 0;
+    size_t idx = 0;
     try
     {
         for ( ; idx < ARR_SIZE + 1; idx++ )
@@ -294,7 +294,7 @@ UnitTestResult TTLTests::DynamicArray::Subscript( )
     }
 
     UTL_TEST_ASSERT(boundaryThrow == true);
-    UTL_TEST_ASSERT(idx == 0ull);
+    UTL_TEST_ASSERT(idx == 0);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -304,7 +304,7 @@ UnitTestResult TTLTests::DynamicArray::Subscript( )
 // Public Method Tests
 UnitTestResult TTLTests::DynamicArray::At( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     bool boundaryThrow = false;
     TTL::DynamicArray<uint64> emptyArr;
     TTL::DynamicArray<uint64> arr;
@@ -319,12 +319,12 @@ UnitTestResult TTLTests::DynamicArray::At( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
+    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
 
@@ -341,7 +341,7 @@ UnitTestResult TTLTests::DynamicArray::At( )
 
     boundaryThrow = false;
 
-    uint64 idx = 0;
+    size_t idx = 0;
     try
     {
         for ( ; idx < ARR_SIZE + 1; idx++ )
@@ -355,7 +355,7 @@ UnitTestResult TTLTests::DynamicArray::At( )
     }
 
     UTL_TEST_ASSERT(boundaryThrow == true);
-    UTL_TEST_ASSERT(idx == 0ull);
+    UTL_TEST_ASSERT(idx == 0);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -363,7 +363,7 @@ UnitTestResult TTLTests::DynamicArray::At( )
 
 UnitTestResult TTLTests::DynamicArray::Clear( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     TTL::DynamicArray<uint64> arr;
 
     try
@@ -376,15 +376,15 @@ UnitTestResult TTLTests::DynamicArray::Clear( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
     arr.Clear( );
 
-    UTL_TEST_ASSERT(arr.Size( ) == 0ull);
-    UTL_TEST_ASSERT(arr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 0);
+    UTL_TEST_ASSERT(arr.Capacity( ) == 0);
     UTL_TEST_ASSERT(arr.Data( ) == nullptr);
     UTL_TEST_ASSERT(arr.Empty( ) == true);
 
@@ -394,8 +394,7 @@ UnitTestResult TTLTests::DynamicArray::Clear( )
 
 UnitTestResult TTLTests::DynamicArray::CopyAppend( )
 {
-    const uint64 ARR_SIZE = 16ull;
-
+    const size_t ARR_SIZE = 16;
     TTL::DynamicArray<CopyMoveHelper> emptyArr;
     TTL::DynamicArray<CopyMoveHelper> arr;
 
@@ -411,11 +410,11 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
+    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
@@ -429,7 +428,7 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 1ull);
+    UTL_TEST_ASSERT(emptyArr.Size( ) == 1);
     UTL_TEST_ASSERT(emptyArr.Capacity( ) == TTL::DynamicArray<CopyMoveHelper>::DefaultCapacity( ));
     UTL_TEST_ASSERT(emptyArr.Data( ) != nullptr);
     UTL_TEST_ASSERT(emptyArr.Data( )[0].GetCopy( ) == true);
@@ -445,7 +444,7 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(arr.Size( ) == 1ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 1);
     UTL_TEST_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_TEST_ASSERT(arr.Data( )[0].GetCopy( ) == true);
     UTL_TEST_ASSERT(arr.Data( )[0].GetMove( ) == false);
@@ -457,8 +456,7 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
 
 UnitTestResult TTLTests::DynamicArray::MoveAppend( )
 {
-    const uint64 ARR_SIZE = 16ull;
-
+    const size_t ARR_SIZE = 16;
     TTL::DynamicArray<CopyMoveHelper> emptyArr;
     TTL::DynamicArray<CopyMoveHelper> arr;
 
@@ -475,11 +473,11 @@ UnitTestResult TTLTests::DynamicArray::MoveAppend( )
 
     // Confirm Initial Test Conditions
 
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0ull);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0ull);
+    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
+    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
     UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
     UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
@@ -493,7 +491,7 @@ UnitTestResult TTLTests::DynamicArray::MoveAppend( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 1ull);
+    UTL_TEST_ASSERT(emptyArr.Size( ) == 1);
     UTL_TEST_ASSERT(emptyArr.Capacity( ) == TTL::DynamicArray<CopyMoveHelper>::DefaultCapacity( ));
     UTL_TEST_ASSERT(emptyArr.Data( ) != nullptr);
     UTL_TEST_ASSERT(emptyArr.Data( )[0].GetCopy( ) == false);
@@ -509,7 +507,7 @@ UnitTestResult TTLTests::DynamicArray::MoveAppend( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(arr.Size( ) == 1ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 1);
     UTL_TEST_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_TEST_ASSERT(arr.Data( )[0].GetCopy( ) == false);
     UTL_TEST_ASSERT(arr.Data( )[0].GetMove( ) == true);
@@ -521,7 +519,7 @@ UnitTestResult TTLTests::DynamicArray::MoveAppend( )
 
 UnitTestResult TTLTests::DynamicArray::Front( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     bool boundaryThrow = false;
     TTL::DynamicArray<uint64> arr;
 
@@ -535,7 +533,7 @@ UnitTestResult TTLTests::DynamicArray::Front( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
@@ -553,13 +551,13 @@ UnitTestResult TTLTests::DynamicArray::Front( )
 
     boundaryThrow = false;
 
-    arr.Append(0ull);
+    arr.Append(0);
 
-    UTL_TEST_ASSERT(arr.Front( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Front( ) == 0);
 
-    arr.Append(1ull);
+    arr.Append(1);
 
-    UTL_TEST_ASSERT(arr.Front( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Front( ) == 0);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -567,7 +565,7 @@ UnitTestResult TTLTests::DynamicArray::Front( )
 
 UnitTestResult TTLTests::DynamicArray::Back( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     bool boundaryThrow = false;
     TTL::DynamicArray<uint64> arr;
 
@@ -581,7 +579,7 @@ UnitTestResult TTLTests::DynamicArray::Back( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
@@ -599,13 +597,13 @@ UnitTestResult TTLTests::DynamicArray::Back( )
 
     boundaryThrow = false;
 
-    arr.Append(0ull);
+    arr.Append(0);
 
-    UTL_TEST_ASSERT(arr.Back( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Back( ) == 0);
 
-    arr.Append(1ull);
+    arr.Append(1);
 
-    UTL_TEST_ASSERT(arr.Back( ) == 1ull);
+    UTL_TEST_ASSERT(arr.Back( ) == 1);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -613,7 +611,7 @@ UnitTestResult TTLTests::DynamicArray::Back( )
 
 UnitTestResult TTLTests::DynamicArray::Compress( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16;
     TTL::DynamicArray<uint64> arr(ARR_SIZE);
 
     try
@@ -626,15 +624,15 @@ UnitTestResult TTLTests::DynamicArray::Compress( )
     }
 
     // Confirm Initial Test Conditions Pt. 1
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
     arr.Compress( );
 
-    UTL_TEST_ASSERT(arr.Size( ) == 0ull);
-    UTL_TEST_ASSERT(arr.Capacity( ) == 0ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 0);
+    UTL_TEST_ASSERT(arr.Capacity( ) == 0);
     UTL_TEST_ASSERT(arr.Data( ) == nullptr);
     UTL_TEST_ASSERT(arr.Empty( ) == true);
 
@@ -648,18 +646,18 @@ UnitTestResult TTLTests::DynamicArray::Compress( )
     }
 
     // Confirm Initial Test Conditions Pt. 2
-    UTL_SETUP_ASSERT(arr.Size( ) == 0ull);
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
     UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
     UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
     UTL_SETUP_ASSERT(arr.Empty( ) == true);
 
-    arr.Append(0ull);
-    arr.Append(1ull);
-    arr.Append(2ull);
+    arr.Append(0);
+    arr.Append(1);
+    arr.Append(2);
 
     arr.Compress( );
 
-    UTL_TEST_ASSERT(arr.Size( ) == 3ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 3);
     UTL_TEST_ASSERT(arr.Capacity( ) == arr.Size( ));
     UTL_TEST_ASSERT(arr.Data( ) != nullptr);
     UTL_TEST_ASSERT(arr.Empty( ) == false);
@@ -668,7 +666,7 @@ UnitTestResult TTLTests::DynamicArray::Compress( )
 
     try
     {
-        arr.Append(3ull);
+        arr.Append(3);
     }
     catch ( const std::exception& e )
     {
@@ -676,9 +674,9 @@ UnitTestResult TTLTests::DynamicArray::Compress( )
     }
 
     UTL_TEST_ASSERT(arr.Capacity( ) == ((oldCapacity * 3) >> 1));
-    UTL_TEST_ASSERT(arr.Size( ) == 4ull);
+    UTL_TEST_ASSERT(arr.Size( ) == 4);
 
-    for ( uint64 i = 0; i < arr.Size( ); i++ )
+    for ( size_t i = 0; i < arr.Size( ); i++ )
     {
         UTL_TEST_ASSERT(arr[i] == i);
     }

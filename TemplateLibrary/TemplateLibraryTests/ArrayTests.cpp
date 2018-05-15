@@ -229,7 +229,7 @@ UnitTestResult TTLTests::Array::MoveAssignment( )
 // Subscript Test
 UnitTestResult TTLTests::Array::Subscript( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16ull;
     bool boundaryThrow = false;
     TTL::Array<uint64> emptyArr;
     TTL::Array<uint64> arr;
@@ -264,7 +264,7 @@ UnitTestResult TTLTests::Array::Subscript( )
 
     boundaryThrow = false;
 
-    uint64 idx = 0;
+    size_t idx = 0;
     try
     {
         for ( ; idx < ARR_SIZE + 1; idx++ )
@@ -293,7 +293,7 @@ UnitTestResult TTLTests::Array::Subscript( )
 // Public Method Tests
 UnitTestResult TTLTests::Array::At( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16ull;
     bool boundaryThrow = false;
     TTL::Array<uint64> emptyArr;
     TTL::Array<uint64> arr;
@@ -328,7 +328,7 @@ UnitTestResult TTLTests::Array::At( )
 
     boundaryThrow = false;
 
-    uint64 idx = 0;
+    size_t idx = 0;
     try
     {
         for ( ; idx < ARR_SIZE + 1; idx++ )
@@ -355,7 +355,7 @@ UnitTestResult TTLTests::Array::At( )
 
 UnitTestResult TTLTests::Array::Clear( )
 {
-    const uint64 ARR_SIZE = 16ull;
+    const size_t ARR_SIZE = 16ull;
     TTL::Array<uint64> arr;
 
     try
