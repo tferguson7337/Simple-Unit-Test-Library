@@ -27,11 +27,17 @@
     <ClInclude Include="..\TemplateLibraryTests\ListTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h" />
     <ClInclude Include="Array.hpp" />
+    <ClInclude Include="ArrayInterface.h" />
     <ClInclude Include="DNode.hpp" />
+    <ClInclude Include="DNodeInterface.h" />
     <ClInclude Include="DynamicArray.hpp" />
+    <ClInclude Include="DynamicArrayInterface.h" />
     <ClInclude Include="ExclusivePointer.hpp" />
+    <ClInclude Include="ExclusivePointerInterface.h" />
     <ClInclude Include="List.hpp" />
+    <ClInclude Include="ListInterface.h" />
     <ClInclude Include="Node.hpp" />
+    <ClInclude Include="NodeInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp" />

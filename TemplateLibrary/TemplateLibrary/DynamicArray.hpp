@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Array.hpp"
+#include "DynamicArrayInterface.h"
 
 namespace TTL
 {
     template <class T>
-    class DynamicArray : public Array<T>
+    class DynamicArray : public virtual DynamicArrayInterface<T>, public Array<T>
     {
     private:
         size_t mSize;
@@ -57,7 +58,7 @@ namespace TTL
         { }
 
         // Capacity
-        explicit DynamicArray(size_t cap) :
+        explicit DynamicArray(const size_t cap) :
             Array(cap),
             mSize(0ull)
         { }
@@ -70,7 +71,7 @@ namespace TTL
 
         // Move
         DynamicArray(DynamicArray&& src) noexcept :
-        Array(std::move(src)),
+            Array(std::move(src)),
             mSize(src.mSize)
         {
             src.mSize = 0ull;
@@ -107,7 +108,7 @@ namespace TTL
         {
             if ( index >= mSize )
             {
-                throw std::out_of_range("TTL::DynamicArray<T>::operator[](uint64) - Attempted to access memory beyond array boundaries.");
+                throw std::out_of_range("TTL::Array<T>::operator[](size_t) - Attempted to access memory beyond array boundaries.");
             }
 
             return mArr[index];
@@ -117,7 +118,7 @@ namespace TTL
         {
             if ( index >= mSize )
             {
-                throw std::out_of_range("TTL::DynamicArray<T>::operator[](uint64) - Attempted to access memory beyond array boundaries.");
+                throw std::out_of_range("TTL::Array<T>::operator[](size_t) - Attempted to access memory beyond array boundaries.");
             }
 
             return mArr[index];
@@ -135,24 +136,9 @@ namespace TTL
             return mSize;
         }
 
-        inline size_t Capacity( ) const noexcept
-        {
-            return mCapacity;
-        }
-
         inline bool Empty( ) const noexcept
         {
             return mSize == 0;
-        }
-
-        inline T* Data( ) noexcept
-        {
-            return mArr.Get( );
-        }
-
-        inline const T* Data( ) const noexcept
-        {
-            return mArr.Get( );
         }
 
         /// Public Methods \\\
@@ -249,6 +235,37 @@ namespace TTL
             }
 
             Shrink( );
+        }
+
+        // Attempt to increase the array's capacity to amount specified via arg.
+        inline void Reserve(const size_t newCap)
+        {
+            ExclusivePointer<T[ ]> arr;
+
+            if ( newCap <= mCapacity )
+            {
+                return;
+            }
+
+            // Try to allocate new array.
+            try
+            {
+                arr.Set(new T[newCap]);
+            }
+            catch ( const std::exception& )
+            {
+                return;
+            }
+
+            // Move data to new array.
+            for ( size_t i = 0; i < mSize; i++ )
+            {
+                arr[i] = std::move(mArr[i]);
+            }
+
+            // Update member variables.
+            mArr.Set(std::move(arr));
+            mCapacity = newCap;
         }
     };
 }

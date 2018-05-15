@@ -43,7 +43,6 @@ namespace TTL
                 // Check if we're appending.
                 if ( p == mTail )
                 {
-                    _ASSERT(n == nullptr);
                     mTail = c;
                 }
             }
@@ -56,7 +55,6 @@ namespace TTL
                 // Check if we're prepending.
                 if ( n == mHead )
                 {
-                    _ASSERT(p == nullptr);
                     mHead = c;
                 }
             }

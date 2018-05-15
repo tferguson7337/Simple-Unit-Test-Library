@@ -2,10 +2,12 @@
 
 #include "Uncopyable.h"
 
+#include "NodeInterface.h"
+
 namespace TTL
 {
     template <class T>
-    class Node : public Uncopyable
+    class Node : public virtual NodeInterface<T>, public Uncopyable
     {
     private:
         T mData{};
@@ -48,11 +50,6 @@ namespace TTL
         /// Getters \\\
 
         inline T& GetData( ) noexcept
-        {
-            return mData;
-        }
-
-        inline const T& GetData( ) const noexcept
         {
             return mData;
         }

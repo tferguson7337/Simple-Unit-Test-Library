@@ -63,6 +63,24 @@
     <ClInclude Include="Node.hpp">
       <Filter>Internal Data Structures</Filter>
     </ClInclude>
+    <ClInclude Include="ExclusivePointerInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicArrayInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DNodeInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ListInterface.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">

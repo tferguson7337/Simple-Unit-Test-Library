@@ -2,12 +2,14 @@
 
 #include "ExclusivePointer.hpp"
 
+#include "ArrayInterface.h"
+
 #include <stdexcept>
 
 namespace TTL
 {
     template <class T>
-    class Array
+    class Array : public virtual ArrayInterface<T>
     {
     protected:
         ExclusivePointer<T[ ]> mArr;
@@ -50,21 +52,14 @@ namespace TTL
         // Copy
         virtual inline Array& operator=(const Array& src)
         {
-            if ( src.Empty( ) )
+            ExclusivePointer<T[ ]> newArr(new T[src.mCapacity]);
+            for ( size_t i = 0; i < src.mCapacity; i++ )
             {
-                Clear( );
+                newArr[i] = src.mArr[i];
             }
-            else
-            {
-                ExclusivePointer<T[ ]> newArr(new T[src.mCapacity]);
-                for ( size_t i = 0; i < src.mCapacity; i++ )
-                {
-                    newArr[i] = src.mArr[i];
-                }
 
-                mArr = std::move(newArr);
-                mCapacity = src.mCapacity;
-            }
+            mArr = std::move(newArr);
+            mCapacity = src.mCapacity;
 
             return *this;
         }
@@ -103,7 +98,7 @@ namespace TTL
 
         /// Getters \\\
 
-        virtual inline uint64 Capacity( ) const noexcept
+        virtual inline size_t Capacity( ) const noexcept
         {
             return mCapacity;
         }

@@ -30,5 +30,6 @@ namespace TTLTests
         UnitTestResult Front( );
         UnitTestResult Back( );
         UnitTestResult Compress( );
+        UnitTestResult Reserve( );
     }
 }

@@ -27,7 +27,8 @@ std::list<std::function<UnitTestResult(void)>> TTLTests::DynamicArray::BuildTest
         MoveAppend,
         Front,
         Back,
-        Compress
+        Compress,
+        Reserve
     };
 
     return testList;
@@ -612,7 +613,7 @@ UnitTestResult TTLTests::DynamicArray::Back( )
 UnitTestResult TTLTests::DynamicArray::Compress( )
 {
     const size_t ARR_SIZE = 16;
-    TTL::DynamicArray<uint64> arr(ARR_SIZE);
+    TTL::DynamicArray<uint64> arr;
 
     try
     {
@@ -682,5 +683,88 @@ UnitTestResult TTLTests::DynamicArray::Compress( )
     }
 
     /// Test Pass!
+    UTL_TEST_SUCCESS( );
+}
+
+UnitTestResult TTLTests::DynamicArray::Reserve( )
+{
+    const size_t ARR_SIZE = 16;
+    const size_t RESERVE_SIZE = (ARR_SIZE * 3) >> 1;
+    TTL::DynamicArray<uint64> arr;
+
+    try
+    {
+        arr = std::move(TTL::DynamicArray<uint64>(ARR_SIZE));
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    // Confirm Initial Test Conditions Pt. 1
+    UTL_SETUP_ASSERT(arr.Size( ) == 0);
+    UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
+    UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
+    UTL_SETUP_ASSERT(arr.Empty( ) == true);
+
+    for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
+    {
+        arr.Append(i);
+    }
+
+    arr.Reserve(RESERVE_SIZE);
+
+    UTL_TEST_ASSERT(arr.Size( ) == ARR_SIZE >> 1);
+    UTL_TEST_ASSERT(arr.Capacity( ) == RESERVE_SIZE);
+    UTL_TEST_ASSERT(arr.Data( ) != nullptr);
+    UTL_TEST_ASSERT(arr.Empty( ) == false);
+
+    for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
+    {
+        UTL_TEST_ASSERT(arr[i] == i);
+    }
+
+    TTL::DynamicArray<CopyMoveHelper> cmArr;
+
+    try
+    {
+        cmArr = std::move(TTL::DynamicArray<CopyMoveHelper>(ARR_SIZE));
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    // Confirm Initial Test Conditions Pt. 2
+    UTL_SETUP_ASSERT(cmArr.Size( ) == 0);
+    UTL_SETUP_ASSERT(cmArr.Capacity( ) == ARR_SIZE);
+    UTL_SETUP_ASSERT(cmArr.Data( ) != nullptr);
+    UTL_SETUP_ASSERT(cmArr.Empty( ) == true);
+
+    for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
+    {
+        CopyMoveHelper copy;
+        cmArr.Append(copy);
+    }
+
+    for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
+    {
+        UTL_SETUP_ASSERT(cmArr[i].GetCopy( ) == true);
+        UTL_SETUP_ASSERT(cmArr[i].GetMove( ) == false);
+    }
+
+    cmArr.Reserve(RESERVE_SIZE);
+
+    UTL_TEST_ASSERT(cmArr.Size( ) == ARR_SIZE >> 1);
+    UTL_TEST_ASSERT(cmArr.Capacity( ) == RESERVE_SIZE);
+    UTL_TEST_ASSERT(cmArr.Data( ) != nullptr);
+    UTL_TEST_ASSERT(cmArr.Empty( ) == false);
+
+    for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
+    {
+        UTL_TEST_ASSERT(cmArr[i].GetCopy( ) == false);
+        UTL_TEST_ASSERT(cmArr[i].GetMove( ) == true);
+    }
+
     UTL_TEST_SUCCESS( );
 }

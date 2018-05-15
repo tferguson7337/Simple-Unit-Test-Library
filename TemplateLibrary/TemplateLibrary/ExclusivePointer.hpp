@@ -3,10 +3,12 @@
 #include "Uncopyable.h"
 #include "Types.h"
 
+#include "ExclusivePointerInterface.h"
+
 namespace TTL
 {
     template <class T>
-    class ExclusivePointer : public Uncopyable
+    class ExclusivePointer : public virtual ExclusivePointerInterface<T>, public Uncopyable
     {
     private:
         T * mPtr;
@@ -110,8 +112,7 @@ namespace TTL
         {
             *this = pNull;
         }
-
-        // Free owned resource, claim passed memory (copy).
+        // Free owned resource, claim passed resource (copy).
         inline void Set(T* pT) noexcept
         {
             *this = pT;
@@ -128,10 +129,11 @@ namespace TTL
         {
             return mPtr;
         }
+
     };
 
     template <class T>
-    class ExclusivePointer<T[ ]> : public Uncopyable
+    class ExclusivePointer<T[ ]> : public ExclusivePointerInterface<T[ ]>, public Uncopyable
     {
     private:
         T * mPtr;
@@ -181,15 +183,6 @@ namespace TTL
             return *this;
         }
 
-        // Const Raw Pointer Assignment
-        inline ExclusivePointer& operator=(const T* pT) noexcept
-        {
-            delete[ ] mPtr;
-            mPtr = pT;
-
-            return *this;
-        }
-
         // Raw Pointer Assignment
         inline ExclusivePointer& operator=(T* pT) noexcept
         {
@@ -221,7 +214,7 @@ namespace TTL
         }
 
         // Derefence Op
-        T& operator[](uint64 i) const noexcept
+        T& operator[](size_t i) const noexcept
         {
             return mPtr[i];
         }
