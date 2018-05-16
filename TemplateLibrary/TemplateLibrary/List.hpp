@@ -2,16 +2,18 @@
 
 #include "DNode.hpp"
 
+#include "ListInterface.h"
+
 namespace TTL
 {
     template <class T>
-    class List
+    class List : public ListInterface<T>
     {
     private:
         DNode<T>* mHead;
         DNode<T>* mTail;
 
-        uint64 mSize;
+        size_t mSize;
 
         /// Private Helper Methods \\\
 
@@ -82,6 +84,11 @@ namespace TTL
             mSize++;
         }
 
+        inline void InsertDataCommon(DNode<T>* p) noexcept
+        {
+            
+        }
+
         inline List DeepCopyList(const List& src)
         {
             List copyList;
@@ -102,7 +109,7 @@ namespace TTL
         explicit List( ) noexcept :
             mHead(nullptr),
             mTail(nullptr),
-            mSize(0ull)
+            mSize(0)
         {
 
         }
@@ -188,7 +195,7 @@ namespace TTL
             return mTail;
         }
 
-        inline uint64 Size( ) const noexcept
+        inline size_t Size( ) const noexcept
         {
             return mSize;
         }
@@ -197,7 +204,7 @@ namespace TTL
 
         inline bool Empty( ) const noexcept
         {
-            return mSize == 0ull;
+            return mSize == 0;
         }
 
         inline void Clear( ) noexcept
@@ -209,7 +216,7 @@ namespace TTL
             }
 
             mTail = nullptr;
-            mSize = 0ull;
+            mSize = 0;
         }
 
         inline T& Front( )
@@ -297,7 +304,7 @@ namespace TTL
             // Clear out src.
             src.mHead = nullptr;
             src.mTail = nullptr;
-            src.mSize = 0ull;
+            src.mSize = 0;
         }
 
         inline void Prepend(const T& d)
@@ -332,7 +339,7 @@ namespace TTL
 
             DNode<T>* ptr = mHead;
 
-            if ( mSize == 1ull )
+            if ( mSize == 1 )
             {
                 mHead = mTail = nullptr;
             }
@@ -354,7 +361,7 @@ namespace TTL
 
             DNode<T>* p = mTail;
 
-            if ( mSize == 1ull )
+            if ( mSize == 1 )
             {
                 mHead = mTail = nullptr;
             }
@@ -366,6 +373,29 @@ namespace TTL
             mSize--;
             delete p;
         }
+
+        inline Insert(const size_t pos, const T& data)
+        {
+            if ( pos > mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Insert(const size_t, const T&) - Attempted to insert beyond list boundaries.");
+            }
+
+            if ( pos == 0 )
+            {
+                PrependDataCommon(BuildNode(data, nullptr, mHead));
+            }
+            else if ( pos == mSize )
+            {
+                AppendDataCommon(BuildNode(data, mTail, nullptr));
+            }
+            else
+            {
+
+            }
+        }
+
+        
     };
 }
 
