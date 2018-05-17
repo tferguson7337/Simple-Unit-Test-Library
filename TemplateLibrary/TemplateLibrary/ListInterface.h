@@ -61,7 +61,7 @@ namespace TTL
         virtual void Insert(const size_t, const T&) = 0;
         virtual void Insert(const size_t, T&&) = 0;
         virtual void Insert(const size_t, const List<T>&) = 0;
-        virtual void Insert(const size_t, List<T>&&) noexcept = 0;
+        virtual void Insert(const size_t, List<T>&&) = 0;
 
         virtual void Remove(const size_t) = 0;
         virtual void Remove(const size_t, const size_t) = 0;

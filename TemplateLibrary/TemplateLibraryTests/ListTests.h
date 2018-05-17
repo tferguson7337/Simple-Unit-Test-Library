@@ -43,5 +43,11 @@ namespace TTLTests
         UnitTestResult MovePrependList( );
         UnitTestResult PopFront( );
         UnitTestResult PopBack( );
+        UnitTestResult CopyInsertData( );
+        UnitTestResult MoveInsertData( );
+        UnitTestResult CopyInsertList( );
+        UnitTestResult MoveInsertList( );
+        UnitTestResult RemoveOne( );
+        UnitTestResult RemoveMany( );
     }
 }

@@ -84,9 +84,82 @@ namespace TTL
             mSize++;
         }
 
-        inline void InsertDataCommon(DNode<T>* p) noexcept
+        inline DNode<T>* GetNodeAtPos(const size_t pos)
         {
-            
+            size_t shiftCount = 0;
+            DNode<T>* ptr = nullptr;
+            std::function<void(void)> fShift;
+
+            if ( pos <= (mSize >> 1) )
+            {
+                shiftCount = pos;
+                ptr = mHead;
+                fShift = [&ptr] ( ) -> void
+                {
+                    ptr = ptr->GetNext( );
+                };
+            }
+            else
+            {
+                shiftCount = mSize - pos - 1;
+                ptr = mTail;
+                fShift = [&ptr] ( ) -> void
+                {
+                    ptr = ptr->GetPrev( );
+                };
+            }
+
+            for ( size_t i = 0; i < shiftCount; i++ )
+            {
+                fShift( );
+            }
+
+            return ptr;
+        }
+
+        inline void GetSublist(DNode<T>*& pHead, DNode<T>*& pTail, const size_t pos, const size_t count)
+        {
+            const size_t rPos = pos + count - 1;
+            const bool startFromHead = ((pos <= mSize >> 1) ? pos : mSize - pos - 1) <= (((rPos) <= (mSize >> 1) ? rPos : mSize - rPos - 1));
+
+            std::function<void(void)> fShift;
+
+            pHead = pTail = GetNodeAtPos((startFromHead) ? pos : rPos);
+
+            if ( startFromHead )
+            {
+                fShift = [&pTail] ( ) -> void
+                {
+                    pTail = pTail->GetNext( );
+                };
+            }
+            else
+            {
+                fShift = [&pHead] ( ) -> void
+                {
+                    pHead = pHead->GetPrev( );
+                };
+            }
+
+            for ( size_t i = 0; i < count; i++ )
+            {
+                fShift( );
+            }
+        }
+
+        friend inline void InsertListCommon(List<T>& dest, DNode<T>* insertionPoint, List<T>&& src) noexcept
+        {
+            // Merge the source list into the destination list (adjust pointers).
+            dest.LinkNodes(src.mHead, insertionPoint->GetPrev( ), src.mHead->GetNext( ));
+            dest.LinkNodes(src.mTail, src.mTail->GetPrev( ), insertionPoint);
+
+            // Increase destination list size.
+            dest.mSize += src.mSize;
+
+            // Disasscoiate merged resources from source list.
+            src.mHead = nullptr;
+            src.mTail = nullptr;
+            src.mSize = 0;
         }
 
         inline List DeepCopyList(const List& src)
@@ -346,6 +419,7 @@ namespace TTL
             else
             {
                 mHead = mHead->GetNext( );
+                mHead->SetPrev(nullptr);
             }
 
             mSize--;
@@ -368,13 +442,14 @@ namespace TTL
             else
             {
                 mTail = mTail->GetPrev( );
+                mTail->SetNext(nullptr);
             }
 
             mSize--;
             delete p;
         }
 
-        inline Insert(const size_t pos, const T& data)
+        inline void Insert(const size_t pos, const T& data)
         {
             if ( pos > mSize )
             {
@@ -391,11 +466,188 @@ namespace TTL
             }
             else
             {
-
+                DNode<T>* ptr = GetNodeAtPos(pos);
+                BuildNode(std::move(data), ptr->GetPrev( ), ptr);
+                mSize++;
             }
         }
 
-        
+        inline void Insert(const size_t pos, T&& data)
+        {
+            if ( pos > mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Insert(const size_t, const T&) - Attempted to insert beyond list boundaries.");
+            }
+
+            if ( pos == 0 )
+            {
+                PrependDataCommon(BuildNode(std::move(data), nullptr, mHead));
+            }
+            else if ( pos == mSize )
+            {
+                AppendDataCommon(BuildNode(std::move(data), mTail, nullptr));
+            }
+            else
+            {
+                DNode<T>* ptr = GetNodeAtPos(pos);
+                BuildNode(std::move(data), ptr->GetPrev( ), ptr);
+                mSize++;
+            }
+        }
+
+        inline void Insert(const size_t pos, const List<T>& src)
+        {
+            if ( pos > mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Insert(const size_t, const T&) - Attempted to insert beyond list boundaries.");
+            }
+
+            if ( pos == 0 )
+            {
+                Prepend(src);
+            }
+            else if ( pos == mSize )
+            {
+                Append(src);
+            }
+            else
+            {
+                InsertListCommon(*this, GetNodeAtPos(pos), List<T>(src));
+            }
+        }
+
+        inline void Insert(const size_t pos, List<T>&& src)
+        {
+            if ( pos > mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Insert(const size_t, const T&) - Attempted to insert beyond list boundaries.");
+            }
+
+            if ( pos == 0 )
+            {
+                Prepend(std::move(src));
+            }
+            else if ( pos == mSize )
+            {
+                Append(std::move(src));
+            }
+            else
+            {
+                InsertListCommon(*this, GetNodeAtPos(pos), List<T>(std::move(src)));
+            }
+        }
+
+        inline void Remove(const size_t pos)
+        {
+            DNode<T>* prev = nullptr;
+            DNode<T>* next = nullptr;
+            DNode<T>* del = nullptr;
+
+            if ( Empty( ) )
+            {
+                throw std::out_of_range("TTL::List<T>::Remove(const size_t) - Attempted to remove an element from an empty list.");
+            }
+            else if ( pos >= mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Remove(const size_t) - Attempted to remove beyond list boundaries.");
+            }
+
+            if ( pos == 0 )
+            {
+                PopFront( );
+            }
+            else if ( pos == mSize - 1 )
+            {
+                PopBack( );
+            }
+            else
+            {
+                del = GetNodeAtPos(pos);
+                prev = del->GetPrev( );
+                next = del->GetNext( );
+
+                if ( prev )
+                {
+                    prev->SetNext(next);
+                }
+
+                if ( next )
+                {
+                    next->SetPrev(prev);
+                }
+
+                delete del;
+                del = nullptr;
+
+                mSize--;
+            }
+        }
+
+        inline void Remove(const size_t pos, const size_t count)
+        {
+            DNode<T>* delHead = nullptr;
+            DNode<T>* delTail = nullptr;
+
+            DNode<T>* lPtr = nullptr;
+            DNode<T>* rPtr = nullptr;
+
+            if ( count == 0 )
+            {
+                throw std::invalid_argument("TTL::List<T>::Remove(const size_t, const size_t) - Attempted to remove '0' elements from list.");
+            }
+            else if ( Empty( ) )
+            {
+                throw std::out_of_range("TTL::List<T>::Remove(const size_t, const size_t) - Attempted to remove an element from an empty list.");
+            }
+            else if ( pos + count > mSize )
+            {
+                throw std::out_of_range("TTL::List<T>::Remove(const size_t, const size_t) - Attempted to remove beyond list boundaries.");
+            }
+
+            if ( count == mSize )
+            {
+                Clear( );
+                return;
+            }
+
+            GetSublist(delHead, delTail, pos, count);
+
+            lPtr = delHead->GetPrev( );
+            rPtr = delTail->GetNext( );
+
+            if ( lPtr )
+            {
+                lPtr->SetNext(rPtr);
+            }
+
+            if ( rPtr )
+            {
+                rPtr->SetPrev(lPtr);
+            }
+
+            if ( delHead == mHead )
+            {
+                mHead = rPtr;
+            }
+
+            if ( delTail == mTail )
+            {
+                mTail = lPtr;
+            }
+
+            DNode<T>* del = delHead;
+            while ( del != rPtr )
+            {
+                delHead = delHead->GetNext( );
+                delete del;
+                del = delHead;
+            }
+
+            delHead = delTail = del = nullptr;
+
+            mSize -= count;
+        }
     };
+
 }
 
