@@ -20,6 +20,9 @@ std::list<std::function<UnitTestResult(void)>> TTLTests::List::BuildTestList( )
         AppendDataNodeLinkage,
         PrependDataNodeLinkage,
         Clear,
+        PopFront,
+        PopBack,
+        Remove,
         CopyAppendData,
         MoveAppendData,
         CopyAppendList,
@@ -28,14 +31,10 @@ std::list<std::function<UnitTestResult(void)>> TTLTests::List::BuildTestList( )
         MovePrependData,
         CopyPrependList,
         MovePrependList,
-        PopFront,
-        PopBack,
         CopyInsertData,
         MoveInsertData,
         CopyInsertList,
-        MoveInsertList,
-        RemoveOne,
-        RemoveMany
+        MoveInsertList
     };
 
     return testList;
@@ -928,6 +927,381 @@ UnitTestResult TTLTests::List::Clear( )
     UTL_TEST_SUCCESS( );
 }
 
+UnitTestResult TTLTests::List::PopFront( )
+{
+    const size_t LIST_SIZE = 16;
+    TTL::List<size_t> list;
+
+    // Confirm Initial Test Conditions
+    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == 0);
+    UTL_SETUP_ASSERT(list.Empty( ) == true);
+
+    try
+    {
+        for ( size_t i = 0; i < LIST_SIZE; i++ )
+        {
+            list.Append(i);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    size_t i = 0;
+    try
+    {
+        while ( !list.Empty( ) )
+        {
+            UTL_TEST_ASSERT(list.Front( ) == i++);
+            list.PopFront( );
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(i == LIST_SIZE);
+    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(list.Size( ) == 0);
+    UTL_TEST_ASSERT(list.Empty( ) == true);
+
+    /// Test Pass!
+    UTL_TEST_SUCCESS( );
+}
+
+UnitTestResult TTLTests::List::PopBack( )
+{
+    const size_t LIST_SIZE = 16;
+    TTL::List<size_t> list;
+
+    // Confirm Initial Test Conditions
+    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == 0);
+    UTL_SETUP_ASSERT(list.Empty( ) == true);
+
+    try
+    {
+        for ( size_t i = 0; i < LIST_SIZE; i++ )
+        {
+            list.Append(i);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(list.Empty( ) == false);
+
+    size_t i = LIST_SIZE - 1;
+    try
+    {
+        while ( !list.Empty( ) )
+        {
+            UTL_TEST_ASSERT(list.Back( ) == i--);
+            list.PopBack( );
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(i == (size_t)-1);
+    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(list.Size( ) == 0);
+    UTL_TEST_ASSERT(list.Empty( ) == true);
+
+    /// Test Pass!
+    UTL_TEST_SUCCESS( );
+}
+
+UnitTestResult TTLTests::List::Remove( )
+{
+    const size_t LIST_SIZE = 16;
+    const size_t REMOVE_POS = LIST_SIZE >> 1;
+
+    bool removeThrew = false;
+
+    size_t removeCount = 0;
+    TTL::List<size_t> list;
+
+    // Confirm Initial Test Conditions - Pt 1
+    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == 0);
+    UTL_SETUP_ASSERT(list.Empty( ) == true);
+
+    // Try to remove from an empty list.
+    try
+    {
+        list.Remove(0);
+    }
+    catch ( const std::out_of_range& )
+    {
+        removeThrew = true;
+    }
+
+    UTL_TEST_ASSERT(removeThrew == true);
+
+    try
+    {
+        for ( size_t i = 0; i < LIST_SIZE; i++ )
+        {
+            list.Append(i);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(list.Empty( ) == false);
+
+    // Try to remove past non-empty list boundaries.
+    removeThrew = false;
+    try
+    {
+        list.Remove(list.Size( ));
+    }
+    catch ( const std::out_of_range& )
+    {
+        removeThrew = true;
+    }
+
+    UTL_TEST_ASSERT(removeThrew == true);
+
+    // Test remove from front (should be same as Pop_Front( ))
+    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 0);
+
+    try
+    {
+        list.Remove(0);
+        removeCount++;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 1);
+    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
+
+    // Test remove from back (should be same as Pop_Back( ))
+    UTL_TEST_ASSERT(list.GetTail( )->GetData( ) == LIST_SIZE - 1);
+
+    try
+    {
+        list.Remove(list.Size( ) - 1);
+        removeCount++;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(list.GetTail( )->GetData( ) == LIST_SIZE - 2);
+    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
+
+    // Test remove from middle.
+    {
+        const TTL::DNode<size_t>* pRemove = list.GetHead( );
+        const TTL::DNode<size_t>* pRemovePrev = nullptr;
+        const TTL::DNode<size_t>* pRemoveNext = nullptr;
+        const size_t expectedVal = REMOVE_POS + 1;
+
+        for ( size_t pos = 0; pos < REMOVE_POS; pos++ )
+        {
+            pRemove = pRemove->GetNext( );
+        }
+
+        UTL_TEST_ASSERT(pRemove != nullptr);
+        UTL_TEST_ASSERT(pRemove->GetData( ) == expectedVal);
+
+        pRemovePrev = pRemove->GetPrev( );
+        pRemoveNext = pRemove->GetNext( );
+
+        UTL_TEST_ASSERT(pRemovePrev != nullptr);
+        UTL_TEST_ASSERT(pRemovePrev->GetData( ) == expectedVal - 1);
+
+        UTL_TEST_ASSERT(pRemoveNext != nullptr);
+        UTL_TEST_ASSERT(pRemoveNext->GetData( ) == expectedVal + 1);
+
+        try
+        {
+            list.Remove(REMOVE_POS);
+            removeCount++;
+        }
+        catch ( const std::exception& e )
+        {
+            UTL_TEST_EXCEPTION(e.what( ));
+        }
+
+        UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
+        UTL_TEST_ASSERT(pRemovePrev->GetNext( ) == pRemoveNext);
+        UTL_TEST_ASSERT(pRemoveNext->GetPrev( ) == pRemovePrev);
+    }
+
+    list.Clear( );
+
+    // Confirm Initial Test Conditions - Pt 2
+    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == 0);
+    UTL_SETUP_ASSERT(list.Empty( ) == true);
+
+    try
+    {
+        for ( size_t i = 0; i < LIST_SIZE; i++ )
+        {
+            list.Append(i);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(list.Empty( ) == false);
+
+    // Test remove from front until one left.
+    try
+    {
+        while ( list.Size( ) > 1 )
+        {
+            list.Remove(0);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    // Ensure single-element list case is valid.
+    UTL_TEST_ASSERT(list.Size( ) == 1);
+    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
+    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == LIST_SIZE - 1);
+
+    try
+    {
+        list.Remove(0);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    // Ensure list is empty after final remove.
+    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(list.Size( ) == 0);
+    UTL_TEST_ASSERT(list.Empty( ) == true);
+
+    removeThrew = false;
+    try
+    {
+        list.Remove(0);
+    }
+    catch ( const std::out_of_range& )
+    {
+        removeThrew = true;
+    }
+
+    UTL_TEST_ASSERT(removeThrew == true);
+
+    // Confirm Initial Test Conditions - Pt 3
+    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == 0);
+    UTL_SETUP_ASSERT(list.Empty( ) == true);
+
+    try
+    {
+        for ( size_t i = 0; i < LIST_SIZE; i++ )
+        {
+            list.Append(i);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(list.Empty( ) == false);
+
+    // Test remove from back until one left.
+    try
+    {
+        while ( list.Size( ) > 1 )
+        {
+            list.Remove(list.Size( ) - 1);
+        }
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    // Ensure single-element list case is valid.
+    UTL_TEST_ASSERT(list.Size( ) == 1);
+    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
+    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 0);
+
+    try
+    {
+        list.Remove(list.Size( ) - 1);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    // Ensure list is empty after final remove.
+    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(list.Size( ) == 0);
+    UTL_TEST_ASSERT(list.Empty( ) == true);
+
+    removeThrew = false;
+    try
+    {
+        list.Remove(list.Size( ) - 1);
+    }
+    catch ( const std::out_of_range& )
+    {
+        removeThrew = true;
+    }
+
+    UTL_TEST_ASSERT(removeThrew == true);
+
+    /// Test Pass!
+    UTL_TEST_SUCCESS( );
+}
+
+
 UnitTestResult TTLTests::List::CopyAppendData( )
 {
     TTL::List<CopyMoveHelper> list;
@@ -1572,105 +1946,6 @@ UnitTestResult TTLTests::List::MovePrependList( )
     UTL_TEST_ASSERT(ptr == moveList.GetTail( ));
     UTL_TEST_ASSERT(counter == (LIST_SIZE << 1) - 1);
     UTL_TEST_ASSERT(ptr->GetData( ) == counter);
-
-    /// Test Pass!
-    UTL_TEST_SUCCESS( );
-}
-
-UnitTestResult TTLTests::List::PopFront( )
-{
-    const size_t LIST_SIZE = 16;
-    TTL::List<size_t> list;
-
-    // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    try
-    {
-        for ( size_t i = 0; i < LIST_SIZE; i++ )
-        {
-            list.Append(i);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_SETUP_EXCEPTION(e.what( ));
-    }
-
-    size_t i = 0;
-    try
-    {
-        while ( !list.Empty( ) )
-        {
-            UTL_TEST_ASSERT(list.Front( ) == i++);
-            list.PopFront( );
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    UTL_TEST_ASSERT(i == LIST_SIZE);
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
-
-    /// Test Pass!
-    UTL_TEST_SUCCESS( );
-}
-
-UnitTestResult TTLTests::List::PopBack( )
-{
-    const size_t LIST_SIZE = 16;
-    TTL::List<size_t> list;
-
-    // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    try
-    {
-        for ( size_t i = 0; i < LIST_SIZE; i++ )
-        {
-            list.Append(i);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_SETUP_EXCEPTION(e.what( ));
-    }
-
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-
-    size_t i = LIST_SIZE - 1;
-    try
-    {
-        while ( !list.Empty( ) )
-        {
-            UTL_TEST_ASSERT(list.Back( ) == i--);
-            list.PopBack( );
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    UTL_TEST_ASSERT(i == (size_t)-1);
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -2469,294 +2744,4 @@ UnitTestResult TTLTests::List::MoveInsertList( )
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
-}
-
-UnitTestResult TTLTests::List::RemoveOne( )
-{
-    const size_t LIST_SIZE = 16;
-    const size_t REMOVE_POS = LIST_SIZE >> 1;
-
-    bool removeThrew = false;
-
-    size_t removeCount = 0;
-    TTL::List<size_t> list;
-
-    // Confirm Initial Test Conditions - Pt 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    // Try to remove from an empty list.
-    try
-    {
-        list.Remove(0);
-    }
-    catch ( const std::out_of_range& )
-    {
-        removeThrew = true;
-    }
-
-    UTL_TEST_ASSERT(removeThrew == true);
-
-    try
-    {
-        for ( size_t i = 0; i < LIST_SIZE; i++ )
-        {
-            list.Append(i);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_SETUP_EXCEPTION(e.what( ));
-    }
-
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-
-    // Try to remove past non-empty list boundaries.
-    removeThrew = false;
-    try
-    {
-        list.Remove(list.Size( ));
-    }
-    catch ( const std::out_of_range& )
-    {
-        removeThrew = true;
-    }
-
-    UTL_TEST_ASSERT(removeThrew == true);
-
-    // Test remove from front (should be same as Pop_Front( ))
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 0);
-
-    try
-    {
-        list.Remove(0);
-        removeCount++;
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 1);
-    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
-
-    // Test remove from back (should be same as Pop_Back( ))
-    UTL_TEST_ASSERT(list.GetTail( )->GetData( ) == LIST_SIZE - 1);
-
-    try
-    {
-        list.Remove(list.Size( ) - 1);
-        removeCount++;
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    UTL_TEST_ASSERT(list.GetTail( )->GetData( ) == LIST_SIZE - 2);
-    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
-
-    // Test remove from middle.
-    {
-        const TTL::DNode<size_t>* pRemove = list.GetHead( );
-        const TTL::DNode<size_t>* pRemovePrev = nullptr;
-        const TTL::DNode<size_t>* pRemoveNext = nullptr;
-        const size_t expectedVal = REMOVE_POS + 1;
-
-        for ( size_t pos = 0; pos < REMOVE_POS; pos++ )
-        {
-            pRemove = pRemove->GetNext( );
-        }
-        
-        UTL_TEST_ASSERT(pRemove != nullptr);
-        UTL_TEST_ASSERT(pRemove->GetData( ) == expectedVal);
-
-        pRemovePrev = pRemove->GetPrev( );
-        pRemoveNext = pRemove->GetNext( );
-
-        UTL_TEST_ASSERT(pRemovePrev != nullptr);
-        UTL_TEST_ASSERT(pRemovePrev->GetData( ) == expectedVal - 1);
-
-        UTL_TEST_ASSERT(pRemoveNext != nullptr);
-        UTL_TEST_ASSERT(pRemoveNext->GetData( ) == expectedVal + 1);
-
-        try
-        {
-            list.Remove(REMOVE_POS);
-            removeCount++;
-        }
-        catch ( const std::exception& e )
-        {
-            UTL_TEST_EXCEPTION(e.what( ));
-        }        
-
-        UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE - removeCount);
-        UTL_TEST_ASSERT(pRemovePrev->GetNext( ) == pRemoveNext);
-        UTL_TEST_ASSERT(pRemoveNext->GetPrev( ) == pRemovePrev);
-    }
-
-    list.Clear( );
-
-    // Confirm Initial Test Conditions - Pt 2
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    try
-    {
-        for ( size_t i = 0; i < LIST_SIZE; i++ )
-        {
-            list.Append(i);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_SETUP_EXCEPTION(e.what( ));
-    }
-
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-
-    // Test remove from front until one left.
-    try
-    {
-        while ( list.Size( ) > 1 )
-        {
-            list.Remove(0);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    // Ensure single-element list case is valid.
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == LIST_SIZE - 1);
-
-    try
-    {
-        list.Remove(0);
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    // Ensure list is empty after final remove.
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
-
-    removeThrew = false;
-    try
-    {
-        list.Remove(0);
-    }
-    catch ( const std::out_of_range& )
-    {
-        removeThrew = true;
-    }
-
-    UTL_TEST_ASSERT(removeThrew == true);
-
-    // Confirm Initial Test Conditions - Pt 3
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    try
-    {
-        for ( size_t i = 0; i < LIST_SIZE; i++ )
-        {
-            list.Append(i);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_SETUP_EXCEPTION(e.what( ));
-    }
-
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-
-    // Test remove from back until one left.
-    try
-    {
-        while ( list.Size( ) > 1 )
-        {
-            list.Remove(list.Size( ) - 1);
-        }
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    // Ensure single-element list case is valid.
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ) == 0);
-
-    try
-    {
-        list.Remove(list.Size( ) - 1);
-    }
-    catch ( const std::exception& e )
-    {
-        UTL_TEST_EXCEPTION(e.what( ));
-    }
-
-    // Ensure list is empty after final remove.
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
-
-    removeThrew = false;
-    try
-    {
-        list.Remove(list.Size( ) - 1);
-    }
-    catch ( const std::out_of_range& )
-    {
-        removeThrew = true;
-    }
-
-    UTL_TEST_ASSERT(removeThrew == true);
-
-    /// Test Pass!
-    UTL_TEST_SUCCESS( );
-}
-
-UnitTestResult TTLTests::List::RemoveMany( )
-{
-    const size_t LIST_SIZE = 16;
-    TTL::List<size_t> list;
-
-    // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-
-    ///@todo - HARDCODED FAILURE PENDING IMPLEMENTATION
-    UTL_TEST_FAILURE( );
 }

@@ -45,6 +45,10 @@ namespace TTL
         virtual T& Back( ) = 0;
         virtual const T& Back( ) const = 0;
 
+        virtual void PopFront( ) noexcept = 0;
+        virtual void PopBack( ) noexcept = 0;
+        virtual void Remove(const size_t) = 0;
+
         virtual void Append(const T&) = 0;
         virtual void Append(T&&) = 0;
         virtual void Append(const List<T>&) = 0;
@@ -55,15 +59,9 @@ namespace TTL
         virtual void Prepend(const List<T>&) = 0;
         virtual void Prepend(List<T>&&) noexcept = 0;
 
-        virtual void PopFront( ) noexcept = 0;
-        virtual void PopBack( ) noexcept = 0;
-
         virtual void Insert(const size_t, const T&) = 0;
         virtual void Insert(const size_t, T&&) = 0;
         virtual void Insert(const size_t, const List<T>&) = 0;
         virtual void Insert(const size_t, List<T>&&) = 0;
-
-        virtual void Remove(const size_t) = 0;
-        virtual void Remove(const size_t, const size_t) = 0;
     };
 }

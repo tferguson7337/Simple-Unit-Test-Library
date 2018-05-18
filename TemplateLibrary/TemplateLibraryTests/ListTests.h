@@ -47,7 +47,6 @@ namespace TTLTests
         UnitTestResult MoveInsertData( );
         UnitTestResult CopyInsertList( );
         UnitTestResult MoveInsertList( );
-        UnitTestResult RemoveOne( );
-        UnitTestResult RemoveMany( );
+        UnitTestResult Remove( );
     }
 }
