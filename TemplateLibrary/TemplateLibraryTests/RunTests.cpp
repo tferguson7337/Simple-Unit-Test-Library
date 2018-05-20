@@ -8,6 +8,7 @@
 #include "DynamicArrayTests.h"
 #include "ListTests.h"
 #include "StackTests.h"
+#include "QueueTests.h"
 
 
 // For timing
@@ -57,6 +58,7 @@ void BuildMasterTestList(UnitTestRunner<T>& runner)
     runner.AddUnitTests(TTLTests::DynamicArray::BuildTestList( ));
     runner.AddUnitTests(TTLTests::List::BuildTestList( ));
     runner.AddUnitTests(TTLTests::Stack::BuildTestList( ));
+    runner.AddUnitTests(TTLTests::Queue::BuildTestList( ));
 }
 
 template <class R, class T>

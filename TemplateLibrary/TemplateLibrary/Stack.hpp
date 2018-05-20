@@ -4,8 +4,6 @@
 #include "Node.hpp"
 #include "IStack.h"
 
-#include "stdexcept"
-
 namespace TTL
 {
     template <class T>

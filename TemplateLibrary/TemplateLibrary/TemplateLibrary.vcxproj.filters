@@ -90,6 +90,15 @@
     <ClInclude Include="..\TemplateLibraryTests\StackTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
+    <ClInclude Include="IQueue.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\QueueTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">
@@ -114,6 +123,9 @@
       <Filter>Unit Tests</Filter>
     </ClCompile>
     <ClCompile Include="..\TemplateLibraryTests\StackTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TemplateLibraryTests\QueueTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
   </ItemGroup>

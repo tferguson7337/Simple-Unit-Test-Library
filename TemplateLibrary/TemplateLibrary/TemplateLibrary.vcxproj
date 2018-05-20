@@ -26,6 +26,7 @@
     <ClInclude Include="..\TemplateLibraryTests\ExclusivePointerTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\ListTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h" />
+    <ClInclude Include="..\TemplateLibraryTests\QueueTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\StackTests.h" />
     <ClInclude Include="Array.hpp" />
     <ClInclude Include="IArray.h" />
@@ -35,11 +36,13 @@
     <ClInclude Include="IDynamicArray.h" />
     <ClInclude Include="ExclusivePointer.hpp" />
     <ClInclude Include="IExclusivePointer.h" />
+    <ClInclude Include="IQueue.h" />
     <ClInclude Include="IStack.h" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="IList.h" />
     <ClInclude Include="Node.hpp" />
     <ClInclude Include="INode.h" />
+    <ClInclude Include="Queue.hpp" />
     <ClInclude Include="Stack.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +52,7 @@
     <ClCompile Include="..\TemplateLibraryTests\ExclusivePointerTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\ListTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\NodeTests.cpp" />
+    <ClCompile Include="..\TemplateLibraryTests\QueueTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\StackTests.cpp" />
   </ItemGroup>
