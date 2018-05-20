@@ -2,12 +2,12 @@
 
 #include "DNode.hpp"
 
-#include "ListInterface.h"
+#include "IList.h"
 
 namespace TTL
 {
     template <class T>
-    class List : public ListInterface<T>
+    class List : public virtual IList<T>
     {
     private:
         DNode<T>* mHead;

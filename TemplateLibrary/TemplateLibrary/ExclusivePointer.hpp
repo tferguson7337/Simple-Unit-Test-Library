@@ -3,12 +3,12 @@
 #include "Uncopyable.h"
 #include "Types.h"
 
-#include "ExclusivePointerInterface.h"
+#include "IExclusivePointer.h"
 
 namespace TTL
 {
     template <class T>
-    class ExclusivePointer : public virtual ExclusivePointerInterface<T>, public Uncopyable
+    class ExclusivePointer : public virtual IExclusivePointer<T>, public Uncopyable
     {
     private:
         T * mPtr;
@@ -133,7 +133,7 @@ namespace TTL
     };
 
     template <class T>
-    class ExclusivePointer<T[ ]> : public ExclusivePointerInterface<T[ ]>, public Uncopyable
+    class ExclusivePointer<T[ ]> : public IExclusivePointer<T[ ]>, public Uncopyable
     {
     private:
         T * mPtr;

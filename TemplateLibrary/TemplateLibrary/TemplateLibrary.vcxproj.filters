@@ -63,23 +63,32 @@
     <ClInclude Include="Node.hpp">
       <Filter>Internal Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="ExclusivePointerInterface.h">
+    <ClInclude Include="IArray.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicArrayInterface.h">
+    <ClInclude Include="IDNode.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="ArrayInterface.h">
+    <ClInclude Include="IDynamicArray.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="DNodeInterface.h">
+    <ClInclude Include="IExclusivePointer.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="NodeInterface.h">
+    <ClInclude Include="IList.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="ListInterface.h">
+    <ClInclude Include="INode.h">
       <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IStack.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Stack.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="StackTests.h">
+      <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp">
       <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="StackTests.cpp">
+      <Filter>Unit Tests\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

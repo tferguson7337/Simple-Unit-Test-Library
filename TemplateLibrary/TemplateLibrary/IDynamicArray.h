@@ -7,11 +7,11 @@ namespace TTL
     class DynamicArray;
 
     template <class T>
-    class DynamicArrayInterface
+    class IDynamicArray
     {
     public:
-        DynamicArrayInterface( ) = default;
-        virtual ~DynamicArrayInterface( ) = default;
+        IDynamicArray( ) = default;
+        virtual ~IDynamicArray( ) = default;
 
         /// Operator Overloads \\\
 

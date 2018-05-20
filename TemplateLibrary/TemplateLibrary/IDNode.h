@@ -7,11 +7,11 @@ namespace TTL
     class DNode;
 
     template <class T>
-    class DNodeInterface
+    class IDNode
     {
     public:
-        DNodeInterface( ) = default;
-        virtual ~DNodeInterface( ) = default;
+        IDNode( ) = default;
+        virtual ~IDNode( ) = default;
 
         /// Operator Overloads \\\
 

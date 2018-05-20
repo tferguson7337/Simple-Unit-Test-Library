@@ -7,11 +7,11 @@ namespace TTL
     class Array;
 
     template <class T>
-    class ArrayInterface
+    class IArray
     {
     public:
-        ArrayInterface( ) = default;
-        virtual ~ArrayInterface( ) = default;
+        IArray( ) = default;
+        virtual ~IArray( ) = default;
 
         /// Operator Overloads \\\
 

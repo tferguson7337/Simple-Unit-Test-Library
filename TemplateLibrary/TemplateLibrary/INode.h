@@ -9,11 +9,11 @@ namespace TTL
     class Node;
 
     template <class T>
-    class NodeInterface
+    class INode
     {
     public:
-        NodeInterface( ) = default;
-        virtual ~NodeInterface( ) = default;
+        INode( ) = default;
+        virtual ~INode( ) = default;
 
         /// Operator Overloads \\\
 

@@ -7,11 +7,11 @@ namespace TTL
     class ExclusivePointer;
 
     template <class T>
-    class ExclusivePointerInterface
+    class IExclusivePointer
     {
     public:
-        ExclusivePointerInterface( ) = default;
-        virtual ~ExclusivePointerInterface( ) = default;
+        IExclusivePointer( ) = default;
+        virtual ~IExclusivePointer( ) = default;
 
         /// Operator Overloads \\\
 
@@ -36,11 +36,11 @@ namespace TTL
     class ExclusivePointer<T[ ]>;
 
     template <class T>
-    class ExclusivePointerInterface<T[ ]>
+    class IExclusivePointer<T[ ]>
     {
     public:
-        ExclusivePointerInterface( ) = default;
-        virtual ~ExclusivePointerInterface( ) = default;
+        IExclusivePointer( ) = default;
+        virtual ~IExclusivePointer( ) = default;
 
         /// Operator Overloads \\\
 

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Array.hpp"
-#include "DynamicArrayInterface.h"
+#include "IDynamicArray.h"
 
 namespace TTL
 {
     template <class T>
-    class DynamicArray : public virtual DynamicArrayInterface<T>, public Array<T>
+    class DynamicArray : public virtual IDynamicArray<T>, public Array<T>
     {
     private:
         size_t mSize;

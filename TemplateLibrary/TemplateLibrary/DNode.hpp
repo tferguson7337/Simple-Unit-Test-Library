@@ -2,12 +2,12 @@
 
 #include "Uncopyable.h"
 
-#include "DNodeInterface.h"
+#include "IDNode.h"
 
 namespace TTL
 {
     template <class T>
-    class DNode : public virtual DNodeInterface<T>, public Uncopyable
+    class DNode : public virtual IDNode<T>, public Uncopyable
     {
     private:
         T mData{};

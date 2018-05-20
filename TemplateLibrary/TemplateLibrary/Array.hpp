@@ -1,15 +1,12 @@
 #pragma once
 
 #include "ExclusivePointer.hpp"
-
-#include "ArrayInterface.h"
-
-#include <stdexcept>
+#include "IArray.h"
 
 namespace TTL
 {
     template <class T>
-    class Array : public virtual ArrayInterface<T>
+    class Array : public virtual IArray<T>
     {
     protected:
         ExclusivePointer<T[ ]> mArr;

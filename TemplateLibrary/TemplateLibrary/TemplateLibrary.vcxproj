@@ -27,17 +27,20 @@
     <ClInclude Include="..\TemplateLibraryTests\ListTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h" />
     <ClInclude Include="Array.hpp" />
-    <ClInclude Include="ArrayInterface.h" />
+    <ClInclude Include="IArray.h" />
     <ClInclude Include="DNode.hpp" />
-    <ClInclude Include="DNodeInterface.h" />
+    <ClInclude Include="IDNode.h" />
     <ClInclude Include="DynamicArray.hpp" />
-    <ClInclude Include="DynamicArrayInterface.h" />
+    <ClInclude Include="IDynamicArray.h" />
     <ClInclude Include="ExclusivePointer.hpp" />
-    <ClInclude Include="ExclusivePointerInterface.h" />
+    <ClInclude Include="IExclusivePointer.h" />
+    <ClInclude Include="IStack.h" />
     <ClInclude Include="List.hpp" />
-    <ClInclude Include="ListInterface.h" />
+    <ClInclude Include="IList.h" />
     <ClInclude Include="Node.hpp" />
-    <ClInclude Include="NodeInterface.h" />
+    <ClInclude Include="INode.h" />
+    <ClInclude Include="Stack.hpp" />
+    <ClInclude Include="StackTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp" />
@@ -47,6 +50,7 @@
     <ClCompile Include="..\TemplateLibraryTests\ListTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\NodeTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp" />
+    <ClCompile Include="StackTests.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

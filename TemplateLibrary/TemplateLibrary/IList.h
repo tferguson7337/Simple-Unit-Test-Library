@@ -11,11 +11,11 @@ namespace TTL
     class List;
 
     template <class T>
-    class ListInterface
+    class IList
     {
     public:
-        ListInterface( ) = default;
-        virtual ~ListInterface( ) = default;
+        IList( ) = default;
+        virtual ~IList( ) = default;
 
         /// Assignment Overloads \\\
 
