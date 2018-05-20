@@ -6,7 +6,7 @@
 
 std::list<std::function<UnitTestResult(void)>> TTLTests::Node::BuildTestList( )
 {
-    std::list<std::function<UnitTestResult(void)>> testList = 
+    static const std::list<std::function<UnitTestResult(void)>> testList =
     {
         // Constructor Tests
         DefaultConstructor,
