@@ -14,7 +14,7 @@ namespace TTLTests
         UnitTestResult CopyConstructor( );
         UnitTestResult MoveConstructor( );
 
-        // Assignment Operator Test
+        // Assignment Operator Tests
         UnitTestResult CopyAssignment( );
         UnitTestResult MoveAssignment( );
 

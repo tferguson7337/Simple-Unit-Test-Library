@@ -26,6 +26,7 @@
     <ClInclude Include="..\TemplateLibraryTests\ExclusivePointerTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\ListTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h" />
+    <ClInclude Include="..\TemplateLibraryTests\StackTests.h" />
     <ClInclude Include="Array.hpp" />
     <ClInclude Include="IArray.h" />
     <ClInclude Include="DNode.hpp" />
@@ -40,7 +41,6 @@
     <ClInclude Include="Node.hpp" />
     <ClInclude Include="INode.h" />
     <ClInclude Include="Stack.hpp" />
-    <ClInclude Include="StackTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp" />
@@ -50,7 +50,7 @@
     <ClCompile Include="..\TemplateLibraryTests\ListTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\NodeTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp" />
-    <ClCompile Include="StackTests.cpp" />
+    <ClCompile Include="..\TemplateLibraryTests\StackTests.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

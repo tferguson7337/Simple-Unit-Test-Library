@@ -87,7 +87,7 @@
     <ClInclude Include="Stack.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="StackTests.h">
+    <ClInclude Include="..\TemplateLibraryTests\StackTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,7 +113,7 @@
     <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp">
       <Filter>Unit Tests</Filter>
     </ClCompile>
-    <ClCompile Include="StackTests.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\StackTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
   </ItemGroup>
