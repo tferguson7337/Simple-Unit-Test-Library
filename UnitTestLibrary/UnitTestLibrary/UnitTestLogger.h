@@ -53,7 +53,7 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestLogger(const std::basic_string<T>&, bool);
+    UnitTestLogger(const std::basic_string<T>& = std::basic_string<T>(), bool = true) noexcept;
     UnitTestLogger(UnitTestLogger&&) noexcept;
 
     /// Dtor \\\
@@ -77,7 +77,9 @@ public:
 
     /// Public Methods \\\
 
+    bool LogTestSetHeader(const UnitTestRunner<T>&);
     bool LogUnitTestResult(const UnitTestResult&);
+    bool LogTestSetSummary(const UnitTestRunner<T>&);
 };
 
 #endif // _UNIT_TEST_LOGGER_H

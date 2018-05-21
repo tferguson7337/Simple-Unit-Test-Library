@@ -1,4 +1,5 @@
 #include <UnitTestLogger.h>
+#include <UnitTestRunner.h>
 
 
 // Explicit Template Instantiation
@@ -8,7 +9,7 @@ template class UnitTestLogger<wchar_t>;
 /// Ctors \\\
 
 template <class T>
-UnitTestLogger<T>::UnitTestLogger(const std::basic_string<T>& file, bool consoleOutput) :
+UnitTestLogger<T>::UnitTestLogger(const std::basic_string<T>& file, bool consoleOutput) noexcept :
     mPrintToConsole(consoleOutput),
     mConsoleStream(InitConsoleStream( )),
     mFileStream(file, std::ios_base::app | std::ios_base::out),
@@ -462,9 +463,29 @@ void UnitTestLogger<T>::SetPrintToConsole(bool print)
 // Public Methods
 
 template <class T>
+bool UnitTestLogger<T>::LogTestSetHeader(const UnitTestRunner<T>& runner)
+{
+    ///@todo: NEED IMPLEMENTATION
+
+    runner.GetUnitTests( );
+
+    return true;
+}
+
+template <class T>
 bool UnitTestLogger<T>::LogUnitTestResult(const UnitTestResult& res)
 {
     this->operator<<(std::move(BuildLogString(res)));
+
+    return true;
+}
+
+template <class T>
+bool UnitTestLogger<T>::LogTestSetSummary(const UnitTestRunner<T>& runner)
+{
+    ///@todo: NEED IMPLEMENTATION
+
+    runner.GetUnitTests( );
 
     return true;
 }

@@ -10,6 +10,9 @@ template <class T>
 class UnitTestLogger;
 
 template <class T>
+class UnitTestRunner;
+
+template <class T>
 class UnitTestLoggerInterface
 {
 public:
@@ -23,7 +26,9 @@ public:
     virtual bool SetTargetFile(const std::basic_string<T>&) = 0;
     virtual bool SetTargetFile(std::basic_string<T>&&) = 0;
 
+    virtual bool LogTestSetHeader(const UnitTestRunner<T>&) = 0;
     virtual bool LogUnitTestResult(const UnitTestResult&) = 0;
+    virtual bool LogTestSetSummary(const UnitTestRunner<T>&) = 0;
 };
 
 #endif

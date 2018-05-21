@@ -12,10 +12,13 @@ private:
     std::list<UnitTest> mUnitTests;
     UnitTestLogger<T> mLogger;
 
+    const std::basic_string<T> mTestName;
+
 public:
     /// Ctors \\\
 
-    UnitTestRunner(const std::basic_string<T>& = std::basic_string<T>( ), bool = true) noexcept;
+    UnitTestRunner(const std::basic_string<T>&);
+    UnitTestRunner(std::basic_string<T>&&) noexcept;
     UnitTestRunner(UnitTestRunner&&) noexcept;
 
     /// Dtor \\\
@@ -28,9 +31,10 @@ public:
 
     /// Getters \\\
 
-    const std::list<UnitTest>& GetUnitTests( ) const;
-    const std::basic_string<T>& GetLogFile( ) const;
-    bool GetConsoleOutput( ) const;
+    const std::list<UnitTest>& GetUnitTests( ) const noexcept;
+    const std::basic_string<T>& GetLogFile( ) const noexcept;
+    bool GetConsoleOutput( ) const noexcept;
+    const std::basic_string<T>& GetTestName( ) const noexcept;
 
     /// Setters \\\
 

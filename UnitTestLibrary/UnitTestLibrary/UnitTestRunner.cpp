@@ -10,8 +10,15 @@ template class UnitTestRunner<wchar_t>;
 /// Ctors \\\
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& log, bool consoleOut) noexcept :
-    mLogger(log, consoleOut)
+UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& testName) :
+    mTestName(testName)
+{
+
+}
+
+template <class T>
+UnitTestRunner<T>::UnitTestRunner(std::basic_string<T>&& testName) noexcept :
+    mTestName(std::move(testName))
 {
 
 }
@@ -37,23 +44,28 @@ UnitTestRunner<T>& UnitTestRunner<T>::operator=(UnitTestRunner&& src) noexcept
 // Getters
 
 template <class T>
-const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests( ) const
+const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests( ) const noexcept
 {
     return mUnitTests;
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestRunner<T>::GetLogFile( ) const
+const std::basic_string<T>& UnitTestRunner<T>::GetLogFile( ) const noexcept
 {
     return mLogger.GetTargetFile( );
 }
 
 template <class T>
-bool UnitTestRunner<T>::GetConsoleOutput( ) const
+bool UnitTestRunner<T>::GetConsoleOutput( ) const noexcept
 {
     return mLogger.GetPrintToConsole( );
 }
 
+template <class T>
+const std::basic_string<T>& UnitTestRunner<T>::GetTestName( ) const noexcept
+{
+    return mTestName;
+}
 
 // Setters
 
