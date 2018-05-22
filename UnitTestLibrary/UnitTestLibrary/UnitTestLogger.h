@@ -6,12 +6,12 @@
 
 #include <Interface\UnitTestLoggerInterface.h>
 
-#include <cstdarg>
-#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <vector>
 
+#include "TestSetData.h"
+#include "UnitTestResult.h"
 
 template <class T>
 class UnitTestLogger : public UnitTestLoggerInterface<T>, public Uncopyable
@@ -31,6 +31,13 @@ private:
     std::basic_ofstream<T>& operator<<(std::basic_string<T>&&);
 
     std::basic_ostream<T>& InitConsoleStream( );
+
+    std::basic_string<T> BuildTestSetHeaderString(const TestSetData<T>&);
+    std::basic_string<T> BuildTestSetSummaryString(const TestSetData<T>&);
+
+    const std::basic_string<T>& GetTestSetHeaderFormat( );
+    const std::basic_string<T>& GetTestSetSummaryFormat( );
+    std::basic_string<T> GetLineBreak(size_t);
 
     std::basic_string<T> BuildLogString(const UnitTestResult&);
     std::basic_string<T> BuildTimeString( );
@@ -77,9 +84,9 @@ public:
 
     /// Public Methods \\\
 
-    bool LogTestSetHeader(const UnitTestRunner<T>&);
+    bool LogTestSetHeader(const TestSetData<T>&);
     bool LogUnitTestResult(const UnitTestResult&);
-    bool LogTestSetSummary(const UnitTestRunner<T>&);
+    bool LogTestSetSummary(const TestSetData<T>&);
 };
 
 #endif // _UNIT_TEST_LOGGER_H

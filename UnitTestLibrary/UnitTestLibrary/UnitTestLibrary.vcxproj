@@ -27,12 +27,15 @@
     <ClInclude Include="Interface\UnitTestResultInterface.h" />
     <ClInclude Include="Interface\UnitTestRunnerInterface.h" />
     <ClInclude Include="ResultEnums.h" />
+    <ClInclude Include="TestSetData.h" />
+    <ClInclude Include="TestSetDataInterface.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="UnitTestLogger.h" />
     <ClInclude Include="UnitTestResult.h" />
     <ClInclude Include="UnitTestRunner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestSetData.cpp" />
     <ClCompile Include="UnitTest.cpp" />
     <ClCompile Include="UnitTestLogger.cpp" />
     <ClCompile Include="UnitTestResult.cpp" />

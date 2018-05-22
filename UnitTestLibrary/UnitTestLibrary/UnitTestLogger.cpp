@@ -1,6 +1,8 @@
 #include <UnitTestLogger.h>
 #include <UnitTestRunner.h>
 
+#include <cstdarg>
+#include <ctime>
 
 // Explicit Template Instantiation
 template class UnitTestLogger<char>;
@@ -92,6 +94,153 @@ std::basic_ostream<wchar_t>& UnitTestLogger<wchar_t>::InitConsoleStream( )
 {
     return std::wcout;
 }
+
+
+
+template <class T>
+std::basic_string<T> UnitTestLogger<T>::BuildTestSetHeaderString(const TestSetData<T>& data)
+{
+    return stprintf(
+        &GetTestSetHeaderFormat( ),
+        data.GetTestSetName( ).c_str( ),
+        data.GetTotalTestCount( )
+    );
+}
+
+template <class T>
+std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryString(const TestSetData<T>& data)
+{
+    return stprintf(
+        &GetTestSetSummaryFormat( ),
+        data.GetTestSetName( ).c_str( ),
+        data.GetTotalTestCount( ) - data.GetTestSkipCount( ),
+        data.GetTestPassCount( ),
+        data.GetTotalFailureCount( ),
+        data.GetSetupFailureCount( ),
+        data.GetSetupExceptionCount( ),
+        data.GetTestFailureCount( ),
+        data.GetTestExceptionCount( ),
+        data.GetCleanupFailureCount( ),
+        data.GetCleanupExceptionCount( ),
+        data.GetUnhandledExceptionCount( ),
+        data.GetTestSkipCount( ),
+        data.GetTestSetGrade( ),
+        data.GetTestPassCount( ),
+        data.GetTotalTestCount( ) - data.GetTestSkipCount( )
+    );
+}
+
+template <>
+const std::basic_string<char>& UnitTestLogger<char>::GetTestSetHeaderFormat( )
+{
+    static const size_t lineBreakLen = 60;
+
+    static const std::basic_string<char> headerFormatA(
+        GetLineBreak(lineBreakLen)
+        +
+        "  Test-Set Name: %s  Total Tests: %zu"
+        +
+        GetLineBreak(lineBreakLen)
+    );
+
+    return headerFormatA;
+}
+
+template <>
+const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTestSetHeaderFormat( )
+{
+    static const size_t lineBreakLen = 60;
+
+    static const std::basic_string<wchar_t> headerFormatW(
+        GetLineBreak(lineBreakLen)
+        +
+        L"  Test-Set Name: %s  Total Tests: %zu"
+        +
+        GetLineBreak(lineBreakLen)
+    );
+
+    return headerFormatW;
+}
+
+template <>
+const std::basic_string<char>& UnitTestLogger<char>::GetTestSetSummaryFormat( )
+{
+    static const size_t lineBreakLen = 40;
+
+    static const std::basic_string<char> lineBreak(
+        GetLineBreak(lineBreakLen)
+    );
+
+    static const std::basic_string<char> summaryFormatA(
+        lineBreak
+        +
+        "    \"%s\" Complete\n\n"
+        "  Total Tests Run:  %llu\n\n"
+        "   Successful Tests: %llu\n\n"
+        "   Failed Tests:     %llu\n"
+        "    Setup Failures:       %llu\n"
+        "    Setup Exceptions:     %llu\n"
+        "    Test Failures:        %llu\n"
+        "    Test Exceptions:      %llu\n"
+        "    Cleanup Failures:     %llu\n"
+        "    Cleanup Exceptions:   %llu\n"
+        "    Unhandled Exceptions: %llu\n\n"
+        "   Skipped Tests:    %llu\n\n"
+        "  Test Pass Grade:  %2.2f%% (%llu / %llu)"
+        +
+        lineBreak
+    );
+
+    return summaryFormatA;
+}
+
+template <>
+const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTestSetSummaryFormat( )
+{
+    static const size_t lineBreakLen = 40;
+
+    static const std::basic_string<wchar_t> lineBreak(
+        GetLineBreak(lineBreakLen)
+    );
+
+    static const std::basic_string<wchar_t> summaryFormatW(
+        lineBreak
+        +
+        L"    \"%s\" Complete\n\n"
+        L"  Total Tests Run:  %llu\n\n"
+        L"   Successful Tests: %llu\n\n"
+        L"   Failed Tests:     %llu\n"
+        L"    Setup Failures:       %llu\n"
+        L"    Setup Exceptions:     %llu\n"
+        L"    Test Failures:        %llu\n"
+        L"    Test Exceptions:      %llu\n"
+        L"    Cleanup Failures:     %llu\n"
+        L"    Cleanup Exceptions:   %llu\n"
+        L"    Unhandled Exceptions: %llu\n\n"
+        L"   Skipped Tests:    %llu\n\n"
+        L"  Test Pass Grade:  %2.2f%% (%llu / %llu)"
+        +
+        lineBreak
+    );
+
+    return summaryFormatW;
+}
+
+template <class T>
+std::basic_string<T> UnitTestLogger<T>::GetLineBreak(size_t size)
+{
+    std::basic_string<T> lineBreak;
+
+    lineBreak.reserve(size + 4);
+    lineBreak.push_back(T('\n'));
+    lineBreak.push_back(T('\n'));
+    lineBreak.append(size, T('='));
+    lineBreak.push_back(T('\n'));
+    lineBreak.push_back(T('\n'));
+
+    return lineBreak;
+}
+
 
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildLogString(const UnitTestResult& res)
@@ -390,13 +539,13 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(const std::basic_string<T>* for
 template <>
 int UnitTestLogger<char>::StringPrintWrapper(std::vector<char>& buffer, const std::basic_string<char>* format, va_list args)
 {
-    return (buffer.empty( )) ? vsnprintf(nullptr, 0, format->c_str( ), args) : vsnprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
+    return (buffer.empty( )) ? _vscprintf(format->c_str( ), args) : vsnprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
 }
 
 template <>
 int UnitTestLogger<wchar_t>::StringPrintWrapper(std::vector<wchar_t>& buffer, const std::basic_string<wchar_t>* format, va_list args)
 {
-    return (buffer.empty( )) ? vswprintf(nullptr, 0, format->c_str( ), args) : vswprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
+    return (buffer.empty( )) ? _vscwprintf(format->c_str( ), args) : vswprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
 }
 
 
@@ -463,11 +612,9 @@ void UnitTestLogger<T>::SetPrintToConsole(bool print)
 // Public Methods
 
 template <class T>
-bool UnitTestLogger<T>::LogTestSetHeader(const UnitTestRunner<T>& runner)
+bool UnitTestLogger<T>::LogTestSetHeader(const TestSetData<T>& data)
 {
-    ///@todo: NEED IMPLEMENTATION
-
-    runner.GetUnitTests( );
+    this->operator<<(std::move(BuildTestSetHeaderString(data)));
 
     return true;
 }
@@ -481,11 +628,9 @@ bool UnitTestLogger<T>::LogUnitTestResult(const UnitTestResult& res)
 }
 
 template <class T>
-bool UnitTestLogger<T>::LogTestSetSummary(const UnitTestRunner<T>& runner)
+bool UnitTestLogger<T>::LogTestSetSummary(const TestSetData<T>& data)
 {
-    ///@todo: NEED IMPLEMENTATION
-
-    runner.GetUnitTests( );
+    this->operator<<(std::move(BuildTestSetSummaryString(data)));
 
     return true;
 }

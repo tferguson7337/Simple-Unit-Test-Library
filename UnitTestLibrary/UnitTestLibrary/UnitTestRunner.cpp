@@ -11,14 +11,14 @@ template class UnitTestRunner<wchar_t>;
 
 template <class T>
 UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& testName) :
-    mTestName(testName)
+    mTestSetData(testName)
 {
 
 }
 
 template <class T>
 UnitTestRunner<T>::UnitTestRunner(std::basic_string<T>&& testName) noexcept :
-    mTestName(std::move(testName))
+    mTestSetData(std::move(testName))
 {
 
 }
@@ -61,10 +61,10 @@ bool UnitTestRunner<T>::GetConsoleOutput( ) const noexcept
     return mLogger.GetPrintToConsole( );
 }
 
-template <class T>
-const std::basic_string<T>& UnitTestRunner<T>::GetTestName( ) const noexcept
+template<class T>
+const TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) const noexcept
 {
-    return mTestName;
+    return mTestSetData;
 }
 
 // Setters
@@ -155,6 +155,11 @@ bool UnitTestRunner<T>::RunUnitTests( )
 {
     bool ret = true;
 
+    mTestSetData.ResetCounters( );
+    mTestSetData.SetTotalTestCount(mUnitTests.size( ));
+
+    mLogger.LogTestSetHeader(mTestSetData);
+
     for ( UnitTest& test : mUnitTests )
     {
         Result r = Result::NotRun;
@@ -163,6 +168,7 @@ bool UnitTestRunner<T>::RunUnitTests( )
         try
         {
             test.RunTest( );
+            r = test.GetUnitTestResult( ).GetResult( );
         }
         catch ( const std::exception& e )
         {
@@ -188,7 +194,11 @@ bool UnitTestRunner<T>::RunUnitTests( )
         {
             mLogger.LogUnitTestResult(UnitTestResult(r, test.GetUnitTestResult( ).GetFunctionName( ), "", 0, eStr));
         }
+
+        mTestSetData.IncrementResultCounter(r);
     }
+
+    mLogger.LogTestSetSummary(mTestSetData);
 
     return ret;
 }

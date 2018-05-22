@@ -85,6 +85,18 @@ inline UnitTestResult CleanupExceptionTest( )
     return UnitTestResult( );
 }
 
+inline UnitTestResult UnhandledExceptionTest( )
+{
+    try
+    {
+        ThrowInvalidArgument( );
+    }
+    catch ( const std::runtime_error& e )
+    {
+        UTL_CLEANUP_EXCEPTION(e.what( ));
+    }
 
+    return UnitTestResult( );
+}
 
 #endif

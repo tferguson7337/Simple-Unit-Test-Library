@@ -66,6 +66,12 @@
     <ClInclude Include="..\..\Common\Util\Unmovable.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="TestSetData.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSetDataInterface.h">
+      <Filter>Data Structures\Interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnitTestLogger.cpp">
@@ -78,6 +84,9 @@
       <Filter>Data Structures\src</Filter>
     </ClCompile>
     <ClCompile Include="UnitTestResult.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSetData.cpp">
       <Filter>Data Structures\src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,7 +28,7 @@ int main( )
     std::chrono::time_point<std::chrono::high_resolution_clock> buildT0, buildT1;
     std::chrono::time_point<std::chrono::high_resolution_clock> testT0, testT1;
 
-    UnitTestRunner<char> testRunner;
+    UnitTestRunner<char> testRunner("Template Library Tests");
 
     testRunner.SetLogFile("C:\\TTL_Log.txt");
 
