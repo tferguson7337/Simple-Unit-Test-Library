@@ -20,15 +20,17 @@ private:
     /// Private Data Members \\\
 
     bool mPrintToConsole;
+
+    std::basic_string<T> logBuffer;
     std::basic_ostream<T>& mConsoleStream;
     std::basic_ofstream<T> mFileStream;
     std::basic_string<T> mTargetFile;
 
     static const uint64 mTimeBufferSize = 32;
 
-    /// Private Helper Methods \\\
+    static const size_t mLineBreakLightDefaultLen = 64;
 
-    std::basic_ofstream<T>& operator<<(std::basic_string<T>&&);
+    /// Private Helper Methods \\\
 
     std::basic_ostream<T>& InitConsoleStream( );
 
@@ -37,18 +39,21 @@ private:
 
     const std::basic_string<T>& GetTestSetHeaderFormat( );
     const std::basic_string<T>& GetTestSetSummaryFormat( );
-    std::basic_string<T> GetLineBreak(size_t);
+    std::basic_string<T> GetLineBreakLight(size_t = mLineBreakLightDefaultLen);
+    std::basic_string<T> GetLineBreakHeavy(size_t);
 
     std::basic_string<T> BuildLogString(const UnitTestResult&);
     std::basic_string<T> BuildTimeString( );
     std::basic_string<T> BuildResultString(const UnitTestResult&);
     std::basic_string<T> BuildExceptionString(const UnitTestResult&);
+    std::basic_string<T> BuildSkipString(const UnitTestResult&);
     std::basic_string<T> BuildUnhandledExceptionString(const UnitTestResult&);
 
     const T* GetResultString(const Result);
     const std::basic_string<T>& GetTimeFormat( );
     const std::basic_string<T>& GetResultFormat( );
     const std::basic_string<T>& GetExceptionFormat( );
+    const std::basic_string<T>& GetSkipFormat( );
     const std::basic_string<T>& GetUnhandledExceptionFormat( );
     const std::basic_string<T>& GetDivider( );
 
@@ -87,6 +92,8 @@ public:
     bool LogTestSetHeader(const TestSetData<T>&);
     bool LogUnitTestResult(const UnitTestResult&);
     bool LogTestSetSummary(const TestSetData<T>&);
+
+    bool PrintLogs( );
 };
 
 #endif // _UNIT_TEST_LOGGER_H

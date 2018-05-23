@@ -40,8 +40,10 @@ int main( )
     testRunner.RunUnitTests( );
     testT1 = std::chrono::high_resolution_clock::now( );
 
+    testRunner.PrintTestLogs( );
+
     printf("\n");
-    printf("\tTest Time [%3.2f ms]\n", GetTimeDiff<long double, std::milli>(testT0, testT1));
+    printf("\tTest Run Time [%3.2f ms]\n", GetTimeDiff<long double, std::milli>(testT0, testT1));
 
     std::cin.get( );
 

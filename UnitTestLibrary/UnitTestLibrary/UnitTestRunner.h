@@ -50,6 +50,8 @@ public:
     bool AddUnitTests(std::list<std::function<UnitTestResult(void)>>&&);
 
     bool RunUnitTests( );
+
+    bool PrintTestLogs( );
 };
 
 

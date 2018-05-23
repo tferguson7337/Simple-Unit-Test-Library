@@ -18,9 +18,9 @@ inline void ThrowInvalidArgument( )
     throw std::invalid_argument("Invalid argument provided.");
 }
 
-inline UnitTestResult ErroneousTest( )
+inline UnitTestResult SkippedTest( )
 {
-    return UnitTestResult(Result::NotRun, __func__, __FILE__, __LINE__, "This should never happen.");
+    UTL_SKIP_TEST("Testing UTL_SKIP_TEST macro");
 }
 
 inline UnitTestResult PositiveTest( )
@@ -39,7 +39,7 @@ inline UnitTestResult SetupExceptionTest( )
     {
         ThrowAllocationException( );
     }
-    catch ( const std::exception& e )
+    catch ( const std::bad_alloc& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
@@ -58,7 +58,7 @@ inline UnitTestResult RunExceptionTest( )
     {
         ThrowRuntimeException( );
     }
-    catch ( const std::exception& e )
+    catch ( const std::runtime_error& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
@@ -77,7 +77,7 @@ inline UnitTestResult CleanupExceptionTest( )
     {
         ThrowInvalidArgument( );
     }
-    catch ( const std::exception& e )
+    catch ( const std::logic_error& e )
     {
         UTL_CLEANUP_EXCEPTION(e.what( ));
     }
@@ -93,7 +93,7 @@ inline UnitTestResult UnhandledExceptionTest( )
     }
     catch ( const std::runtime_error& e )
     {
-        UTL_CLEANUP_EXCEPTION(e.what( ));
+        UTL_TEST_EXCEPTION(e.what( ));
     }
 
     return UnitTestResult( );

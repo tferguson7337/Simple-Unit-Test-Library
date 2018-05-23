@@ -202,3 +202,9 @@ bool UnitTestRunner<T>::RunUnitTests( )
 
     return ret;
 }
+
+template <class T>
+bool UnitTestRunner<T>::PrintTestLogs( )
+{
+    return mLogger.PrintLogs( );
+}

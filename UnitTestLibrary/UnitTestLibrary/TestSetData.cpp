@@ -213,7 +213,7 @@ void TestSetData<T>::IncrementResultCounter(Result r)
         break;
 
     default:
-        throw std::invalid_argument("TestSetData::IncrementDataPoint(enum class Result) - Received invalid Result value.");
+        return;
     }
 }
 
