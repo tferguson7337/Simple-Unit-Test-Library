@@ -10,6 +10,8 @@
 #include "StackTests.h"
 #include "QueueTests.h"
 
+#include "CountedPointer.hpp"
+
 
 // For timing
 #include <chrono>

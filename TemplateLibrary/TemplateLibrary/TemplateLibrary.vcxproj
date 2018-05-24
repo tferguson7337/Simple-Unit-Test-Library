@@ -29,8 +29,10 @@
     <ClInclude Include="..\TemplateLibraryTests\QueueTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\StackTests.h" />
     <ClInclude Include="Array.hpp" />
+    <ClInclude Include="CountedPointer.hpp" />
     <ClInclude Include="IArray.h" />
     <ClInclude Include="DNode.hpp" />
+    <ClInclude Include="ICountedPointer.h" />
     <ClInclude Include="IDNode.h" />
     <ClInclude Include="DynamicArray.hpp" />
     <ClInclude Include="IDynamicArray.h" />

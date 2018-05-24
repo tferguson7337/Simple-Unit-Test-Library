@@ -99,6 +99,12 @@
     <ClInclude Include="Queue.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
+    <ClInclude Include="ICountedPointer.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="CountedPointer.hpp">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">

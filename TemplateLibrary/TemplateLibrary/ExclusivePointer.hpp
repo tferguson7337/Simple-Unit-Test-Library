@@ -18,7 +18,7 @@ namespace TTL
         /// Ctors \\\
 
         // Default
-        explicit ExclusivePointer( ) noexcept :
+        ExclusivePointer( ) noexcept :
             mPtr(nullptr)
         { }
 
@@ -33,7 +33,7 @@ namespace TTL
         { }
 
         // Move
-        explicit ExclusivePointer(ExclusivePointer&& src) noexcept :
+        ExclusivePointer(ExclusivePointer&& src) noexcept :
             mPtr(src.mPtr)
         {
             src.mPtr = nullptr;
@@ -143,7 +143,7 @@ namespace TTL
         /// Ctors \\\
 
         // Default
-        explicit ExclusivePointer( ) noexcept :
+        ExclusivePointer( ) noexcept :
             mPtr(nullptr)
         { }
 
@@ -158,7 +158,7 @@ namespace TTL
         { }
 
         // Move
-        explicit ExclusivePointer(ExclusivePointer&& src) noexcept :
+        ExclusivePointer(ExclusivePointer&& src) noexcept :
             mPtr(src.mPtr)
         {
             src.mPtr = nullptr;
