@@ -10,6 +10,10 @@ namespace TTL
     template <class T>
     class ExclusivePointer : public virtual IExclusivePointer<T>, public Uncopyable
     {
+        /// Allow ExclusivePointer<T>-to-CountedPointer<T> moved-based methods to "steal" resource.
+        template <class T>
+        friend class CountedPointer;
+
     private:
         T * mPtr;
 
@@ -135,6 +139,10 @@ namespace TTL
     template <class T>
     class ExclusivePointer<T[ ]> : public IExclusivePointer<T[ ]>, public Uncopyable
     {
+        /// Allow ExclusivePointer<T[ ]>-to-CountedPointer<T[ ]> moved-based methods to "steal" resources.
+        template <class T>
+        friend class CountedPointer;
+
     private:
         T * mPtr;
 

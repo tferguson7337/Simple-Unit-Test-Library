@@ -3,6 +3,8 @@
 #include "ICountedPointer.h"
 #include "ExclusivePointer.hpp"
 
+#include <stdexcept>
+
 namespace TTL
 {
     template <class T>
@@ -81,8 +83,13 @@ namespace TTL
         }
 
         // Copy
-        inline CountedPointer& operator=(const CountedPointer& src) noexcept
+        inline CountedPointer& operator=(const CountedPointer& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::CountedPointer<T>::operator=(const CountedPointer<T>&) - Attempted self-assignment.");
+            }
+
             Release( );
             mPtr = src.mPtr;
             mCount = src.mCount;
@@ -96,12 +103,18 @@ namespace TTL
         }
 
         // Move
-        inline CountedPointer& operator=(CountedPointer&& src) noexcept
+        inline CountedPointer& operator=(CountedPointer&& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::CountedPointer<T>::operator=(CountedPointer<T>&&) - Attempted self-assignment.");
+            }
+
             Release( );
             mPtr = src.mPtr;
             mCount = src.mCount;
-            src.Release( );
+            src.mPtr = nullptr;
+            src.mCount = nullptr;
 
             return *this;
         }
@@ -112,7 +125,7 @@ namespace TTL
             Release( );
             mPtr = src.Get( );
             mCount = new size_t(1);
-            src.Release( );
+            src.mPtr = nullptr;
 
             return *this;
         }
@@ -151,14 +164,10 @@ namespace TTL
         {
             if ( mCount )
             {
-                if ( *mCount == 1 )
+                if ( --(*mCount) == 0 )
                 {
                     delete mPtr;
                     delete mCount;
-                }
-                else
-                {
-                    (*mCount)--;
                 }
             }
 
@@ -277,8 +286,13 @@ namespace TTL
         }
 
         // Copy
-        inline CountedPointer<T[ ]>& operator=(const CountedPointer<T[ ]>& src) noexcept
+        inline CountedPointer<T[ ]>& operator=(const CountedPointer<T[ ]>& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::CountedPointer<T[ ]>::operator=(const CountedPointer<T[ ]>&) - Attempted self-assignment.");
+            }
+
             Release( );
             mPtr = src.mPtr;
             mCount = src.mCount;
@@ -292,12 +306,18 @@ namespace TTL
         }
 
         // Move
-        inline CountedPointer<T[ ]>& operator=(CountedPointer<T[ ]>&& src) noexcept
+        inline CountedPointer<T[ ]>& operator=(CountedPointer<T[ ]>&& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::CountedPointer<T[ ]>::operator=(CountedPointer<T[ ]>&&) - Attempted self-assignment.");
+            }
+
             Release( );
             mPtr = src.mPtr;
             mCount = src.mCount;
-            src.Release( );
+            src.mPtr = nullptr;
+            src.mCount = nullptr;
 
             return *this;
         }
@@ -308,7 +328,7 @@ namespace TTL
             Release( );
             mPtr = src.Get( );
             mCount = new size_t(1);
-            src.Release( );
+            src.mPtr = nullptr;
 
             return *this;
         }
@@ -396,4 +416,339 @@ namespace TTL
             return (mCount) ? *mCount : 0;
         }
     };
+
+    /// Non-member CountedPointer Relational Ops \\\
+
+    // CountedPointer<T1> vs CountedPointer<T2>
+    template <class T1, class T2>
+    inline bool operator==(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return lhs.Get( ) == rhs.Get( );
+    }
+
+    template <class T1, class T2>
+    inline bool operator!=(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T1, class T2>
+    inline bool operator<(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return lhs.Get( ) < rhs.Get( );
+    }
+
+    template <class T1, class T2>
+    inline bool operator<=(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T1, class T2>
+    inline bool operator>(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return lhs.Get( ) > rhs.Get( );
+    }
+
+    template <class T1, class T2>
+    inline bool operator>=(const CountedPointer<T1>& lhs, const CountedPointer<T2>& rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // ExclusivePointer<T> vs Raw Pointer
+    template <class T>
+    inline bool operator==(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) == rhs;
+    }
+
+    template <class T>
+    inline bool operator!=(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) < rhs;
+    }
+
+    template <class T>
+    inline bool operator>(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) > rhs;
+    }
+
+    template <class T>
+    inline bool operator<=(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const CountedPointer<T>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // ExclusivePointer<T[ ]> vs Raw Pointer
+    template <class T>
+    inline bool operator==(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) == rhs;
+    }
+
+    template <class T>
+    inline bool operator!=(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) < rhs;
+    }
+
+    template <class T>
+    inline bool operator>(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return lhs.Get( ) > rhs;
+    }
+
+    template <class T>
+    inline bool operator<=(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const CountedPointer<T[ ]>& lhs, const T* const rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // Raw Pointer vs ExclusivePointer<T>
+    template <class T>
+    inline bool operator==(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs == rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator!=(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs < rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator>(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs > rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator<=(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const T* const lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // Raw Pointer vs ExclusivePointer<T[ ]>
+    template <class T>
+    inline bool operator==(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs == rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator!=(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs < rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator>(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs > rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator<=(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const T* const lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // ExclusivePointer<T> vs nullptr
+    template <class T>
+    inline bool operator==(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) == rhs;
+    }
+
+    template <class T>
+    inline bool operator!=(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) < rhs;
+    }
+
+    template <class T>
+    inline bool operator>(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) > rhs;
+    }
+
+    template <class T>
+    inline bool operator<=(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const CountedPointer<T>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // ExclusivePointer<T[ ]> vs nullptr
+    template <class T>
+    inline bool operator==(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) == rhs;
+    }
+
+    template <class T>
+    inline bool operator!=(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) < rhs;
+    }
+
+    template <class T>
+    inline bool operator>(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return lhs.Get( ) > rhs;
+    }
+
+    template <class T>
+    inline bool operator<=(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const CountedPointer<T[ ]>& lhs, const std::nullptr_t rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // nullptr vs ExclusivePointer<T>
+    template <class T>
+    inline bool operator==(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs == rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator!=(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs < rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator>(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return lhs > rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator<=(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const std::nullptr_t lhs, const CountedPointer<T>& rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
+
+    // nullptr vs ExclusivePointer<T[ ]>
+    template <class T>
+    inline bool operator==(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs == rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator!=(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    inline bool operator<(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs < rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator>(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return lhs > rhs.Get( );
+    }
+
+    template <class T>
+    inline bool operator<=(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs > rhs);
+    }
+
+    template <class T>
+    inline bool operator>=(const std::nullptr_t lhs, const CountedPointer<T[ ]>& rhs) noexcept
+    {
+        return !(lhs < rhs);
+    }
 }

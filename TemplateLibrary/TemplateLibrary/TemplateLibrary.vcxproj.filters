@@ -105,6 +105,12 @@
     <ClInclude Include="CountedPointer.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
+    <ClInclude Include="RunTests.hpp">
+      <Filter>Unit Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\CountedPointerTests.h">
+      <Filter>Unit Tests\hdr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">
@@ -125,13 +131,14 @@
     <ClCompile Include="..\TemplateLibraryTests\NodeTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\TemplateLibraryTests\RunTests.cpp">
-      <Filter>Unit Tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\TemplateLibraryTests\StackTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
     <ClCompile Include="..\TemplateLibraryTests\QueueTests.cpp">
+      <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TemplateLibraryTests\ProgramEntry.cpp" />
+    <ClCompile Include="..\TemplateLibraryTests\CountedPointerTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
   </ItemGroup>

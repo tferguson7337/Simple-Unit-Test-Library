@@ -1,6 +1,11 @@
+#pragma once
+
 #include <UnitTestRunner.h>
 
-// Data Structures
+// For timing
+#include <chrono>
+
+// Template Library Tests
 #include "ExclusivePointerTests.h"
 #include "NodeTests.h"
 #include "DNodeTests.h"
@@ -9,48 +14,6 @@
 #include "ListTests.h"
 #include "StackTests.h"
 #include "QueueTests.h"
-
-#include "CountedPointer.hpp"
-
-
-// For timing
-#include <chrono>
-
-template <class T>
-void BuildMasterTestList(UnitTestRunner<T>&);
-
-template <class R, class T>
-R GetTimeDiff(
-    const std::chrono::time_point<std::chrono::high_resolution_clock>&,
-    const std::chrono::time_point<std::chrono::high_resolution_clock>&
-);
-
-int main( )
-{
-    std::chrono::time_point<std::chrono::high_resolution_clock> buildT0, buildT1;
-    std::chrono::time_point<std::chrono::high_resolution_clock> testT0, testT1;
-
-    UnitTestRunner<char> testRunner("Template Library Tests");
-
-    testRunner.SetLogFile("C:\\TTL_Log.txt");
-
-    buildT0 = std::chrono::high_resolution_clock::now( );
-    BuildMasterTestList(testRunner);
-    buildT1 = std::chrono::high_resolution_clock::now( );
-
-    testT0 = std::chrono::high_resolution_clock::now( );
-    testRunner.RunUnitTests( );
-    testT1 = std::chrono::high_resolution_clock::now( );
-
-    testRunner.PrintTestLogs( );
-
-    printf("\n");
-    printf("\tTest Run Time [%3.2f ms]\n", GetTimeDiff<long double, std::milli>(testT0, testT1));
-
-    std::cin.get( );
-
-    return 0;
-}
 
 template <class T>
 void BuildMasterTestList(UnitTestRunner<T>& runner)
@@ -79,4 +42,29 @@ R GetTimeDiff(
     {
         return std::chrono::duration_cast<std::chrono::duration<R, T>>(t0 - t1).count( );
     }
+}
+
+
+template <class T>
+void RunTemplateLibraryTests( )
+{
+    std::chrono::time_point<std::chrono::high_resolution_clock> buildT0, buildT1;
+    std::chrono::time_point<std::chrono::high_resolution_clock> testT0, testT1;
+
+    UnitTestRunner<T> testRunner("Template Library Tests");
+
+    testRunner.SetLogFile("C:\\TTL_Log.txt");
+
+    buildT0 = std::chrono::high_resolution_clock::now( );
+    BuildMasterTestList(testRunner);
+    buildT1 = std::chrono::high_resolution_clock::now( );
+
+    testT0 = std::chrono::high_resolution_clock::now( );
+    testRunner.RunUnitTests( );
+    testT1 = std::chrono::high_resolution_clock::now( );
+
+    testRunner.PrintTestLogs( );
+
+    printf("\n");
+    printf("\tTest Run Time [%3.2f ms]\n", GetTimeDiff<long double, std::milli>(testT0, testT1));
 }

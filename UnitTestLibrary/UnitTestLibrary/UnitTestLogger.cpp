@@ -554,19 +554,19 @@ const std::basic_string<char>& UnitTestLogger<char>::GetSkipFormat( )
         GetLineBreakLight( )
     );
 
-    static const std::basic_string<char> exceptionFormatA(
+    static const std::basic_string<char> skipFormatA(
         "File: %-24s  Test: %s\n"
         +
         lineBreak
         +
         "    Result: %s\n"
         "    Line: %llu\n"
-        "    Reason: %S\n"
+        "    Reason: %s\n"
         +
         lineBreak
     );
 
-    return exceptionFormatA;
+    return skipFormatA;
 }
 
 template <>
@@ -576,7 +576,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSkipFormat( )
         GetLineBreakLight( )
     );
 
-    static const std::basic_string<wchar_t> exceptionFormatW(
+    static const std::basic_string<wchar_t> skipFormatW(
         L"File: %-24S  Test: %S\n"
         +
         lineBreak
@@ -588,7 +588,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSkipFormat( )
         lineBreak
     );
 
-    return exceptionFormatW;
+    return skipFormatW;
 }
 
 template <>
@@ -674,11 +674,11 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(const std::basic_string<T>* for
 
     va_start(args, format);
 
-    bufferSize = StringPrintWrapper(buffer, format, args) + 2;
+    bufferSize = StringPrintWrapper(buffer, format, args);
 
     if ( bufferSize > 0 )
     {
-        buffer = std::move(std::vector<T>(bufferSize, T('\0')));
+        buffer = std::move(std::vector<T>(static_cast<size_t>(bufferSize) + 2, T('\0')));
         bufferSize = StringPrintWrapper(buffer, format, args);
     }
 
