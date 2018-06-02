@@ -109,7 +109,7 @@ namespace TTL
             return *this = std::move(src.BuildCopy( ));
         }
 
-        inline Queue<T>& operator=(Queue<T>&& src)
+        inline Queue<T>& operator=(Queue<T>&& src) noexcept
         {
             Clear( );
 
