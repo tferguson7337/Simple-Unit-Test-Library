@@ -95,7 +95,6 @@ namespace TTL
         inline void SetData(T&& d) noexcept
         {
             mData = std::move(d);
-            d = T( );
         }
 
         inline void SetPrev(DNode<T>* pNode) noexcept

@@ -117,36 +117,6 @@ namespace TTL
             return ptr;
         }
 
-        inline void GetSublist(DNode<T>*& pHead, DNode<T>*& pTail, const size_t pos, const size_t count)
-        {
-            const size_t rPos = pos + count - 1;
-            const bool startFromHead = ((pos <= mSize >> 1) ? pos : mSize - pos - 1) <= (((rPos) <= (mSize >> 1) ? rPos : mSize - rPos - 1));
-
-            std::function<void(void)> fShift;
-
-            pHead = pTail = GetNodeAtPos((startFromHead) ? pos : rPos);
-
-            if ( startFromHead )
-            {
-                fShift = [&pTail] ( ) -> void
-                {
-                    pTail = pTail->GetNext( );
-                };
-            }
-            else
-            {
-                fShift = [&pHead] ( ) -> void
-                {
-                    pHead = pHead->GetPrev( );
-                };
-            }
-
-            for ( size_t i = 0; i < count; i++ )
-            {
-                fShift( );
-            }
-        }
-
         friend inline void InsertListCommon(List<T>& dest, DNode<T>* insertionPoint, List<T>&& src) noexcept
         {
             // Merge the source list into the destination list (adjust pointers).

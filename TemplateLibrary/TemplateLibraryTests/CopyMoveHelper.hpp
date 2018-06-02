@@ -41,12 +41,14 @@ public:
     CopyMoveHelper& operator=(const CopyMoveHelper&) noexcept
     {
         mCopy = true;
+        mMove = false;
         return *this;
     }
 
     // Move Assignment
     CopyMoveHelper& operator=(CopyMoveHelper&&) noexcept
     {
+        mCopy = false;
         mMove = true;
         return *this;
     }

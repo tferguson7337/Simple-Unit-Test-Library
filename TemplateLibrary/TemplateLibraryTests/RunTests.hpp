@@ -67,6 +67,6 @@ void RunTemplateLibraryTests( )
 
     testRunner.PrintTestLogs( );
 
-    printf("\tTest Run Time [%3.2f ms]\n", GetTimeDiff<long double, std::milli>(testT0, testT1));
+    printf("\tTest Run Time [%3.2f ms]\n", GetTimeDiff<double, std::milli>(testT0, testT1));
     fflush(stdout);
 }

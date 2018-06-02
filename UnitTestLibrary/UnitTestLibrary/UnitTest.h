@@ -26,7 +26,7 @@ private:
 public:
     /// Ctors \\\
 
-    explicit UnitTest(std::function<UnitTestResult(void)>);
+    explicit UnitTest(const std::function<UnitTestResult(void)>&);
     explicit UnitTest(UnitTest&&) noexcept;
 
     /// Dtor \\\

@@ -81,7 +81,6 @@ namespace TTL
         inline void SetData(T&& d) noexcept
         {
             mData = std::move(d);
-            d = T( );
         }
 
         // Raw Pointer

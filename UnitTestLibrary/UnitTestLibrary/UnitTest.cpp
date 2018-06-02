@@ -5,8 +5,8 @@
 
 /// Ctors \\\
     
-UnitTest::UnitTest(std::function<UnitTestResult(void)> func) :
-    mTestFuncPtr(std::make_unique<std::function<UnitTestResult(void)>>(std::move(func)))
+UnitTest::UnitTest(const std::function<UnitTestResult(void)>& func) :
+    mTestFuncPtr(std::make_unique<std::function<UnitTestResult(void)>>(func))
 {
 
 }

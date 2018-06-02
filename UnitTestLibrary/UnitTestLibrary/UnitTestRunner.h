@@ -18,8 +18,8 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestRunner(const std::basic_string<T>&);
-    UnitTestRunner(std::basic_string<T>&&) noexcept;
+    explicit UnitTestRunner(const std::basic_string<T>&);
+    explicit UnitTestRunner(std::basic_string<T>&&) noexcept;
     UnitTestRunner(UnitTestRunner&&) noexcept;
 
     /// Dtor \\\

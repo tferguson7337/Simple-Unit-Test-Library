@@ -2548,8 +2548,8 @@ UnitTestResult TTLTests::List::MoveInsertList( )
     {
         for ( size_t i = 0; i < LIST_SIZE; i++ )
         {
-            list.Insert(list.Size( ), std::move(moveHelper));
-            moveList.Insert(moveList.Size( ), std::move(moveHelper));
+            list.Insert(list.Size( ), CopyMoveHelper( ));
+            moveList.Insert(moveList.Size( ), CopyMoveHelper( ));
         }
     }
     catch ( const std::exception& e )

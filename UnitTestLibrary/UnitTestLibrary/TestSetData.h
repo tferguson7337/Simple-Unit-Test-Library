@@ -25,8 +25,8 @@ private:
 public:
     /// Ctors \\\
 
-    TestSetData(const std::basic_string<T>& = std::basic_string<T>( )) noexcept;
-    TestSetData(std::basic_string<T>&&) noexcept;
+    explicit TestSetData(const std::basic_string<T>& = std::basic_string<T>( )) noexcept;
+    explicit TestSetData(std::basic_string<T>&&) noexcept;
     TestSetData(const TestSetData&) noexcept;
     TestSetData(TestSetData&&) noexcept;
 
