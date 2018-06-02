@@ -22,6 +22,7 @@
     <ClInclude Include="..\TemplateLibraryTests\ArrayTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\CopyMoveHelper.hpp" />
     <ClInclude Include="..\TemplateLibraryTests\CountedPointerTests.h" />
+    <ClInclude Include="..\TemplateLibraryTests\DeleteHelper.hpp" />
     <ClInclude Include="..\TemplateLibraryTests\DNodeTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\DynamicArrayTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\ExclusivePointerTests.h" />
@@ -52,6 +53,7 @@
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\CountedPointerTests.cpp" />
+    <ClCompile Include="..\TemplateLibraryTests\DeleteHelper.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\DNodeTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\DynamicArrayTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\ExclusivePointerTests.cpp" />

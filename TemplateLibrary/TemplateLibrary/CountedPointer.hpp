@@ -171,7 +171,8 @@ namespace TTL
                 }
             }
 
-            mPtr = mCount = nullptr;
+            mPtr = nullptr;
+            mCount = nullptr;
         }
 
         virtual void Set(const std::nullptr_t pNull) noexcept
@@ -184,12 +185,12 @@ namespace TTL
             *this = p;
         }
 
-        virtual void Set(const CountedPointer& src) noexcept
+        virtual void Set(const CountedPointer& src)
         {
             *this = src;
         }
 
-        virtual void Set(CountedPointer&& src) noexcept
+        virtual void Set(CountedPointer&& src)
         {
             *this = std::move(src);
         }
@@ -378,7 +379,8 @@ namespace TTL
                 }
             }
 
-            mPtr = mCount = nullptr;
+            mPtr = nullptr;
+            mCount = nullptr;
         }
 
         virtual void Set(const std::nullptr_t pNull) noexcept
@@ -391,12 +393,12 @@ namespace TTL
             *this = p;
         }
 
-        virtual void Set(const CountedPointer<T[ ]>& src) noexcept
+        virtual void Set(const CountedPointer<T[ ]>& src)
         {
             *this = src;
         }
 
-        virtual void Set(CountedPointer<T[ ]>&& src) noexcept
+        virtual void Set(CountedPointer<T[ ]>&& src)
         {
             *this = std::move(src);
         }

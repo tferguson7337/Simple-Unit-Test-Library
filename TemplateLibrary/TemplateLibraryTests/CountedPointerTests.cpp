@@ -2,6 +2,8 @@
 
 #include "CountedPointerTests.h"
 
+#include "DeleteHelper.hpp"
+
 std::list<std::function<UnitTestResult(void)>> TTLTests::CountedPointer::BuildTestList( )
 {
     static const std::list<std::function<UnitTestResult(void)>> testList =
@@ -1563,7 +1565,7 @@ UnitTestResult TTLTests::CountedPointer::AssignmentOperatorMove_Single( )
 
     UTL_TEST_ASSERT(*(movePtr.Get( )) == *p);
     UTL_TEST_ASSERT(*(movePtr.Get( )) == VAL);
-    
+
     UTL_TEST_ASSERT(movePtr.Count( ) == 1);
 
     UTL_TEST_SUCCESS( );
@@ -1802,66 +1804,718 @@ UnitTestResult TTLTests::CountedPointer::AssignmentOperatorSelf_Array( )
 // Public Method Tests
 UnitTestResult TTLTests::CountedPointer::Release_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    bool threw = false;
+    TTL::CountedPointer<DeleteHelper> ptr;
+    TTL::CountedPointer<DeleteHelper> copyPtr;
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        ptr.Set(new DeleteHelper);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    copyPtr.Set(ptr);
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
+
+    copyPtr.Release( );
+
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    ptr.Release( );
+
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    threw = false;
+    try
+    {
+        *ptr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::Release_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    const size_t ARR_SIZE = 10;
+    bool threw = false;
+    TTL::CountedPointer<DeleteHelper[ ]> arrPtr;
+    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        arrPtr.Set(new DeleteHelper[ARR_SIZE]);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_ASSERT(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(arrPtr.Count( ) == 1);
+
+    copyPtr.Set(arrPtr);
+
+    UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == arrPtr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(arrPtr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == arrPtr.Count( ));
+
+    copyPtr.Release( );
+
+    UTL_TEST_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(arrPtr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    arrPtr.Release( );
+
+    UTL_TEST_ASSERT(arrPtr.Get( ) == nullptr);
+    threw = false;
+    try
+    {
+        *arrPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(arrPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 
 UnitTestResult TTLTests::CountedPointer::SetNull_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    bool threw = false;
+    TTL::CountedPointer<DeleteHelper> ptr;
+    TTL::CountedPointer<DeleteHelper> copyPtr;
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        ptr.Set(new DeleteHelper);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    copyPtr.Set(ptr);
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
+
+    copyPtr.Set(nullptr);
+
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    ptr.Set(nullptr);
+
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    threw = false;
+    try
+    {
+        *ptr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    const size_t ARR_SIZE = 10;
+    bool threw = false;
+    TTL::CountedPointer<DeleteHelper[ ]> arrPtr;
+    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        arrPtr.Set(new DeleteHelper[ARR_SIZE]);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_ASSERT(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(arrPtr.Count( ) == 1);
+
+    copyPtr.Set(arrPtr);
+
+    UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == arrPtr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(arrPtr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == arrPtr.Count( ));
+
+    copyPtr.Set(nullptr);
+
+    UTL_TEST_ASSERT(arrPtr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(arrPtr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    arrPtr.Set(nullptr);
+
+    UTL_TEST_ASSERT(arrPtr.Get( ) == nullptr);
+    threw = false;
+    try
+    {
+        *arrPtr;
+    }
+    catch ( const std::logic_error& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw == true);
+    UTL_TEST_ASSERT(arrPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 
 UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    TTL::CountedPointer<DeleteHelper> ptr;
+    TTL::CountedPointer<DeleteHelper> copyPtr;
+
+    DeleteHelper* pRaw = nullptr;
+
+    try
+    {
+        pRaw = new DeleteHelper;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(pRaw != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        ptr.Set(new DeleteHelper);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        copyPtr.Set(ptr);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
+
+    copyPtr.Set(pRaw);
+
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) != ptr.Get( ));
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 1);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    ptr.Release( );
+    copyPtr.Release( );
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    const size_t ARR_SIZE = 10;
+    TTL::CountedPointer<DeleteHelper[]> ptr;
+    TTL::CountedPointer<DeleteHelper[]> copyPtr;
+
+    DeleteHelper* pRaw = nullptr;
+
+    try
+    {
+        pRaw = new DeleteHelper[ARR_SIZE];
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(pRaw != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    try
+    {
+        ptr.Set(new DeleteHelper[ARR_SIZE]);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        copyPtr.Set(ptr);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 2);
+    UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
+
+    copyPtr.Set(pRaw);
+
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(copyPtr.Get( ) != ptr.Get( ));
+    try
+    {
+        *copyPtr;
+    }
+    catch ( const std::logic_error& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 1);
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    ptr.Release( );
+    copyPtr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE << 1);
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 
 UnitTestResult TTLTests::CountedPointer::SetCopy_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    TTL::CountedPointer<DeleteHelper> ptr;
+    TTL::CountedPointer<DeleteHelper> copyPtr;
+
+    try
+    {
+        ptr.Set(new DeleteHelper);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        copyPtr.Set(ptr);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_TEST_ASSERT(ptr.Count( ) == 2);
+    UTL_TEST_ASSERT(ptr.Count( ) == copyPtr.Count( ));
+
+    copyPtr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+
+    ptr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0);
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::SetCopy_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    const size_t ARR_SIZE = 10;
+    TTL::CountedPointer<DeleteHelper[ ]> ptr;
+    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+
+    try
+    {
+        ptr.Set(new DeleteHelper[ARR_SIZE]);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        copyPtr.Set(ptr);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == ptr.Get( ));
+    UTL_TEST_ASSERT(ptr.Count( ) == 2);
+    UTL_TEST_ASSERT(ptr.Count( ) == copyPtr.Count( ));
+
+    copyPtr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
+    UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 1);
+
+    ptr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0);
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 
 UnitTestResult TTLTests::CountedPointer::SetMove_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    TTL::CountedPointer<DeleteHelper> ptr;
+    TTL::CountedPointer<DeleteHelper> movePtr;
+
+    try
+    {
+        ptr.Set(new DeleteHelper);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        movePtr.Set(std::move(ptr));
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(movePtr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(movePtr.Count( ) == 1);
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0); 
+
+    movePtr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+    UTL_TEST_ASSERT(movePtr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(movePtr.Count( ) == 0);
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::SetMove_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    const size_t ARR_SIZE = 10;
+    TTL::CountedPointer<DeleteHelper[ ]> ptr;
+    TTL::CountedPointer<DeleteHelper[ ]> movePtr;
+
+    try
+    {
+        ptr.Set(new DeleteHelper[ARR_SIZE]);
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
+    UTL_SETUP_ASSERT(ptr.Count( ) == 1);
+
+    try
+    {
+        movePtr.Set(std::move(ptr));
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_TEST_EXCEPTION(e.what( ));
+    }
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(movePtr.Get( ) != nullptr);
+    UTL_TEST_ASSERT(movePtr.Count( ) == 1);
+    UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(ptr.Count( ) == 0);
+
+    movePtr.Release( );
+
+    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(movePtr.Get( ) == nullptr);
+    UTL_TEST_ASSERT(movePtr.Count( ) == 0);
+
+    DeleteHelper::SetDeleteCount(0);
+    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+
+    UTL_TEST_SUCCESS( );
 }
 
 
 UnitTestResult TTLTests::CountedPointer::SetSelf_Single( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    bool threw = false;
+    TTL::CountedPointer<size_t> ptr;
+
+    try
+    {
+        ptr = new size_t;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    try
+    {
+        ptr.Set(ptr);
+    }
+    catch ( const std::invalid_argument& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw);
+
+    threw = false;
+    try
+    {
+        ptr.Set(std::move(ptr));
+    }
+    catch ( const std::invalid_argument& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw);
+
+    UTL_TEST_SUCCESS( );
 }
 
 UnitTestResult TTLTests::CountedPointer::SetSelf_Array( )
 {
-    UTL_SKIP_TEST("Skipping test pending implementation.");
+    bool threw = false;
+    const size_t ARR_SIZE = 10;
+    TTL::CountedPointer<size_t[ ]> ptr;
+
+    try
+    {
+        ptr = new size_t[ARR_SIZE];
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    try
+    {
+        ptr.Set(ptr);
+    }
+    catch ( const std::invalid_argument& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw);
+
+    threw = false;
+    try
+    {
+        ptr.Set(std::move(ptr));
+    }
+    catch ( const std::invalid_argument& )
+    {
+        threw = true;
+    }
+
+    UTL_TEST_ASSERT(threw);
+
+    UTL_TEST_SUCCESS( );
 }
 

@@ -111,6 +111,9 @@
     <ClInclude Include="..\TemplateLibraryTests\CountedPointerTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\DeleteHelper.hpp">
+      <Filter>Unit Tests\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp">
@@ -140,6 +143,9 @@
     <ClCompile Include="..\TemplateLibraryTests\ProgramEntry.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\CountedPointerTests.cpp">
       <Filter>Unit Tests\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TemplateLibraryTests\DeleteHelper.cpp">
+      <Filter>Unit Tests\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
