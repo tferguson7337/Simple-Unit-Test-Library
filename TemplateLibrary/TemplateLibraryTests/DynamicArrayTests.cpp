@@ -1,5 +1,5 @@
 #include "DynamicArrayTests.h"
-#include "CopyMoveHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 #include "DynamicArray.hpp"
 
@@ -396,14 +396,16 @@ UnitTestResult TTLTests::DynamicArray::Clear( )
 UnitTestResult TTLTests::DynamicArray::CopyAppend( )
 {
     const size_t ARR_SIZE = 16;
-    TTL::DynamicArray<CopyMoveHelper> emptyArr;
-    TTL::DynamicArray<CopyMoveHelper> arr;
+    TTL::DynamicArray<MemoryManagementHelper>* pEmptyArr = nullptr;
+    TTL::DynamicArray<MemoryManagementHelper>* pArr = nullptr;
 
-    CopyMoveHelper copyHelper;
+    MemoryManagementHelper* pMemHelper = nullptr;
 
     try
     {
-        arr = std::move(TTL::DynamicArray<CopyMoveHelper>(ARR_SIZE));
+        pMemHelper = new MemoryManagementHelper;
+        pArr = new TTL::DynamicArray<MemoryManagementHelper>(ARR_SIZE);
+        pEmptyArr = new TTL::DynamicArray<MemoryManagementHelper>;
     }
     catch ( const std::exception& e )
     {
@@ -411,45 +413,67 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
     }
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
-    UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
-    UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
-    UTL_SETUP_ASSERT(arr.Size( ) == 0);
-    UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
-    UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
-    UTL_SETUP_ASSERT(arr.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pMemHelper != nullptr);
+    UTL_SETUP_ASSERT(pArr != nullptr);
+    UTL_SETUP_ASSERT(pEmptyArr != nullptr);
+
+    UTL_SETUP_ASSERT(pEmptyArr->Size( ) == 0);
+    UTL_SETUP_ASSERT(pEmptyArr->Capacity( ) == 0);
+    UTL_SETUP_ASSERT(pEmptyArr->Data( ) == nullptr);
+    UTL_SETUP_ASSERT(pEmptyArr->Empty( ) == true);
+    UTL_SETUP_ASSERT(pArr->Size( ) == 0);
+    UTL_SETUP_ASSERT(pArr->Capacity( ) == ARR_SIZE);
+    UTL_SETUP_ASSERT(pArr->Data( ) != nullptr);
+    UTL_SETUP_ASSERT(pArr->Empty( ) == true);
 
     try
     {
-        emptyArr.Append(copyHelper);
+        pEmptyArr->Append(*pMemHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 1);
-    UTL_TEST_ASSERT(emptyArr.Capacity( ) == TTL::DynamicArray<CopyMoveHelper>::DefaultCapacity( ));
-    UTL_TEST_ASSERT(emptyArr.Data( ) != nullptr);
-    UTL_TEST_ASSERT(emptyArr.Data( )[0].GetCopy( ) == true);
-    UTL_TEST_ASSERT(emptyArr.Data( )[0].GetMove( ) == false);
-    UTL_TEST_ASSERT(emptyArr.Empty( ) == false);
+    UTL_TEST_ASSERT(pEmptyArr->Size( ) == 1);
+    UTL_TEST_ASSERT(pEmptyArr->Capacity( ) == TTL::DynamicArray<MemoryManagementHelper>::DefaultCapacity( ));
+    UTL_TEST_ASSERT(pEmptyArr->Data( ) != nullptr);
+    UTL_TEST_ASSERT(pEmptyArr->Data( )[0].GetCopy( ) == true);
+    UTL_TEST_ASSERT(pEmptyArr->Data( )[0].GetMove( ) == false);
+    UTL_TEST_ASSERT(pEmptyArr->Empty( ) == false);
 
     try
     {
-        arr.Append(copyHelper);
+        pArr->Append(*pMemHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(arr.Size( ) == 1);
-    UTL_TEST_ASSERT(arr.Capacity( ) == ARR_SIZE);
-    UTL_TEST_ASSERT(arr.Data( )[0].GetCopy( ) == true);
-    UTL_TEST_ASSERT(arr.Data( )[0].GetMove( ) == false);
-    UTL_TEST_ASSERT(arr.Empty( ) == false);
+    UTL_TEST_ASSERT(pArr->Size( ) == 1);
+    UTL_TEST_ASSERT(pArr->Capacity( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(pArr->Data( )[0].GetCopy( ) == true);
+    UTL_TEST_ASSERT(pArr->Data( )[0].GetMove( ) == false);
+    UTL_TEST_ASSERT(pArr->Empty( ) == false);
+
+    delete pArr;
+    delete pEmptyArr;
+    delete pMemHelper;
+    pArr = nullptr;
+    pEmptyArr = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 
+                    ARR_SIZE + 
+                    TTL::DynamicArray<MemoryManagementHelper>::DefaultCapacity( ) + 
+                    1);
+    
+
+    UTL_CLEANUP_ASSERT(pArr == nullptr);
+    UTL_CLEANUP_ASSERT(pEmptyArr == nullptr);
+    UTL_CLEANUP_ASSERT(pMemHelper == nullptr);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -458,14 +482,16 @@ UnitTestResult TTLTests::DynamicArray::CopyAppend( )
 UnitTestResult TTLTests::DynamicArray::MoveAppend( )
 {
     const size_t ARR_SIZE = 16;
-    TTL::DynamicArray<CopyMoveHelper> emptyArr;
-    TTL::DynamicArray<CopyMoveHelper> arr;
+    TTL::DynamicArray<MemoryManagementHelper>* pEmptyArr = nullptr;
+    TTL::DynamicArray<MemoryManagementHelper>* pArr = nullptr;
 
-    CopyMoveHelper moveHelper;
+    MemoryManagementHelper* pMemHelper = nullptr;
 
     try
     {
-        arr = std::move(TTL::DynamicArray<CopyMoveHelper>(ARR_SIZE));
+        pMemHelper = new MemoryManagementHelper;
+        pArr = new TTL::DynamicArray<MemoryManagementHelper>(ARR_SIZE);
+        pEmptyArr = new TTL::DynamicArray<MemoryManagementHelper>;
     }
     catch ( const std::exception& e )
     {
@@ -473,46 +499,67 @@ UnitTestResult TTLTests::DynamicArray::MoveAppend( )
     }
 
     // Confirm Initial Test Conditions
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pMemHelper != nullptr);
+    UTL_SETUP_ASSERT(pArr != nullptr);
+    UTL_SETUP_ASSERT(pEmptyArr != nullptr);
 
-    UTL_SETUP_ASSERT(emptyArr.Size( ) == 0);
-    UTL_SETUP_ASSERT(emptyArr.Capacity( ) == 0);
-    UTL_SETUP_ASSERT(emptyArr.Data( ) == nullptr);
-    UTL_SETUP_ASSERT(emptyArr.Empty( ) == true);
-    UTL_SETUP_ASSERT(arr.Size( ) == 0);
-    UTL_SETUP_ASSERT(arr.Capacity( ) == ARR_SIZE);
-    UTL_SETUP_ASSERT(arr.Data( ) != nullptr);
-    UTL_SETUP_ASSERT(arr.Empty( ) == true);
+    UTL_SETUP_ASSERT(pEmptyArr->Size( ) == 0);
+    UTL_SETUP_ASSERT(pEmptyArr->Capacity( ) == 0);
+    UTL_SETUP_ASSERT(pEmptyArr->Data( ) == nullptr);
+    UTL_SETUP_ASSERT(pEmptyArr->Empty( ) == true);
+    UTL_SETUP_ASSERT(pArr->Size( ) == 0);
+    UTL_SETUP_ASSERT(pArr->Capacity( ) == ARR_SIZE);
+    UTL_SETUP_ASSERT(pArr->Data( ) != nullptr);
+    UTL_SETUP_ASSERT(pArr->Empty( ) == true);
 
     try
     {
-        emptyArr.Append(std::move(moveHelper));
+        pEmptyArr->Append(std::move(*pMemHelper));
     }
     catch ( const std::exception& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(emptyArr.Size( ) == 1);
-    UTL_TEST_ASSERT(emptyArr.Capacity( ) == TTL::DynamicArray<CopyMoveHelper>::DefaultCapacity( ));
-    UTL_TEST_ASSERT(emptyArr.Data( ) != nullptr);
-    UTL_TEST_ASSERT(emptyArr.Data( )[0].GetCopy( ) == false);
-    UTL_TEST_ASSERT(emptyArr.Data( )[0].GetMove( ) == true);
-    UTL_TEST_ASSERT(emptyArr.Empty( ) == false);
+    UTL_TEST_ASSERT(pEmptyArr->Size( ) == 1);
+    UTL_TEST_ASSERT(pEmptyArr->Capacity( ) == TTL::DynamicArray<MemoryManagementHelper>::DefaultCapacity( ));
+    UTL_TEST_ASSERT(pEmptyArr->Data( ) != nullptr);
+    UTL_TEST_ASSERT(pEmptyArr->Data( )[0].GetCopy( ) == false);
+    UTL_TEST_ASSERT(pEmptyArr->Data( )[0].GetMove( ) == true);
+    UTL_TEST_ASSERT(pEmptyArr->Empty( ) == false);
 
     try
     {
-        arr.Append(std::move(moveHelper));
+        pArr->Append(std::move(*pMemHelper));
     }
     catch ( const std::exception& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(arr.Size( ) == 1);
-    UTL_TEST_ASSERT(arr.Capacity( ) == ARR_SIZE);
-    UTL_TEST_ASSERT(arr.Data( )[0].GetCopy( ) == false);
-    UTL_TEST_ASSERT(arr.Data( )[0].GetMove( ) == true);
-    UTL_TEST_ASSERT(arr.Empty( ) == false);
+    UTL_TEST_ASSERT(pArr->Size( ) == 1);
+    UTL_TEST_ASSERT(pArr->Capacity( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(pArr->Data( )[0].GetCopy( ) == false);
+    UTL_TEST_ASSERT(pArr->Data( )[0].GetMove( ) == true);
+    UTL_TEST_ASSERT(pArr->Empty( ) == false);
+
+    delete pArr;
+    delete pEmptyArr;
+    delete pMemHelper;
+    pArr = nullptr;
+    pEmptyArr = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) ==
+                    ARR_SIZE +
+                    TTL::DynamicArray<MemoryManagementHelper>::DefaultCapacity( ) +
+                    1);
+    
+
+    UTL_CLEANUP_ASSERT(pArr == nullptr);
+    UTL_CLEANUP_ASSERT(pEmptyArr == nullptr);
+    UTL_CLEANUP_ASSERT(pMemHelper == nullptr);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -724,11 +771,13 @@ UnitTestResult TTLTests::DynamicArray::Reserve( )
         UTL_TEST_ASSERT(arr[i] == i);
     }
 
-    TTL::DynamicArray<CopyMoveHelper> cmArr;
+    TTL::DynamicArray<MemoryManagementHelper>* pMemHelperArr = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
 
     try
     {
-        cmArr = std::move(TTL::DynamicArray<CopyMoveHelper>(ARR_SIZE));
+        pMemHelperArr = new TTL::DynamicArray<MemoryManagementHelper>(ARR_SIZE);
+        pMemHelper = new MemoryManagementHelper;
     }
     catch ( const std::exception& e )
     {
@@ -736,35 +785,46 @@ UnitTestResult TTLTests::DynamicArray::Reserve( )
     }
 
     // Confirm Initial Test Conditions Pt. 2
-    UTL_SETUP_ASSERT(cmArr.Size( ) == 0);
-    UTL_SETUP_ASSERT(cmArr.Capacity( ) == ARR_SIZE);
-    UTL_SETUP_ASSERT(cmArr.Data( ) != nullptr);
-    UTL_SETUP_ASSERT(cmArr.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pMemHelperArr->Size( ) == 0);
+    UTL_SETUP_ASSERT(pMemHelperArr->Capacity( ) == ARR_SIZE);
+    UTL_SETUP_ASSERT(pMemHelperArr->Data( ) != nullptr);
+    UTL_SETUP_ASSERT(pMemHelperArr->Empty( ) == true);
 
     for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
     {
-        CopyMoveHelper copy;
-        cmArr.Append(copy);
+        pMemHelperArr->Append(*pMemHelper);
     }
 
     for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
     {
-        UTL_SETUP_ASSERT(cmArr[i].GetCopy( ) == true);
-        UTL_SETUP_ASSERT(cmArr[i].GetMove( ) == false);
+        UTL_SETUP_ASSERT((*pMemHelperArr)[i].GetCopy( ) == true);
+        UTL_SETUP_ASSERT((*pMemHelperArr)[i].GetMove( ) == false);
     }
 
-    cmArr.Reserve(RESERVE_SIZE);
+    pMemHelperArr->Reserve(RESERVE_SIZE);
 
-    UTL_TEST_ASSERT(cmArr.Size( ) == ARR_SIZE >> 1);
-    UTL_TEST_ASSERT(cmArr.Capacity( ) == RESERVE_SIZE);
-    UTL_TEST_ASSERT(cmArr.Data( ) != nullptr);
-    UTL_TEST_ASSERT(cmArr.Empty( ) == false);
+    UTL_TEST_ASSERT(pMemHelperArr->Size( ) == ARR_SIZE >> 1);
+    UTL_TEST_ASSERT(pMemHelperArr->Capacity( ) == RESERVE_SIZE);
+    UTL_TEST_ASSERT(pMemHelperArr->Data( ) != nullptr);
+    UTL_TEST_ASSERT(pMemHelperArr->Empty( ) == false);
 
     for ( size_t i = 0; i < ARR_SIZE >> 1; i++ )
     {
-        UTL_TEST_ASSERT(cmArr[i].GetCopy( ) == false);
-        UTL_TEST_ASSERT(cmArr[i].GetMove( ) == true);
+        UTL_TEST_ASSERT((*pMemHelperArr)[i].GetCopy( ) == false);
+        UTL_TEST_ASSERT((*pMemHelperArr)[i].GetMove( ) == true);
     }
+
+    delete pMemHelperArr;
+    delete pMemHelper;
+    pMemHelperArr = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE + RESERVE_SIZE + 1);
+    
+
+    UTL_CLEANUP_ASSERT(pMemHelperArr == nullptr);
+    UTL_CLEANUP_ASSERT(pMemHelper == nullptr);
 
     UTL_TEST_SUCCESS( );
 }

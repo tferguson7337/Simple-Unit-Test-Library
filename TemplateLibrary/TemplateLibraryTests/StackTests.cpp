@@ -2,7 +2,7 @@
 
 #include "Stack.hpp"
 
-#include "CopyMoveHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 std::list<std::function<UnitTestResult(void)>> TTLTests::Stack::BuildTestList( )
 {
@@ -303,43 +303,53 @@ UnitTestResult TTLTests::Stack::Clear( )
 
 UnitTestResult TTLTests::Stack::CopyPush( )
 {
-    const TTL::Node<CopyMoveHelper>* ptr = nullptr;
+    const TTL::Node<MemoryManagementHelper>* ptr = nullptr;
 
-    TTL::Stack<CopyMoveHelper> stack;
-    CopyMoveHelper copyHelper;
+    TTL::Stack<MemoryManagementHelper>* pStack = nullptr;
 
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    
     try
     {
-        stack.Push(copyHelper);
+        MemoryManagementHelper copyHelper;
+        pStack = new TTL::Stack<MemoryManagementHelper>;
+        pStack->Push(copyHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(stack.Empty( ) == false);
-    UTL_TEST_ASSERT(stack.Size( ) == 1);
-    UTL_TEST_ASSERT(stack.TopPtr( ) != nullptr);
-    UTL_TEST_ASSERT(stack.Top( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(stack.Top( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pStack->Empty( ) == false);
+    UTL_TEST_ASSERT(pStack->Size( ) == 1);
+    UTL_TEST_ASSERT(pStack->TopPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pStack->Top( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pStack->Top( ).GetMove( ) == false);
 
-    ptr = stack.TopPtr( );
+    ptr = pStack->TopPtr( );
 
     try
     {
-        stack.Push(copyHelper);
+        MemoryManagementHelper copyHelper;
+        pStack->Push(copyHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(stack.Empty( ) == false);
-    UTL_TEST_ASSERT(stack.Size( ) == 2);
-    UTL_TEST_ASSERT(stack.TopPtr( ) != nullptr);
-    UTL_TEST_ASSERT(stack.Top( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(stack.Top( ).GetMove( ) == false);
-    UTL_TEST_ASSERT(ptr == stack.TopPtr( )->GetNext( ));
+    UTL_TEST_ASSERT(pStack->Empty( ) == false);
+    UTL_TEST_ASSERT(pStack->Size( ) == 2);
+    UTL_TEST_ASSERT(pStack->TopPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pStack->Top( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pStack->Top( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(ptr == pStack->TopPtr( )->GetNext( ));
+
+    delete pStack;
+    pStack = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 4);
+    UTL_CLEANUP_ASSERT(pStack == nullptr);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -348,43 +358,51 @@ UnitTestResult TTLTests::Stack::CopyPush( )
 
 UnitTestResult TTLTests::Stack::MovePush( )
 {
-    const TTL::Node<CopyMoveHelper>* ptr = nullptr;
+    const TTL::Node<MemoryManagementHelper>* ptr = nullptr;
 
-    TTL::Stack<CopyMoveHelper> stack;
-    CopyMoveHelper moveHelper;
+    TTL::Stack<MemoryManagementHelper>* pStack = nullptr;
+
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        stack.Push(std::move(moveHelper));
+        pStack = new TTL::Stack<MemoryManagementHelper>;
+        pStack->Push(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(stack.Empty( ) == false);
-    UTL_TEST_ASSERT(stack.Size( ) == 1);
-    UTL_TEST_ASSERT(stack.TopPtr( ) != nullptr);
-    UTL_TEST_ASSERT(stack.Top( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(stack.Top( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pStack->Empty( ) == false);
+    UTL_TEST_ASSERT(pStack->Size( ) == 1);
+    UTL_TEST_ASSERT(pStack->TopPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pStack->Top( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pStack->Top( ).GetMove( ) == true);
 
-    ptr = stack.TopPtr( );
+    ptr = pStack->TopPtr( );
 
     try
     {
-        stack.Push(std::move(moveHelper));
+        pStack->Push(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(stack.Empty( ) == false);
-    UTL_TEST_ASSERT(stack.Size( ) == 2);
-    UTL_TEST_ASSERT(stack.TopPtr( ) != nullptr);
-    UTL_TEST_ASSERT(stack.Top( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(stack.Top( ).GetMove( ) == true);
-    UTL_TEST_ASSERT(ptr == stack.TopPtr( )->GetNext( ));
+    UTL_TEST_ASSERT(pStack->Empty( ) == false);
+    UTL_TEST_ASSERT(pStack->Size( ) == 2);
+    UTL_TEST_ASSERT(pStack->TopPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pStack->Top( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pStack->Top( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(ptr == pStack->TopPtr( )->GetNext( ));
+
+    delete pStack;
+    pStack = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 4);
+    UTL_CLEANUP_ASSERT(pStack == nullptr);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );

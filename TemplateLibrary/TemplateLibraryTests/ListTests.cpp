@@ -2,7 +2,7 @@
 
 #include "List.hpp"
 
-#include "CopyMoveHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 std::list<std::function<UnitTestResult(void)>> TTLTests::List::BuildTestList( )
 {
@@ -57,68 +57,73 @@ UnitTestResult TTLTests::List::DefaultConstructor( )
 
 UnitTestResult TTLTests::List::CopyConstructor( )
 {
-    TTL::List<CopyMoveHelper> list;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pList == nullptr);
 
     try
     {
-        list.Append(CopyMoveHelper( ));
+        pList = new TTL::List<MemoryManagementHelper>( );
+        pList->Append(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    // Reset appended CopyMoveHelper() to test later.
-    list.Front( ).Reset( );
+    // Reset appended MemoryManagementHelper() to test later.
+    pList->Front( ).Reset( );
 
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(list.Size( ) == 1);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pList->Size( ) == 1);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
-    TTL::List<CopyMoveHelper>* pCopyList = nullptr;
+    TTL::List<MemoryManagementHelper>* pCopyList = nullptr;
 
     try
     {
-        pCopyList = new TTL::List<CopyMoveHelper>(list);
+        pCopyList = new TTL::List<MemoryManagementHelper>(*pList);
     }
     catch ( const std::exception& e )
     {
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    // Ensure list wasn't modified after copy.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
+    // Ensure pList wasn't modified after copy.
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
 
-    // Ensure list was properly copied.
+    // Ensure pList was properly copied.
     UTL_TEST_ASSERT(pCopyList != nullptr);
     UTL_TEST_ASSERT(pCopyList->GetHead( ) != nullptr);
     UTL_TEST_ASSERT(pCopyList->GetTail( ) != nullptr);
     UTL_TEST_ASSERT(pCopyList->GetHead( ) == pCopyList->GetTail( ));
-    UTL_TEST_ASSERT(pCopyList->GetHead( ) != list.GetHead( ));
+    UTL_TEST_ASSERT(pCopyList->GetHead( ) != pList->GetHead( ));
     UTL_TEST_ASSERT(pCopyList->GetHead( )->GetData( ).GetCopy( ) == true);
     UTL_TEST_ASSERT(pCopyList->GetHead( )->GetData( ).GetMove( ) == false);
     UTL_TEST_ASSERT(pCopyList->Size( ) == 1);
-    UTL_TEST_ASSERT(pCopyList->Size( ) == list.Size( ));
+    UTL_TEST_ASSERT(pCopyList->Size( ) == pList->Size( ));
     UTL_TEST_ASSERT(pCopyList->Empty( ) == false);
 
+    delete pList;
     delete pCopyList;
+    pList = nullptr;
     pCopyList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 3);
+
+    UTL_CLEANUP_ASSERT(pList == nullptr);
     UTL_CLEANUP_ASSERT(pCopyList == nullptr);
 
     /// Test Pass!
@@ -127,56 +132,75 @@ UnitTestResult TTLTests::List::CopyConstructor( )
 
 UnitTestResult TTLTests::List::MoveConstructor( )
 {
-    TTL::List<CopyMoveHelper> list;
-    const TTL::DNode<CopyMoveHelper>* pListHead = nullptr;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    const TTL::DNode<MemoryManagementHelper>* pListHead = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pList == nullptr);
+    UTL_SETUP_ASSERT(pListHead == nullptr);
 
     try
     {
-        list.Append(CopyMoveHelper( ));
+        pList = new TTL::List<MemoryManagementHelper>( );
+        pList->Append(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    // Reset appended CopyMoveHelper() to test later.
-    list.Front( ).Reset( );
+    // Reset appended MemoryManagementHelper() to test later.
+    pList->Front( ).Reset( );
 
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(list.Size( ) == 1);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pList->Size( ) == 1);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
-    pListHead = list.GetHead( );
+    pListHead = pList->GetHead( );
 
-    TTL::List<CopyMoveHelper> moveList(std::move(list));
+    TTL::List<MemoryManagementHelper>* pMoveList = nullptr;
+
+    try
+    {
+        pMoveList = new TTL::List<MemoryManagementHelper>(std::move(*pList));
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
 
     // Ensure list was cleared out after move.
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(pList->Size( ) == 0);
+    UTL_TEST_ASSERT(pList->Empty( ) == true);
 
     // Ensure list was moved.
-    UTL_TEST_ASSERT(moveList.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(moveList.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(moveList.GetHead( ) == moveList.GetTail( ));
-    UTL_TEST_ASSERT(moveList.Size( ) == 1);
-    UTL_TEST_ASSERT(moveList.Empty( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pMoveList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) == pMoveList->GetTail( ));
+    UTL_TEST_ASSERT(pMoveList->Size( ) == 1);
+    UTL_TEST_ASSERT(pMoveList->Empty( ) == false);
 
     // Ensure list move is efficient (just moving pointers).
-    UTL_TEST_ASSERT(moveList.GetHead( ) == pListHead);
-    UTL_TEST_ASSERT(moveList.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(moveList.GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) == pListHead);
+    UTL_TEST_ASSERT(pMoveList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( )->GetData( ).GetMove( ) == false);
+
+    delete pList;
+    delete pMoveList;
+    pList = nullptr;
+    pMoveList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+
+    UTL_CLEANUP_ASSERT(pList == nullptr);
+    UTL_CLEANUP_ASSERT(pMoveList == nullptr);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -187,42 +211,39 @@ UnitTestResult TTLTests::List::MoveConstructor( )
 
 UnitTestResult TTLTests::List::CopyAssignment( )
 {
-    TTL::List<CopyMoveHelper> list;
-    TTL::List<CopyMoveHelper> copyList;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    TTL::List<MemoryManagementHelper>* pCopyList = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-    UTL_SETUP_ASSERT(copyList.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(copyList.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(copyList.Size( ) == 0);
-    UTL_SETUP_ASSERT(copyList.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Append(CopyMoveHelper( ));
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Append(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    // Reset appended CopyMoveHelper() to test later.
-    list.Front( ).Reset( );
+    UTL_SETUP_ASSERT(pList);
 
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(list.Size( ) == 1);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    // Reset appended MemoryManagementHelper() to test later.
+    pList->Front( ).Reset( );
+
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pList->Size( ) == 1);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
     try
     {
-        copyList = list;
+        pCopyList = new TTL::List<MemoryManagementHelper>;
+        *pCopyList = *pList;
     }
     catch ( const std::exception& e )
     {
@@ -230,24 +251,33 @@ UnitTestResult TTLTests::List::CopyAssignment( )
     }
 
     // Ensure list wasn't modified after copy.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
 
     // Ensure list was properly copied.
-    UTL_TEST_ASSERT(copyList.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(copyList.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(copyList.GetHead( ) == copyList.GetTail( ));
-    UTL_TEST_ASSERT(copyList.GetHead( ) != list.GetHead( ));
-    UTL_TEST_ASSERT(copyList.GetHead( )->GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(copyList.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_TEST_ASSERT(copyList.Size( ) == 1);
-    UTL_TEST_ASSERT(copyList.Size( ) == list.Size( ));
-    UTL_TEST_ASSERT(copyList.Empty( ) == false);
+    UTL_TEST_ASSERT(pCopyList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pCopyList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pCopyList->GetHead( ) == pCopyList->GetTail( ));
+    UTL_TEST_ASSERT(pCopyList->GetHead( ) != pList->GetHead( ));
+    UTL_TEST_ASSERT(pCopyList->GetHead( )->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pCopyList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pCopyList->Size( ) == 1);
+    UTL_TEST_ASSERT(pCopyList->Size( ) == pList->Size( ));
+    UTL_TEST_ASSERT(pCopyList->Empty( ) == false);
+
+    delete pList;
+    delete pCopyList;
+    pList = nullptr;
+    pCopyList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 3);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pCopyList);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -255,61 +285,76 @@ UnitTestResult TTLTests::List::CopyAssignment( )
 
 UnitTestResult TTLTests::List::MoveAssignment( )
 {
-    TTL::List<CopyMoveHelper> list;
-    TTL::List<CopyMoveHelper> moveList;
-    const TTL::DNode<CopyMoveHelper>* pListHead = nullptr;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    TTL::List<MemoryManagementHelper>* pMoveList = nullptr;
+    const TTL::DNode<MemoryManagementHelper>* pListHead = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-    UTL_SETUP_ASSERT(moveList.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(moveList.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(moveList.Size( ) == 0);
-    UTL_SETUP_ASSERT(moveList.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Append(CopyMoveHelper( ));
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Append(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    // Reset appended CopyMoveHelper() to test later.
-    list.Front( ).Reset( );
+    UTL_SETUP_ASSERT(pList);
 
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(list.Size( ) == 1);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    // Reset appended MemoryManagementHelper() to test later.
+    pList->Front( ).Reset( );
 
-    pListHead = list.GetHead( );
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pList->Size( ) == 1);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
-    moveList = std::move(list);
+    pListHead = pList->GetHead( );
 
-    // Ensure list was cleared out after move.
-    UTL_TEST_ASSERT(list.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == 0);
-    UTL_TEST_ASSERT(list.Empty( ) == true);
+    try
+    {
+        pMoveList = new TTL::List<MemoryManagementHelper>;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(pMoveList);
+    *pMoveList = std::move(*pList);
+
+    // Ensure pList->was cleared out after move.
+    UTL_TEST_ASSERT(pList->GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(pList->Size( ) == 0);
+    UTL_TEST_ASSERT(pList->Empty( ) == true);
 
     // Ensure list was moved.
-    UTL_TEST_ASSERT(moveList.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(moveList.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(moveList.GetHead( ) == moveList.GetTail( ));
-    UTL_TEST_ASSERT(moveList.Size( ) == 1);
-    UTL_TEST_ASSERT(moveList.Empty( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pMoveList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) == pMoveList->GetTail( ));
+    UTL_TEST_ASSERT(pMoveList->Size( ) == 1);
+    UTL_TEST_ASSERT(pMoveList->Empty( ) == false);
 
     // Ensure list move is efficient (just moving pointers).
-    UTL_TEST_ASSERT(moveList.GetHead( ) == pListHead);
-    UTL_TEST_ASSERT(moveList.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(moveList.GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) == pListHead);
+    UTL_TEST_ASSERT(pMoveList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( )->GetData( ).GetMove( ) == false);
+
+    delete pList;
+    delete pMoveList;
+    pList = nullptr;
+    pMoveList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pMoveList);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -320,18 +365,16 @@ UnitTestResult TTLTests::List::MoveAssignment( )
 
 UnitTestResult TTLTests::List::CopyAppendAssignmentData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper copyHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list += copyHelper;
+        MemoryManagementHelper copyHelper;
+        pList = new TTL::List<MemoryManagementHelper>;
+        *pList += copyHelper;
     }
     catch ( const std::exception& e )
     {
@@ -339,13 +382,19 @@ UnitTestResult TTLTests::List::CopyAppendAssignmentData( )
     }
 
     // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(!pList);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -393,18 +442,15 @@ UnitTestResult TTLTests::List::CopyAppendAssignmentData( )
 
 UnitTestResult TTLTests::List::MoveAppendAssignmentData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper moveHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list += std::move(moveHelper);
+        pList = new TTL::List<MemoryManagementHelper>;
+        *pList += std::move(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
@@ -412,13 +458,19 @@ UnitTestResult TTLTests::List::MoveAppendAssignmentData( )
     }
 
     // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == true);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(pList == nullptr);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -1304,18 +1356,16 @@ UnitTestResult TTLTests::List::Remove( )
 
 UnitTestResult TTLTests::List::CopyAppendData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper copyHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Append(copyHelper);
+        MemoryManagementHelper copyHelper;
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Append(copyHelper);
     }
     catch ( const std::exception& e )
     {
@@ -1323,13 +1373,19 @@ UnitTestResult TTLTests::List::CopyAppendData( )
     }
 
     // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(pList == nullptr);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -1377,18 +1433,15 @@ UnitTestResult TTLTests::List::CopyAppendData( )
 
 UnitTestResult TTLTests::List::MoveAppendData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper moveHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Append(std::move(moveHelper));
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Append(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
@@ -1396,13 +1449,19 @@ UnitTestResult TTLTests::List::MoveAppendData( )
     }
 
     // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == true);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(pList == nullptr);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -1629,18 +1688,16 @@ UnitTestResult TTLTests::List::MoveAppendList( )
 
 UnitTestResult TTLTests::List::CopyPrependData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper copyHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Prepend(copyHelper);
+        MemoryManagementHelper copyHelper;
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Prepend(copyHelper);
     }
     catch ( const std::exception& e )
     {
@@ -1648,13 +1705,19 @@ UnitTestResult TTLTests::List::CopyPrependData( )
     }
 
     // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == false);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(pList == nullptr);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -1702,32 +1765,35 @@ UnitTestResult TTLTests::List::CopyPrependData( )
 
 UnitTestResult TTLTests::List::MovePrependData( )
 {
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper moveHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
 
     // Confirm Initial Test Conditions - Part 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        list.Prepend(std::move(moveHelper));
+        pList = new TTL::List<MemoryManagementHelper>;
+        pList->Prepend(MemoryManagementHelper( ));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    // Part 1 - Ensure Copy is Performed.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetHead( ) == list.GetTail( ));
-    UTL_TEST_ASSERT(list.Size( ) == 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(list.GetHead( )->GetData( ).GetMove( ) == true);
+    // Part 1 - Ensure Move is Performed.
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetHead( ) == pList->GetTail( ));
+    UTL_TEST_ASSERT(pList->Size( ) == 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( )->GetData( ).GetMove( ) == true);
+
+    delete pList;
+    pList = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    UTL_CLEANUP_ASSERT(pList == nullptr);
 
     const size_t LIST_SIZE = 64;
     TTL::List<size_t> numList;
@@ -1959,19 +2025,28 @@ UnitTestResult TTLTests::List::CopyInsertData( )
 
     bool badInsertThrew = false;
 
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper copyHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    try
+    {
+        pList = new TTL::List<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
 
     // Confirm Initial Test Conditions - Pt 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pList);
+    UTL_SETUP_ASSERT(pMemHelper);
 
     // Test out_of_range throw.
     try
     {
-        list.Insert(1, copyHelper);
+        pList->Insert(1, *pMemHelper);
     }
     catch ( const std::out_of_range& )
     {
@@ -1985,7 +2060,7 @@ UnitTestResult TTLTests::List::CopyInsertData( )
     {
         try
         {
-            list.Insert(list.Size( ), copyHelper);
+            pList->Insert(pList->Size( ), *pMemHelper);
         }
         catch ( const std::exception& e )
         {
@@ -1994,16 +2069,16 @@ UnitTestResult TTLTests::List::CopyInsertData( )
     }
 
     // Ensure the list was populated.
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
     // Test out_of_range throw.
     badInsertThrew = false;
     try
     {
-        list.Insert(list.Size( ) + 1, copyHelper);
+        pList->Insert(pList->Size( ) + 1, *pMemHelper);
     }
     catch ( const std::out_of_range& )
     {
@@ -2014,7 +2089,7 @@ UnitTestResult TTLTests::List::CopyInsertData( )
 
     {
         // Linear scan through list, checking Copy was performed for each element.
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
         size_t i = 0;
         while ( ptr )
         {
@@ -2026,6 +2101,15 @@ UnitTestResult TTLTests::List::CopyInsertData( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE);
     }
+
+    delete pList;
+    delete pMemHelper;
+    pList = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == LIST_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     TTL::List<size_t> numList;
 
@@ -2114,19 +2198,28 @@ UnitTestResult TTLTests::List::MoveInsertData( )
 
     bool badInsertThrew = false;
 
-    TTL::List<CopyMoveHelper> list;
-    CopyMoveHelper moveHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    try
+    {
+        pList = new TTL::List<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
 
     // Confirm Initial Test Conditions - Pt 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(pList);
+    UTL_SETUP_ASSERT(pMemHelper);
 
     // Test out_of_range throw.
     try
     {
-        list.Insert(1, std::move(moveHelper));
+        pList->Insert(1, std::move(*pMemHelper));
     }
     catch ( const std::out_of_range& )
     {
@@ -2138,7 +2231,7 @@ UnitTestResult TTLTests::List::MoveInsertData( )
     {
         try
         {
-            list.Insert(list.Size( ), std::move(moveHelper));
+            pList->Insert(pList->Size( ), std::move(*pMemHelper));
         }
         catch ( const std::exception& e )
         {
@@ -2147,16 +2240,16 @@ UnitTestResult TTLTests::List::MoveInsertData( )
     }
 
     // Ensure the list was populated.
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
 
     // Test out_of_range throw.
     badInsertThrew = false;
     try
     {
-        list.Insert(list.Size( ) + 1, std::move(moveHelper));
+        pList->Insert(pList->Size( ) + 1, std::move(*pMemHelper));
     }
     catch ( const std::out_of_range& )
     {
@@ -2167,7 +2260,7 @@ UnitTestResult TTLTests::List::MoveInsertData( )
 
     {
         // Linear scan through list, checking Move was performed for each element.
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
         size_t i = 0;
         while ( ptr )
         {
@@ -2179,6 +2272,15 @@ UnitTestResult TTLTests::List::MoveInsertData( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE);
     }
+
+    delete pList;
+    delete pMemHelper;
+    pList = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == LIST_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     TTL::List<size_t> numList;
 
@@ -2266,24 +2368,19 @@ UnitTestResult TTLTests::List::CopyInsertList( )
 
     bool badInsertThrew = false;
 
-    TTL::List<CopyMoveHelper> list;
-    TTL::List<CopyMoveHelper> copyList;
-    CopyMoveHelper copyHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    TTL::List<MemoryManagementHelper>* pCopyList = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
 
     // Confirm Initial Test Conditions - Pt 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-    UTL_SETUP_ASSERT(copyList.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(copyList.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(copyList.Size( ) == 0);
-    UTL_SETUP_ASSERT(copyList.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     // Test out_of_range throw.
     try
     {
-        list.Insert(1, copyList);
+        pList = new TTL::List<MemoryManagementHelper>;
+        pCopyList = new TTL::List<MemoryManagementHelper>;
+        pList->Insert(1, *pCopyList);
     }
     catch ( const std::out_of_range& )
     {
@@ -2295,10 +2392,11 @@ UnitTestResult TTLTests::List::CopyInsertList( )
     // Populate lists.
     try
     {
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < LIST_SIZE; i++ )
         {
-            list.Insert(list.Size( ), copyHelper);
-            copyList.Insert(copyList.Size( ), copyHelper);
+            pList->Insert(pList->Size( ), *pMemHelper);
+            pCopyList->Insert(pCopyList->Size( ), *pMemHelper);
         }
     }
     catch ( const std::exception& e )
@@ -2307,20 +2405,20 @@ UnitTestResult TTLTests::List::CopyInsertList( )
     }
 
     // Ensure lists are populated.
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-    UTL_SETUP_ASSERT(copyList.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(copyList.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(copyList.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(copyList.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
+    UTL_SETUP_ASSERT(pCopyList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pCopyList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pCopyList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pCopyList->Empty( ) == false);
 
     // Test out_of_range throw.
     badInsertThrew = false;
     try
     {
-        list.Insert(list.Size( ) + 1, copyList);
+        pList->Insert(pList->Size( ) + 1, *pCopyList);
     }
     catch ( const std::out_of_range& )
     {
@@ -2331,7 +2429,7 @@ UnitTestResult TTLTests::List::CopyInsertList( )
 
     // Ensure list insertions used copy.
     {
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
 
         size_t i = 0;
         while ( ptr )
@@ -2344,7 +2442,7 @@ UnitTestResult TTLTests::List::CopyInsertList( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE);
 
-        ptr = copyList.GetHead( );
+        ptr = pCopyList->GetHead( );
         i = 0;
         while ( ptr )
         {
@@ -2360,7 +2458,7 @@ UnitTestResult TTLTests::List::CopyInsertList( )
     // Insert copyList into the middle of list.
     try
     {
-        list.Insert(LIST_SIZE >> 1, copyList);
+        pList->Insert(LIST_SIZE >> 1, *pCopyList);
     }
     catch ( const std::exception& e )
     {
@@ -2368,18 +2466,18 @@ UnitTestResult TTLTests::List::CopyInsertList( )
     }
 
     // Ensure insertion modified list properly, but did not modify copyList.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE << 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(copyList.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(copyList.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(copyList.Size( ) == LIST_SIZE);
-    UTL_TEST_ASSERT(copyList.Empty( ) == false);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->Size( ) == LIST_SIZE << 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pCopyList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pCopyList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pCopyList->Size( ) == LIST_SIZE);
+    UTL_TEST_ASSERT(pCopyList->Empty( ) == false);
 
     // Ensure all values are still marked as copied.
     {
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
 
         size_t i = 0;
         while ( ptr )
@@ -2392,7 +2490,7 @@ UnitTestResult TTLTests::List::CopyInsertList( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE << 1);
 
-        ptr = copyList.GetHead( );
+        ptr = pCopyList->GetHead( );
         i = 0;
         while ( ptr )
         {
@@ -2404,6 +2502,18 @@ UnitTestResult TTLTests::List::CopyInsertList( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE);
     }
+
+    delete pList;
+    delete pCopyList;
+    delete pMemHelper;
+    pList = nullptr;
+    pCopyList = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 3 * LIST_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pCopyList);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     TTL::List<size_t> numList;
     TTL::List<size_t> numCopyList;
@@ -2517,24 +2627,19 @@ UnitTestResult TTLTests::List::MoveInsertList( )
 
     bool badInsertThrew = false;
 
-    TTL::List<CopyMoveHelper> list;
-    TTL::List<CopyMoveHelper> moveList;
-    CopyMoveHelper moveHelper;
+    TTL::List<MemoryManagementHelper>* pList = nullptr;
+    TTL::List<MemoryManagementHelper>* pMoveList = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
 
     // Confirm Initial Test Conditions - Pt 1
-    UTL_SETUP_ASSERT(list.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == 0);
-    UTL_SETUP_ASSERT(list.Empty( ) == true);
-    UTL_SETUP_ASSERT(moveList.GetHead( ) == nullptr);
-    UTL_SETUP_ASSERT(moveList.GetTail( ) == nullptr);
-    UTL_SETUP_ASSERT(moveList.Size( ) == 0);
-    UTL_SETUP_ASSERT(moveList.Empty( ) == true);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     // Test out_of_range throw.
     try
     {
-        list.Insert(1, std::move(moveList));
+        pList = new TTL::List<MemoryManagementHelper>;
+        pMoveList = new TTL::List<MemoryManagementHelper>;
+        pList->Insert(1, std::move(*pMoveList));
     }
     catch ( const std::out_of_range& )
     {
@@ -2546,10 +2651,11 @@ UnitTestResult TTLTests::List::MoveInsertList( )
     // Populate lists.
     try
     {
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < LIST_SIZE; i++ )
         {
-            list.Insert(list.Size( ), CopyMoveHelper( ));
-            moveList.Insert(moveList.Size( ), CopyMoveHelper( ));
+            pList->Insert(pList->Size( ), std::move(*pMemHelper));
+            pMoveList->Insert(pMoveList->Size( ), std::move(*pMemHelper));
         }
     }
     catch ( const std::exception& e )
@@ -2558,20 +2664,20 @@ UnitTestResult TTLTests::List::MoveInsertList( )
     }
 
     // Ensure lists are populated.
-    UTL_SETUP_ASSERT(list.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(list.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(list.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(list.Empty( ) == false);
-    UTL_SETUP_ASSERT(moveList.GetHead( ) != nullptr);
-    UTL_SETUP_ASSERT(moveList.GetTail( ) != nullptr);
-    UTL_SETUP_ASSERT(moveList.Size( ) == LIST_SIZE);
-    UTL_SETUP_ASSERT(moveList.Empty( ) == false);
+    UTL_SETUP_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pList->Empty( ) == false);
+    UTL_SETUP_ASSERT(pMoveList->GetHead( ) != nullptr);
+    UTL_SETUP_ASSERT(pMoveList->GetTail( ) != nullptr);
+    UTL_SETUP_ASSERT(pMoveList->Size( ) == LIST_SIZE);
+    UTL_SETUP_ASSERT(pMoveList->Empty( ) == false);
 
     // Test out_of_range throw.
     badInsertThrew = false;
     try
     {
-        list.Insert(list.Size( ) + 1, std::move(moveList));
+        pList->Insert(pList->Size( ) + 1, std::move(*pMoveList));
     }
     catch ( const std::out_of_range& )
     {
@@ -2582,7 +2688,7 @@ UnitTestResult TTLTests::List::MoveInsertList( )
 
     // Ensure list insertions used move.
     {
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
 
         size_t i = 0;
         while ( ptr )
@@ -2595,7 +2701,7 @@ UnitTestResult TTLTests::List::MoveInsertList( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE);
 
-        ptr = moveList.GetHead( );
+        ptr = pMoveList->GetHead( );
         i = 0;
         while ( ptr )
         {
@@ -2611,7 +2717,7 @@ UnitTestResult TTLTests::List::MoveInsertList( )
     // Insert copyList into the middle of list.
     try
     {
-        list.Insert(LIST_SIZE >> 1, std::move(moveList));
+        pList->Insert(LIST_SIZE >> 1, std::move(*pMoveList));
     }
     catch ( const std::exception& e )
     {
@@ -2619,18 +2725,18 @@ UnitTestResult TTLTests::List::MoveInsertList( )
     }
 
     // Ensure insertion modified list properly and emptied moveList.
-    UTL_TEST_ASSERT(list.GetHead( ) != nullptr);
-    UTL_TEST_ASSERT(list.GetTail( ) != nullptr);
-    UTL_TEST_ASSERT(list.Size( ) == LIST_SIZE << 1);
-    UTL_TEST_ASSERT(list.Empty( ) == false);
-    UTL_TEST_ASSERT(moveList.GetHead( ) == nullptr);
-    UTL_TEST_ASSERT(moveList.GetTail( ) == nullptr);
-    UTL_TEST_ASSERT(moveList.Size( ) == 0);
-    UTL_TEST_ASSERT(moveList.Empty( ) == true);
+    UTL_TEST_ASSERT(pList->GetHead( ) != nullptr);
+    UTL_TEST_ASSERT(pList->GetTail( ) != nullptr);
+    UTL_TEST_ASSERT(pList->Size( ) == LIST_SIZE << 1);
+    UTL_TEST_ASSERT(pList->Empty( ) == false);
+    UTL_TEST_ASSERT(pMoveList->GetHead( ) == nullptr);
+    UTL_TEST_ASSERT(pMoveList->GetTail( ) == nullptr);
+    UTL_TEST_ASSERT(pMoveList->Size( ) == 0);
+    UTL_TEST_ASSERT(pMoveList->Empty( ) == true);
 
     // Ensure all values are still marked as moved.
     {
-        const TTL::DNode<CopyMoveHelper>* ptr = list.GetHead( );
+        const TTL::DNode<MemoryManagementHelper>* ptr = pList->GetHead( );
 
         size_t i = 0;
         while ( ptr )
@@ -2643,6 +2749,18 @@ UnitTestResult TTLTests::List::MoveInsertList( )
 
         UTL_TEST_ASSERT(i == LIST_SIZE << 1);
     }
+
+    delete pList;
+    delete pMoveList;
+    delete pMemHelper;
+    pList = nullptr;
+    pMoveList = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == (LIST_SIZE << 1) + 1);
+    UTL_CLEANUP_ASSERT(!pList);
+    UTL_CLEANUP_ASSERT(!pMoveList);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     TTL::List<size_t> numList;
     TTL::List<size_t> numMoveList;

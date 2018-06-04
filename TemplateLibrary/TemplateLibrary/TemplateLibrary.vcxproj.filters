@@ -42,9 +42,6 @@
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="..\TemplateLibraryTests\CopyMoveHelper.hpp">
-      <Filter>Unit Tests\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Array.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
@@ -105,14 +102,14 @@
     <ClInclude Include="CountedPointer.hpp">
       <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="RunTests.hpp">
-      <Filter>Unit Tests</Filter>
-    </ClInclude>
     <ClInclude Include="..\TemplateLibraryTests\CountedPointerTests.h">
       <Filter>Unit Tests\hdr</Filter>
     </ClInclude>
-    <ClInclude Include="..\TemplateLibraryTests\DeleteHelper.hpp">
+    <ClInclude Include="..\TemplateLibraryTests\MemoryManagementHelper.hpp">
       <Filter>Unit Tests\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TemplateLibraryTests\RunTests.hpp">
+      <Filter>Unit Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,7 +141,7 @@
     <ClCompile Include="..\TemplateLibraryTests\CountedPointerTests.cpp">
       <Filter>Unit Tests\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\TemplateLibraryTests\DeleteHelper.cpp">
+    <ClCompile Include="..\TemplateLibraryTests\MemoryManagementHelper.cpp">
       <Filter>Unit Tests\Utilities</Filter>
     </ClCompile>
   </ItemGroup>

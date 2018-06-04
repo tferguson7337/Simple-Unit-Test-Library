@@ -2,7 +2,7 @@
 
 #include "CountedPointerTests.h"
 
-#include "DeleteHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 std::list<std::function<UnitTestResult(void)>> TTLTests::CountedPointer::BuildTestList( )
 {
@@ -1805,14 +1805,14 @@ UnitTestResult TTLTests::CountedPointer::AssignmentOperatorSelf_Array( )
 UnitTestResult TTLTests::CountedPointer::Release_Single( )
 {
     bool threw = false;
-    TTL::CountedPointer<DeleteHelper> ptr;
-    TTL::CountedPointer<DeleteHelper> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper> ptr;
+    TTL::CountedPointer<MemoryManagementHelper> copyPtr;
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        ptr.Set(new DeleteHelper);
+        ptr.Set(new MemoryManagementHelper);
     }
     catch ( const std::exception& e )
     {
@@ -1820,14 +1820,14 @@ UnitTestResult TTLTests::CountedPointer::Release_Single( )
     }
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
     copyPtr.Set(ptr);
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
 
@@ -1847,7 +1847,7 @@ UnitTestResult TTLTests::CountedPointer::Release_Single( )
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(ptr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     ptr.Release( );
 
@@ -1864,11 +1864,7 @@ UnitTestResult TTLTests::CountedPointer::Release_Single( )
 
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(ptr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
-
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 1);
 
     UTL_TEST_SUCCESS( );
 }
@@ -1877,14 +1873,14 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
 {
     const size_t ARR_SIZE = 10;
     bool threw = false;
-    TTL::CountedPointer<DeleteHelper[ ]> arrPtr;
-    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> arrPtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> copyPtr;
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        arrPtr.Set(new DeleteHelper[ARR_SIZE]);
+        arrPtr.Set(new MemoryManagementHelper[ARR_SIZE]);
     }
     catch ( const std::exception& e )
     {
@@ -1892,14 +1888,14 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
     }
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(arrPtr.Count( ) == 1);
 
     copyPtr.Set(arrPtr);
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == arrPtr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(arrPtr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == arrPtr.Count( ));
 
@@ -1919,7 +1915,7 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(arrPtr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     arrPtr.Release( );
 
@@ -1936,11 +1932,7 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
 
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(arrPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
-
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE);
 
     UTL_TEST_SUCCESS( );
 }
@@ -1949,14 +1941,14 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
 UnitTestResult TTLTests::CountedPointer::SetNull_Single( )
 {
     bool threw = false;
-    TTL::CountedPointer<DeleteHelper> ptr;
-    TTL::CountedPointer<DeleteHelper> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper> ptr;
+    TTL::CountedPointer<MemoryManagementHelper> copyPtr;
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        ptr.Set(new DeleteHelper);
+        ptr.Set(new MemoryManagementHelper);
     }
     catch ( const std::exception& e )
     {
@@ -1964,14 +1956,14 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Single( )
     }
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
     copyPtr.Set(ptr);
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
 
@@ -1991,7 +1983,7 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Single( )
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(ptr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     ptr.Set(nullptr);
 
@@ -2008,11 +2000,7 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Single( )
 
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(ptr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
-
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 1);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2021,14 +2009,14 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
 {
     const size_t ARR_SIZE = 10;
     bool threw = false;
-    TTL::CountedPointer<DeleteHelper[ ]> arrPtr;
-    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> arrPtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> copyPtr;
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        arrPtr.Set(new DeleteHelper[ARR_SIZE]);
+        arrPtr.Set(new MemoryManagementHelper[ARR_SIZE]);
     }
     catch ( const std::exception& e )
     {
@@ -2036,14 +2024,14 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
     }
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(arrPtr.Count( ) == 1);
 
     copyPtr.Set(arrPtr);
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == arrPtr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(arrPtr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == arrPtr.Count( ));
 
@@ -2063,7 +2051,7 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(arrPtr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     arrPtr.Set(nullptr);
 
@@ -2080,11 +2068,7 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
 
     UTL_TEST_ASSERT(threw == true);
     UTL_TEST_ASSERT(arrPtr.Count( ) == 0);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
-
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2092,14 +2076,14 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
 
 UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
 {
-    TTL::CountedPointer<DeleteHelper> ptr;
-    TTL::CountedPointer<DeleteHelper> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper> ptr;
+    TTL::CountedPointer<MemoryManagementHelper> copyPtr;
 
-    DeleteHelper* pRaw = nullptr;
+    MemoryManagementHelper* pRaw = nullptr;
 
     try
     {
-        pRaw = new DeleteHelper;
+        pRaw = new MemoryManagementHelper;
     }
     catch ( const std::exception& e )
     {
@@ -2107,11 +2091,11 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
     }
 
     UTL_SETUP_ASSERT(pRaw != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        ptr.Set(new DeleteHelper);
+        ptr.Set(new MemoryManagementHelper);
     }
     catch ( const std::exception& e )
     {
@@ -2119,7 +2103,7 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
     }
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
     try
@@ -2133,7 +2117,7 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
 
@@ -2152,13 +2136,12 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
 
     UTL_TEST_ASSERT(ptr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 1);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     ptr.Release( );
     copyPtr.Release( );
 
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2166,14 +2149,14 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Single( )
 UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
 {
     const size_t ARR_SIZE = 10;
-    TTL::CountedPointer<DeleteHelper[]> ptr;
-    TTL::CountedPointer<DeleteHelper[]> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper[]> ptr;
+    TTL::CountedPointer<MemoryManagementHelper[]> copyPtr;
 
-    DeleteHelper* pRaw = nullptr;
+    MemoryManagementHelper* pRaw = nullptr;
 
     try
     {
-        pRaw = new DeleteHelper[ARR_SIZE];
+        pRaw = new MemoryManagementHelper[ARR_SIZE];
     }
     catch ( const std::exception& e )
     {
@@ -2181,11 +2164,11 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
     }
 
     UTL_SETUP_ASSERT(pRaw != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        ptr.Set(new DeleteHelper[ARR_SIZE]);
+        ptr.Set(new MemoryManagementHelper[ARR_SIZE]);
     }
     catch ( const std::exception& e )
     {
@@ -2193,7 +2176,7 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
     }
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
     try
@@ -2207,7 +2190,7 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
 
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(copyPtr.Get( ) == ptr.Get( ));
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Count( ) == 2);
     UTL_SETUP_ASSERT(copyPtr.Count( ) == ptr.Count( ));
 
@@ -2226,15 +2209,12 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
 
     UTL_TEST_ASSERT(ptr.Count( ) == 1);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 1);
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     ptr.Release( );
     copyPtr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE << 1);
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE << 1);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2242,19 +2222,19 @@ UnitTestResult TTLTests::CountedPointer::SetRaw_Array( )
 
 UnitTestResult TTLTests::CountedPointer::SetCopy_Single( )
 {
-    TTL::CountedPointer<DeleteHelper> ptr;
-    TTL::CountedPointer<DeleteHelper> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper> ptr;
+    TTL::CountedPointer<MemoryManagementHelper> copyPtr;
 
     try
     {
-        ptr.Set(new DeleteHelper);
+        ptr.Set(new MemoryManagementHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
@@ -2267,14 +2247,14 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Single( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(copyPtr.Get( ) == ptr.Get( ));
     UTL_TEST_ASSERT(ptr.Count( ) == 2);
     UTL_TEST_ASSERT(ptr.Count( ) == copyPtr.Count( ));
 
     copyPtr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
     UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
@@ -2282,12 +2262,9 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Single( )
 
     ptr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 1);
     UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
     UTL_TEST_ASSERT(ptr.Count( ) == 0);
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2295,19 +2272,19 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Single( )
 UnitTestResult TTLTests::CountedPointer::SetCopy_Array( )
 {
     const size_t ARR_SIZE = 10;
-    TTL::CountedPointer<DeleteHelper[ ]> ptr;
-    TTL::CountedPointer<DeleteHelper[ ]> copyPtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> ptr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> copyPtr;
 
     try
     {
-        ptr.Set(new DeleteHelper[ARR_SIZE]);
+        ptr.Set(new MemoryManagementHelper[ARR_SIZE]);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
@@ -2320,14 +2297,14 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Array( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(copyPtr.Get( ) == ptr.Get( ));
     UTL_TEST_ASSERT(ptr.Count( ) == 2);
     UTL_TEST_ASSERT(ptr.Count( ) == copyPtr.Count( ));
 
     copyPtr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(copyPtr.Get( ) == nullptr);
     UTL_TEST_ASSERT(copyPtr.Count( ) == 0);
     UTL_TEST_ASSERT(ptr.Get( ) != nullptr);
@@ -2335,12 +2312,9 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Array( )
 
     ptr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE);
     UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
     UTL_TEST_ASSERT(ptr.Count( ) == 0);
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2348,19 +2322,19 @@ UnitTestResult TTLTests::CountedPointer::SetCopy_Array( )
 
 UnitTestResult TTLTests::CountedPointer::SetMove_Single( )
 {
-    TTL::CountedPointer<DeleteHelper> ptr;
-    TTL::CountedPointer<DeleteHelper> movePtr;
+    TTL::CountedPointer<MemoryManagementHelper> ptr;
+    TTL::CountedPointer<MemoryManagementHelper> movePtr;
 
     try
     {
-        ptr.Set(new DeleteHelper);
+        ptr.Set(new MemoryManagementHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
@@ -2373,7 +2347,7 @@ UnitTestResult TTLTests::CountedPointer::SetMove_Single( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(movePtr.Get( ) != nullptr);
     UTL_TEST_ASSERT(movePtr.Count( ) == 1);
     UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
@@ -2381,12 +2355,9 @@ UnitTestResult TTLTests::CountedPointer::SetMove_Single( )
 
     movePtr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 1);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 1);
     UTL_TEST_ASSERT(movePtr.Get( ) == nullptr);
     UTL_TEST_ASSERT(movePtr.Count( ) == 0);
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
 
     UTL_TEST_SUCCESS( );
 }
@@ -2394,19 +2365,19 @@ UnitTestResult TTLTests::CountedPointer::SetMove_Single( )
 UnitTestResult TTLTests::CountedPointer::SetMove_Array( )
 {
     const size_t ARR_SIZE = 10;
-    TTL::CountedPointer<DeleteHelper[ ]> ptr;
-    TTL::CountedPointer<DeleteHelper[ ]> movePtr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> ptr;
+    TTL::CountedPointer<MemoryManagementHelper[ ]> movePtr;
 
     try
     {
-        ptr.Set(new DeleteHelper[ARR_SIZE]);
+        ptr.Set(new MemoryManagementHelper[ARR_SIZE]);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_SETUP_ASSERT(ptr.Get( ) != nullptr);
     UTL_SETUP_ASSERT(ptr.Count( ) == 1);
 
@@ -2419,7 +2390,7 @@ UnitTestResult TTLTests::CountedPointer::SetMove_Array( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
     UTL_TEST_ASSERT(movePtr.Get( ) != nullptr);
     UTL_TEST_ASSERT(movePtr.Count( ) == 1);
     UTL_TEST_ASSERT(ptr.Get( ) == nullptr);
@@ -2427,12 +2398,9 @@ UnitTestResult TTLTests::CountedPointer::SetMove_Array( )
 
     movePtr.Release( );
 
-    UTL_TEST_ASSERT(DeleteHelper::GetDeleteCount( ) == ARR_SIZE);
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == ARR_SIZE);
     UTL_TEST_ASSERT(movePtr.Get( ) == nullptr);
     UTL_TEST_ASSERT(movePtr.Count( ) == 0);
-
-    DeleteHelper::SetDeleteCount(0);
-    UTL_CLEANUP_ASSERT(DeleteHelper::GetDeleteCount( ) == 0);
 
     UTL_TEST_SUCCESS( );
 }

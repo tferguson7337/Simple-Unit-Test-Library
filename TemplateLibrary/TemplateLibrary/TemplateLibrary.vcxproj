@@ -20,15 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TemplateLibraryTests\ArrayTests.h" />
-    <ClInclude Include="..\TemplateLibraryTests\CopyMoveHelper.hpp" />
+    <ClInclude Include="..\TemplateLibraryTests\MemoryManagementHelper.hpp" />
     <ClInclude Include="..\TemplateLibraryTests\CountedPointerTests.h" />
-    <ClInclude Include="..\TemplateLibraryTests\DeleteHelper.hpp" />
     <ClInclude Include="..\TemplateLibraryTests\DNodeTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\DynamicArrayTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\ExclusivePointerTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\ListTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\NodeTests.h" />
     <ClInclude Include="..\TemplateLibraryTests\QueueTests.h" />
+    <ClInclude Include="..\TemplateLibraryTests\RunTests.hpp" />
     <ClInclude Include="..\TemplateLibraryTests\StackTests.h" />
     <ClInclude Include="Array.hpp" />
     <ClInclude Include="CountedPointer.hpp" />
@@ -47,13 +47,12 @@
     <ClInclude Include="Node.hpp" />
     <ClInclude Include="INode.h" />
     <ClInclude Include="Queue.hpp" />
-    <ClInclude Include="RunTests.hpp" />
     <ClInclude Include="Stack.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TemplateLibraryTests\ArrayTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\CountedPointerTests.cpp" />
-    <ClCompile Include="..\TemplateLibraryTests\DeleteHelper.cpp" />
+    <ClCompile Include="..\TemplateLibraryTests\MemoryManagementHelper.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\DNodeTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\DynamicArrayTests.cpp" />
     <ClCompile Include="..\TemplateLibraryTests\ExclusivePointerTests.cpp" />

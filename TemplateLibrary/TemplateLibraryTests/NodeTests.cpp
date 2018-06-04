@@ -1,5 +1,5 @@
 #include "NodeTests.h"
-#include "CopyMoveHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 #include <Node.hpp>
 
@@ -148,18 +148,37 @@ UnitTestResult TTLTests::Node::MoveAssignment( )
 
 UnitTestResult TTLTests::Node::SetDataCopy( )
 {
-    TTL::Node<CopyMoveHelper> testNode;
-    CopyMoveHelper copyHelper;
+    TTL::Node<MemoryManagementHelper>* testNode = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(testNode.GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(testNode.GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(testNode == nullptr);
 
-    testNode.SetData(copyHelper);
+    try
+    {
+        MemoryManagementHelper* ptr = new MemoryManagementHelper( );
+        testNode = new TTL::Node<MemoryManagementHelper>( );
+        testNode->SetData(*ptr);
+        delete ptr;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
+
+    UTL_SETUP_ASSERT(testNode != nullptr);
 
     // Ensure copy was used.
-    UTL_TEST_ASSERT(testNode.GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(testNode.GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(testNode->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(testNode->GetData( ).GetMove( ) == false);
+
+    delete testNode;
+    testNode = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    
+
+    UTL_CLEANUP_ASSERT(testNode == nullptr);
+    UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );
@@ -167,18 +186,37 @@ UnitTestResult TTLTests::Node::SetDataCopy( )
 
 UnitTestResult TTLTests::Node::SetDataMove( )
 {
-    TTL::Node<CopyMoveHelper> testNode;
-    CopyMoveHelper moveHelper;
+    TTL::Node<MemoryManagementHelper>* testNode = nullptr;
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(testNode.GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(testNode.GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(testNode == nullptr);
 
-    testNode.SetData(std::move(moveHelper));
+    try
+    {
+        MemoryManagementHelper* ptr = new MemoryManagementHelper( );
+        testNode = new TTL::Node<MemoryManagementHelper>( );
+        testNode->SetData(std::move(*ptr));
+        delete ptr;
+    }
+    catch ( const std::exception& e )
+    {
+        UTL_SETUP_EXCEPTION(e.what( ));
+    }
 
-    // Ensure move was used.
-    UTL_TEST_ASSERT(testNode.GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(testNode.GetData( ).GetMove( ) == true);
+    UTL_SETUP_ASSERT(testNode != nullptr);
+
+    // Ensure copy was used.
+    UTL_TEST_ASSERT(testNode->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(testNode->GetData( ).GetMove( ) == true);
+
+    delete testNode;
+    testNode = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
+    
+
+    UTL_CLEANUP_ASSERT(testNode == nullptr);
+    UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     /// Test Pass!
     UTL_TEST_SUCCESS( );

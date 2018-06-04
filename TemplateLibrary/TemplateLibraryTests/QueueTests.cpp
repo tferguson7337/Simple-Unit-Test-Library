@@ -2,7 +2,7 @@
 
 #include "Queue.hpp"
 
-#include "CopyMoveHelper.hpp"
+#include "MemoryManagementHelper.hpp"
 
 std::list<std::function<UnitTestResult(void)>> TTLTests::Queue::BuildTestList( )
 {
@@ -276,15 +276,19 @@ UnitTestResult TTLTests::Queue::CopyAppend_Data( )
 {
     const size_t QUEUE_SIZE = 3;
 
-    const TTL::Node<CopyMoveHelper>* cmhQueuePtr = nullptr;
-    TTL::Queue<CopyMoveHelper> cmhQueue;
-    CopyMoveHelper copyHelper;
+    const TTL::Node<MemoryManagementHelper>* pMemQueuePtr = nullptr;
+    TTL::Queue<MemoryManagementHelper>* pMemQueue = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
+        pMemQueue = new TTL::Queue<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < QUEUE_SIZE; i++ )
         {
-            cmhQueue += copyHelper;
+            *pMemQueue += *pMemHelper;
         }
     }
     catch ( const std::exception& e )
@@ -292,21 +296,29 @@ UnitTestResult TTLTests::Queue::CopyAppend_Data( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(cmhQueue.Empty( ) == false);
-    UTL_TEST_ASSERT(cmhQueue.Size( ) == QUEUE_SIZE);
-    UTL_TEST_ASSERT(cmhQueue.FrontPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pMemQueue->Empty( ) == false);
+    UTL_TEST_ASSERT(pMemQueue->Size( ) == QUEUE_SIZE);
+    UTL_TEST_ASSERT(pMemQueue->FrontPtr( ) != nullptr);
 
-    cmhQueuePtr = cmhQueue.FrontPtr( );
+    pMemQueuePtr = pMemQueue->FrontPtr( );
     for ( size_t i = 0; i < QUEUE_SIZE; i++ )
     {
-        UTL_TEST_ASSERT(cmhQueuePtr != nullptr);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetCopy( ) == true);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetMove( ) == false);
-        cmhQueuePtr = cmhQueuePtr->GetNext( );
+        UTL_TEST_ASSERT(pMemQueuePtr != nullptr);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetCopy( ) == true);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetMove( ) == false);
+        pMemQueuePtr = pMemQueuePtr->GetNext( );
     }
 
-    UTL_TEST_ASSERT(cmhQueuePtr == nullptr);
+    UTL_TEST_ASSERT(pMemQueuePtr == nullptr);
 
+    delete pMemQueue;
+    delete pMemHelper;
+    pMemQueue = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == QUEUE_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pMemQueue);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     const TTL::Node<size_t>* queuePtr = nullptr;
     TTL::Queue<size_t> queue;
@@ -345,15 +357,19 @@ UnitTestResult TTLTests::Queue::MoveAppend_Data( )
 {
     const size_t QUEUE_SIZE = 3;
 
-    const TTL::Node<CopyMoveHelper>* cmhQueuePtr = nullptr;
-    TTL::Queue<CopyMoveHelper> cmhQueue;
-    CopyMoveHelper moveHelper;
+    const TTL::Node<MemoryManagementHelper>* pMemQueuePtr = nullptr;
+    TTL::Queue<MemoryManagementHelper>* pMemQueue = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
+        pMemQueue = new TTL::Queue<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < QUEUE_SIZE; i++ )
         {
-            cmhQueue += std::move(moveHelper);
+            *pMemQueue += std::move(*pMemHelper);
         }
     }
     catch ( const std::exception& e )
@@ -361,21 +377,29 @@ UnitTestResult TTLTests::Queue::MoveAppend_Data( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(cmhQueue.Empty( ) == false);
-    UTL_TEST_ASSERT(cmhQueue.Size( ) == QUEUE_SIZE);
-    UTL_TEST_ASSERT(cmhQueue.FrontPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pMemQueue->Empty( ) == false);
+    UTL_TEST_ASSERT(pMemQueue->Size( ) == QUEUE_SIZE);
+    UTL_TEST_ASSERT(pMemQueue->FrontPtr( ) != nullptr);
 
-    cmhQueuePtr = cmhQueue.FrontPtr( );
+    pMemQueuePtr = pMemQueue->FrontPtr( );
     for ( size_t i = 0; i < QUEUE_SIZE; i++ )
     {
-        UTL_TEST_ASSERT(cmhQueuePtr != nullptr);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetCopy( ) == false);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetMove( ) == true);
-        cmhQueuePtr = cmhQueuePtr->GetNext( );
+        UTL_TEST_ASSERT(pMemQueuePtr != nullptr);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetCopy( ) == false);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetMove( ) == true);
+        pMemQueuePtr = pMemQueuePtr->GetNext( );
     }
 
-    UTL_TEST_ASSERT(cmhQueuePtr == nullptr);
+    UTL_TEST_ASSERT(pMemQueuePtr == nullptr);
 
+    delete pMemQueue;
+    delete pMemHelper;
+    pMemQueue = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == QUEUE_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pMemQueue);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
     const TTL::Node<size_t>* queuePtr = nullptr;
     TTL::Queue<size_t> queue;
@@ -605,15 +629,19 @@ UnitTestResult TTLTests::Queue::CopyEnqueue_Data( )
 {
     const size_t QUEUE_SIZE = 3;
 
-    const TTL::Node<CopyMoveHelper>* cmhQueuePtr = nullptr;
-    TTL::Queue<CopyMoveHelper> cmhQueue;
-    CopyMoveHelper copyHelper;
+    const TTL::Node<MemoryManagementHelper>* pMemQueuePtr = nullptr;
+    TTL::Queue<MemoryManagementHelper>* pMemQueue = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
+        pMemQueue = new TTL::Queue<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < QUEUE_SIZE; i++ )
         {
-            cmhQueue.Enqueue(copyHelper);
+            pMemQueue->Enqueue(*pMemHelper);
         }
     }
     catch ( const std::exception& e )
@@ -621,20 +649,29 @@ UnitTestResult TTLTests::Queue::CopyEnqueue_Data( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(cmhQueue.Empty( ) == false);
-    UTL_TEST_ASSERT(cmhQueue.Size( ) == QUEUE_SIZE);
-    UTL_TEST_ASSERT(cmhQueue.FrontPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pMemQueue->Empty( ) == false);
+    UTL_TEST_ASSERT(pMemQueue->Size( ) == QUEUE_SIZE);
+    UTL_TEST_ASSERT(pMemQueue->FrontPtr( ) != nullptr);
 
-    cmhQueuePtr = cmhQueue.FrontPtr( );
+    pMemQueuePtr = pMemQueue->FrontPtr( );
     for ( size_t i = 0; i < QUEUE_SIZE; i++ )
     {
-        UTL_TEST_ASSERT(cmhQueuePtr != nullptr);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetCopy( ) == true);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetMove( ) == false);
-        cmhQueuePtr = cmhQueuePtr->GetNext( );
+        UTL_TEST_ASSERT(pMemQueuePtr != nullptr);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetCopy( ) == true);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetMove( ) == false);
+        pMemQueuePtr = pMemQueuePtr->GetNext( );
     }
 
-    UTL_TEST_ASSERT(cmhQueuePtr == nullptr);
+    UTL_TEST_ASSERT(pMemQueuePtr == nullptr);
+
+    delete pMemQueue;
+    delete pMemHelper;
+    pMemQueue = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == QUEUE_SIZE + 1);
+    UTL_CLEANUP_ASSERT(!pMemQueue);
+    UTL_CLEANUP_ASSERT(!pMemHelper);
 
 
     const TTL::Node<size_t>* queuePtr = nullptr;
@@ -674,15 +711,19 @@ UnitTestResult TTLTests::Queue::MoveEnqueue_Data( )
 {
     const size_t QUEUE_SIZE = 3;
 
-    const TTL::Node<CopyMoveHelper>* cmhQueuePtr = nullptr;
-    TTL::Queue<CopyMoveHelper> cmhQueue;
-    CopyMoveHelper moveHelper;
+    const TTL::Node<MemoryManagementHelper>* pMemQueuePtr = nullptr;
+    TTL::Queue<MemoryManagementHelper>* pMemQueue = nullptr;
+    MemoryManagementHelper* pMemHelper = nullptr;
+
+    UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
+        pMemQueue = new TTL::Queue<MemoryManagementHelper>;
+        pMemHelper = new MemoryManagementHelper;
         for ( size_t i = 0; i < QUEUE_SIZE; i++ )
         {
-            cmhQueue.Enqueue(std::move(moveHelper));
+            pMemQueue->Enqueue(std::move(*pMemHelper));
         }
     }
     catch ( const std::exception& e )
@@ -690,20 +731,29 @@ UnitTestResult TTLTests::Queue::MoveEnqueue_Data( )
         UTL_TEST_EXCEPTION(e.what( ));
     }
 
-    UTL_TEST_ASSERT(cmhQueue.Empty( ) == false);
-    UTL_TEST_ASSERT(cmhQueue.Size( ) == QUEUE_SIZE);
-    UTL_TEST_ASSERT(cmhQueue.FrontPtr( ) != nullptr);
+    UTL_TEST_ASSERT(pMemQueue->Empty( ) == false);
+    UTL_TEST_ASSERT(pMemQueue->Size( ) == QUEUE_SIZE);
+    UTL_TEST_ASSERT(pMemQueue->FrontPtr( ) != nullptr);
 
-    cmhQueuePtr = cmhQueue.FrontPtr( );
+    pMemQueuePtr = pMemQueue->FrontPtr( );
     for ( size_t i = 0; i < QUEUE_SIZE; i++ )
     {
-        UTL_TEST_ASSERT(cmhQueuePtr != nullptr);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetCopy( ) == false);
-        UTL_TEST_ASSERT(cmhQueuePtr->GetData( ).GetMove( ) == true);
-        cmhQueuePtr = cmhQueuePtr->GetNext( );
+        UTL_TEST_ASSERT(pMemQueuePtr != nullptr);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetCopy( ) == false);
+        UTL_TEST_ASSERT(pMemQueuePtr->GetData( ).GetMove( ) == true);
+        pMemQueuePtr = pMemQueuePtr->GetNext( );
     }
 
-    UTL_TEST_ASSERT(cmhQueuePtr == nullptr);
+    UTL_TEST_ASSERT(pMemQueuePtr == nullptr);
+
+    delete pMemQueue;
+    delete pMemHelper;
+    pMemQueue = nullptr;
+    pMemHelper = nullptr;
+
+    UTL_TEST_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == QUEUE_SIZE + 1);
+    UTL_CLEANUP_ASSERT(pMemQueue == nullptr);
+    UTL_CLEANUP_ASSERT(pMemHelper == nullptr);
 
 
     const TTL::Node<size_t>* queuePtr = nullptr;
