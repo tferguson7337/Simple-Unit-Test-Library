@@ -17,7 +17,7 @@ namespace TTL
 
         /// Operator Overloads \\\
 
-        virtual Node<T>& operator=(Node<T>&&) noexcept = 0;
+        virtual Node<T>& operator=(Node<T>&&) = 0;
 
         /// Getters \\\
 

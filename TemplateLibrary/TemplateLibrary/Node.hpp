@@ -17,7 +17,7 @@ namespace TTL
         /// Ctors \\\
 
         // Default
-        explicit Node( ) noexcept :
+        Node( ) noexcept :
             mNext(nullptr)
         { }
 
@@ -36,12 +36,16 @@ namespace TTL
 
         /// Operator Overloads \\\
 
-        inline Node& operator=(Node&& src) noexcept
+        inline Node& operator=(Node&& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::Node<T>::operator(Node&&) - Attempted self-assignment.");
+            }
+
             mData = std::move(src.mData);
             mNext = src.mNext;
 
-            src.mData = T( );
             src.mNext = nullptr;
 
             return *this;
