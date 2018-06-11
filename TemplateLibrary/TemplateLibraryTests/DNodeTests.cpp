@@ -41,7 +41,9 @@ UnitTestResult TTLTests::DNode::DefaultConstructor( )
     UTL_TEST_ASSERT(ullNode.GetData( ) == 0ull);
     UTL_TEST_ASSERT(dNode.GetData( ) == 0.0);
     UTL_TEST_ASSERT(ptrNode.GetData( ) == nullptr);
-    UTL_TEST_ASSERT(iNodeNode.GetData( ).GetData( ) == 0 && iNodeNode.GetData( ).GetNext( ) == nullptr);
+    UTL_TEST_ASSERT(iNodeNode.GetData( ).GetData( ) == 0);
+    UTL_TEST_ASSERT(iNodeNode.GetData( ).GetPrev( ) == nullptr);
+    UTL_TEST_ASSERT(iNodeNode.GetData( ).GetNext( ) == nullptr);
 
     // Ensure that prev ptr values are nullptr-initialized.
     UTL_TEST_ASSERT(iNode.GetPrev( ) == nullptr);
