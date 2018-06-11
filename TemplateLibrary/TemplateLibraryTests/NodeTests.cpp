@@ -56,14 +56,14 @@ UnitTestResult TTLTests::Node::DefaultConstructor( )
 UnitTestResult TTLTests::Node::MoveConstructor( )
 {
     TTL::Node<MemoryManagementHelper>* pNext = nullptr;
-    TTL::Node<MemoryManagementHelper>* node = nullptr;
-    TTL::Node<MemoryManagementHelper>* moveNode = nullptr;
+    TTL::Node<MemoryManagementHelper>* pNode = nullptr;
+    TTL::Node<MemoryManagementHelper>* pMoveNode = nullptr;
 
     UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
-        node = new TTL::Node<MemoryManagementHelper>;
+        pNode = new TTL::Node<MemoryManagementHelper>;
         pNext = new TTL::Node<MemoryManagementHelper>;
     }
     catch ( const std::exception& e )
@@ -71,17 +71,17 @@ UnitTestResult TTLTests::Node::MoveConstructor( )
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    node->SetNext(pNext);
+    pNode->SetNext(pNext);
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(node->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(node->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(node->GetNext( ) != nullptr);
-    UTL_SETUP_ASSERT(node->GetNext( ) == pNext);
+    UTL_SETUP_ASSERT(pNode->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pNode->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pNode->GetNext( ) != nullptr);
+    UTL_SETUP_ASSERT(pNode->GetNext( ) == pNext);
 
     try
     {
-        moveNode = new TTL::Node<MemoryManagementHelper>(std::move(*node));
+        pMoveNode = new TTL::Node<MemoryManagementHelper>(std::move(*pNode));
     }
     catch ( const std::exception& e )
     {
@@ -89,22 +89,22 @@ UnitTestResult TTLTests::Node::MoveConstructor( )
     }
 
     // Ensure values were transferred.
-    UTL_TEST_ASSERT(node->GetNext( ) == nullptr);
-    UTL_TEST_ASSERT(moveNode->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(moveNode->GetData( ).GetMove( ) == true);
-    UTL_TEST_ASSERT(moveNode->GetNext( ) == pNext);
+    UTL_TEST_ASSERT(pNode->GetNext( ) == nullptr);
+    UTL_TEST_ASSERT(pMoveNode->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pMoveNode->GetData( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pMoveNode->GetNext( ) == pNext);
 
     // Cleanup
-    delete node;
-    node = nullptr;
+    delete pNode;
+    pNode = nullptr;
     delete pNext;
     pNext = nullptr;
-    delete moveNode;
-    moveNode = nullptr;
+    delete pMoveNode;
+    pMoveNode = nullptr;
 
-    UTL_CLEANUP_ASSERT(node == nullptr);
+    UTL_CLEANUP_ASSERT(pNode == nullptr);
     UTL_CLEANUP_ASSERT(pNext == nullptr);
-    UTL_CLEANUP_ASSERT(moveNode == nullptr);
+    UTL_CLEANUP_ASSERT(pMoveNode == nullptr);
     UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 3);
 
     /// Test Pass!
@@ -117,8 +117,8 @@ UnitTestResult TTLTests::Node::MoveConstructor( )
 UnitTestResult TTLTests::Node::MoveAssignment( )
 {
     TTL::Node<MemoryManagementHelper>* pNext = nullptr;
-    TTL::Node<MemoryManagementHelper>* node = nullptr;
-    TTL::Node<MemoryManagementHelper>* moveNode = nullptr;
+    TTL::Node<MemoryManagementHelper>* pNode = nullptr;
+    TTL::Node<MemoryManagementHelper>* pMoveNode = nullptr;
 
     bool threw = false;
 
@@ -127,25 +127,25 @@ UnitTestResult TTLTests::Node::MoveAssignment( )
     try
     {
         pNext = new TTL::Node<MemoryManagementHelper>;
-        node = new TTL::Node<MemoryManagementHelper>;
-        moveNode = new TTL::Node<MemoryManagementHelper>;
+        pNode = new TTL::Node<MemoryManagementHelper>;
+        pMoveNode = new TTL::Node<MemoryManagementHelper>;
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    node->SetNext(pNext);
+    pNode->SetNext(pNext);
 
     // Confirm Initial Test Conditions
-    UTL_SETUP_ASSERT(node->GetData( ).GetCopy( ) == false);
-    UTL_SETUP_ASSERT(node->GetData( ).GetMove( ) == false);
-    UTL_SETUP_ASSERT(node->GetNext( ) != nullptr);
-    UTL_SETUP_ASSERT(node->GetNext( ) == pNext);
+    UTL_SETUP_ASSERT(pNode->GetData( ).GetCopy( ) == false);
+    UTL_SETUP_ASSERT(pNode->GetData( ).GetMove( ) == false);
+    UTL_SETUP_ASSERT(pNode->GetNext( ) != nullptr);
+    UTL_SETUP_ASSERT(pNode->GetNext( ) == pNext);
 
     try
     {
-        *node = std::move(*node);
+        *pNode = std::move(*pNode);
     }
     catch ( const std::invalid_argument& )
     {
@@ -154,25 +154,25 @@ UnitTestResult TTLTests::Node::MoveAssignment( )
 
     UTL_TEST_ASSERT(threw == true);
 
-    *moveNode = std::move(*node);
+    *pMoveNode = std::move(*pNode);
 
     // Ensure values were transferred.
-    UTL_TEST_ASSERT(node->GetNext( ) == nullptr);
-    UTL_TEST_ASSERT(moveNode->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(moveNode->GetData( ).GetMove( ) == true);
-    UTL_TEST_ASSERT(moveNode->GetNext( ) == pNext);
+    UTL_TEST_ASSERT(pNode->GetNext( ) == nullptr);
+    UTL_TEST_ASSERT(pMoveNode->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pMoveNode->GetData( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pMoveNode->GetNext( ) == pNext);
 
     // Cleanup
-    delete node;
-    node = nullptr;
+    delete pNode;
+    pNode = nullptr;
     delete pNext;
     pNext = nullptr;
-    delete moveNode;
-    moveNode = nullptr;
+    delete pMoveNode;
+    pMoveNode = nullptr;
 
-    UTL_CLEANUP_ASSERT(node == nullptr);
+    UTL_CLEANUP_ASSERT(pNode == nullptr);
     UTL_CLEANUP_ASSERT(pNext == nullptr);
-    UTL_CLEANUP_ASSERT(moveNode == nullptr);
+    UTL_CLEANUP_ASSERT(pMoveNode == nullptr);
     UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 3);
 
     /// Test Pass!
@@ -184,31 +184,31 @@ UnitTestResult TTLTests::Node::MoveAssignment( )
 
 UnitTestResult TTLTests::Node::SetDataCopy( )
 {
-    TTL::Node<MemoryManagementHelper>* node = nullptr;
+    TTL::Node<MemoryManagementHelper>* pNode = nullptr;
 
     UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
         MemoryManagementHelper copyHelper;
-        node = new TTL::Node<MemoryManagementHelper>( );
-        node->SetData(copyHelper);
+        pNode = new TTL::Node<MemoryManagementHelper>( );
+        pNode->SetData(copyHelper);
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(node != nullptr);
+    UTL_SETUP_ASSERT(pNode != nullptr);
 
     // Ensure copy was used.
-    UTL_TEST_ASSERT(node->GetData( ).GetCopy( ) == true);
-    UTL_TEST_ASSERT(node->GetData( ).GetMove( ) == false);
+    UTL_TEST_ASSERT(pNode->GetData( ).GetCopy( ) == true);
+    UTL_TEST_ASSERT(pNode->GetData( ).GetMove( ) == false);
 
-    delete node;
-    node = nullptr;
+    delete pNode;
+    pNode = nullptr;
 
-    UTL_CLEANUP_ASSERT(node == nullptr);
+    UTL_CLEANUP_ASSERT(pNode == nullptr);
     UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
 
     /// Test Pass!
@@ -217,31 +217,31 @@ UnitTestResult TTLTests::Node::SetDataCopy( )
 
 UnitTestResult TTLTests::Node::SetDataMove( )
 {
-    TTL::Node<MemoryManagementHelper>* node = nullptr;
+    TTL::Node<MemoryManagementHelper>* pNode = nullptr;
 
     UTL_SETUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 0);
 
     try
     {
         MemoryManagementHelper copyHelper;
-        node = new TTL::Node<MemoryManagementHelper>( );
-        node->SetData(std::move(copyHelper));
+        pNode = new TTL::Node<MemoryManagementHelper>( );
+        pNode->SetData(std::move(copyHelper));
     }
     catch ( const std::exception& e )
     {
         UTL_SETUP_EXCEPTION(e.what( ));
     }
 
-    UTL_SETUP_ASSERT(node != nullptr);
+    UTL_SETUP_ASSERT(pNode != nullptr);
 
     // Ensure copy was used.
-    UTL_TEST_ASSERT(node->GetData( ).GetCopy( ) == false);
-    UTL_TEST_ASSERT(node->GetData( ).GetMove( ) == true);
+    UTL_TEST_ASSERT(pNode->GetData( ).GetCopy( ) == false);
+    UTL_TEST_ASSERT(pNode->GetData( ).GetMove( ) == true);
 
-    delete node;
-    node = nullptr;
+    delete pNode;
+    pNode = nullptr;
 
-    UTL_CLEANUP_ASSERT(node == nullptr);
+    UTL_CLEANUP_ASSERT(pNode == nullptr);
     UTL_CLEANUP_ASSERT(MemoryManagementHelper::ResetDeleteCount( ) == 2);
 
     /// Test Pass!

@@ -15,7 +15,7 @@ namespace TTL
 
         /// Operator Overloads \\\
 
-        virtual DNode<T>& operator=(DNode<T>&&) noexcept = 0;
+        virtual DNode<T>& operator=(DNode<T>&&) = 0;
 
         /// Getters \\\
 

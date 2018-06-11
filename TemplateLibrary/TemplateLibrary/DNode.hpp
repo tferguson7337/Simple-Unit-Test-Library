@@ -18,7 +18,7 @@ namespace TTL
         /// Ctors \\\
 
         // Default
-        explicit DNode( ) noexcept :
+        DNode( ) noexcept :
             mPrev(nullptr),
             mNext(nullptr)
         { }
@@ -38,13 +38,17 @@ namespace TTL
 
         /// Operator Overloads \\\
 
-        inline DNode& operator=(DNode&& src) noexcept
+        inline DNode& operator=(DNode&& src)
         {
+            if ( this == &src )
+            {
+                throw std::invalid_argument("TTL::DNode<T>::operator(DNode<T>&&) - Attempted self-assignment.");
+            }
+
             mData = std::move(src.mData);
             mPrev = src.mPrev;
             mNext = src.mNext;
 
-            src.mData = T( );
             src.mPrev = nullptr;
             src.mNext = nullptr;
 
