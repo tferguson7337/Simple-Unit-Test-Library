@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/tferguson7337/simple-logging-library
+	branch = master
+	commit = d1cec1eb495bdd4cdea5672aa4fb95ec83068b07
+	parent = 480155e015f13b09501715577dd5c54c4d49eb52
+	cmdver = 0.3.1
