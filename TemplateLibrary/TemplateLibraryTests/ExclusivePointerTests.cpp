@@ -161,7 +161,7 @@ UnitTestResult TTLTests::ExclusivePointer::BoolOperator( )
     }
     catch ( const std::exception& e )
     {
-        UTL_SETUP_ASSERT(e.what( ));
+        UTL_SETUP_EXCEPTION(e.what( ));
     }
 
     // Test operator bool() - not null

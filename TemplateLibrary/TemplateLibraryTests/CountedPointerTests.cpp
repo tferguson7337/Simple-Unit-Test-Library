@@ -1884,7 +1884,7 @@ UnitTestResult TTLTests::CountedPointer::Release_Array( )
     }
     catch ( const std::exception& e )
     {
-        UTL_SETUP_ASSERT(e.what( ));
+        UTL_SETUP_EXCEPTION(e.what( ));
     }
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);
@@ -2020,7 +2020,7 @@ UnitTestResult TTLTests::CountedPointer::SetNull_Array( )
     }
     catch ( const std::exception& e )
     {
-        UTL_SETUP_ASSERT(e.what( ));
+        UTL_SETUP_EXCEPTION(e.what( ));
     }
 
     UTL_SETUP_ASSERT(arrPtr.Get( ) != nullptr);

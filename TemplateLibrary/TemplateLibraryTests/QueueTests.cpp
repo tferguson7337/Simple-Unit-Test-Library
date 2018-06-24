@@ -974,7 +974,7 @@ UnitTestResult TTLTests::Queue::Dequeue( )
     }
     catch ( const std::exception& e )
     {
-        UTL_SETUP_ASSERT(e.what( ));
+        UTL_SETUP_EXCEPTION(e.what( ));
     }
 
     UTL_TEST_ASSERT(queue.Empty( ) == false);
