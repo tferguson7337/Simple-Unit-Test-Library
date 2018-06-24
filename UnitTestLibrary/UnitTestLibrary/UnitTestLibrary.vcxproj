@@ -22,24 +22,24 @@
     <ClInclude Include="..\..\Common\Util\Types.h" />
     <ClInclude Include="..\..\Common\Util\Uncopyable.h" />
     <ClInclude Include="..\..\Common\Util\Unmovable.h" />
+    <ClInclude Include="Headers\ResultEnums.h" />
+    <ClInclude Include="Headers\TestSetData.h" />
+    <ClInclude Include="Headers\UnitTest.h" />
+    <ClInclude Include="Headers\UnitTestLogger.h" />
+    <ClInclude Include="Headers\UnitTestResult.h" />
+    <ClInclude Include="Headers\UnitTestRunner.h" />
     <ClInclude Include="Interface\UnitTestInterface.h" />
     <ClInclude Include="Interface\UnitTestLoggerInterface.h" />
     <ClInclude Include="Interface\UnitTestResultInterface.h" />
     <ClInclude Include="Interface\UnitTestRunnerInterface.h" />
-    <ClInclude Include="ResultEnums.h" />
-    <ClInclude Include="TestSetData.h" />
     <ClInclude Include="TestSetDataInterface.h" />
-    <ClInclude Include="UnitTest.h" />
-    <ClInclude Include="UnitTestLogger.h" />
-    <ClInclude Include="UnitTestResult.h" />
-    <ClInclude Include="UnitTestRunner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestSetData.cpp" />
-    <ClCompile Include="UnitTest.cpp" />
-    <ClCompile Include="UnitTestLogger.cpp" />
-    <ClCompile Include="UnitTestResult.cpp" />
-    <ClCompile Include="UnitTestRunner.cpp" />
+    <ClCompile Include="Source\TestSetData.cpp" />
+    <ClCompile Include="Source\UnitTest.cpp" />
+    <ClCompile Include="Source\UnitTestLogger.cpp" />
+    <ClCompile Include="Source\UnitTestResult.cpp" />
+    <ClCompile Include="Source\UnitTestRunner.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -147,7 +147,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,7 +169,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -197,7 +197,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -228,7 +228,7 @@
       <UseFullPaths>true</UseFullPaths>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

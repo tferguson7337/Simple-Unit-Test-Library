@@ -30,26 +30,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ResultEnums.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitTest.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitTestResult.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\UnitTestInterface.h">
       <Filter>Data Structures\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Interface\UnitTestResultInterface.h">
       <Filter>Data Structures\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitTestLogger.h">
-      <Filter>Implementation\hdr</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitTestRunner.h">
-      <Filter>Implementation\hdr</Filter>
     </ClInclude>
     <ClInclude Include="Interface\UnitTestLoggerInterface.h">
       <Filter>Implementation\Interfaces</Filter>
@@ -66,28 +51,43 @@
     <ClInclude Include="..\..\Common\Util\Unmovable.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="TestSetData.h">
-      <Filter>Data Structures\hdr</Filter>
-    </ClInclude>
     <ClInclude Include="TestSetDataInterface.h">
       <Filter>Data Structures\Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\ResultEnums.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\TestSetData.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UnitTest.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UnitTestResult.h">
+      <Filter>Data Structures\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UnitTestLogger.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UnitTestRunner.h">
+      <Filter>Implementation\hdr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="UnitTestLogger.cpp">
+    <ClCompile Include="Source\TestSetData.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UnitTest.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UnitTestResult.cpp">
+      <Filter>Data Structures\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UnitTestLogger.cpp">
       <Filter>Implementation\src</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTestRunner.cpp">
+    <ClCompile Include="Source\UnitTestRunner.cpp">
       <Filter>Implementation\src</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitTest.cpp">
-      <Filter>Data Structures\src</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitTestResult.cpp">
-      <Filter>Data Structures\src</Filter>
-    </ClCompile>
-    <ClCompile Include="TestSetData.cpp">
-      <Filter>Data Structures\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
