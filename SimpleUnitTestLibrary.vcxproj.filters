@@ -51,6 +51,15 @@
     <ClInclude Include="Interface\IUnitTestRunner.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Types.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Uncopyable.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Unmovable.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interfaces">
@@ -61,6 +70,9 @@
     </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{5878500d-2877-4748-aecb-d5a7a35da411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Common">
+      <UniqueIdentifier>{9c973966-a030-4e11-9a55-068f4a788bb9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

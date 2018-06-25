@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\Types.h" />
+    <ClInclude Include="Common\Uncopyable.h" />
+    <ClInclude Include="Common\Unmovable.h" />
     <ClInclude Include="Headers\ResultEnums.h" />
     <ClInclude Include="Headers\TestSetData.h" />
     <ClInclude Include="Headers\UnitTest.h" />
@@ -95,7 +98,7 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
     <TargetName>SULTD$(PlatformArchitecture)</TargetName>
-    <OutDir>$(ProjectDir)lib</OutDir>
+    <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
@@ -104,7 +107,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>$(ProjectDir)lib</OutDir>
+    <OutDir>$(ProjectDir)lib\</OutDir>
     <TargetName>SULTD$(PlatformArchitecture)</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -114,7 +117,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>SUTL$(PlatformArchitecture)</TargetName>
-    <OutDir>$(ProjectDir)lib</OutDir>
+    <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
@@ -122,7 +125,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)lib</OutDir>
+    <OutDir>$(ProjectDir)lib\</OutDir>
     <TargetName>SUTL$(PlatformArchitecture)</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -144,7 +147,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,7 +169,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,7 +197,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -225,7 +228,7 @@
       <UseFullPaths>true</UseFullPaths>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers;$(ProjectDir)..\..\Common\Util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
