@@ -97,7 +97,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <TargetName>SULTD$(PlatformArchitecture)</TargetName>
+    <TargetName>SUTLD$(PlatformArchitecture)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -109,7 +109,7 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
     <OutDir>$(ProjectDir)lib\</OutDir>
-    <TargetName>SULTD$(PlatformArchitecture)</TargetName>
+    <TargetName>SUTLD$(PlatformArchitecture)</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
