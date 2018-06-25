@@ -3,9 +3,9 @@
 
 #include <Uncopyable.h>
 #include <UnitTestLogger.h>
-#include <Interface\IUnitTestRunner.h>
+#include <IUnitTestRunner.h>
 
-#include "TestSetData.h"
+#include <TestSetData.h>
 
 template <class T>
 class UnitTestRunner final : public virtual IUnitTestRunner<T>, public Uncopyable

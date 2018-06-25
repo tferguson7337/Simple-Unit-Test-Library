@@ -151,7 +151,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,7 +173,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -201,7 +201,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -232,7 +232,7 @@
       <UseFullPaths>true</UseFullPaths>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

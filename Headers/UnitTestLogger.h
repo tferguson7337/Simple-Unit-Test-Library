@@ -4,14 +4,14 @@
 #include <Uncopyable.h>
 #include <Unmovable.h>
 
-#include <Interface\IUnitTestLogger.h>
+#include <IUnitTestLogger.h>
 
 #include <fstream>
 #include <iostream>
 #include <vector>
 
-#include "TestSetData.h"
-#include "UnitTestResult.h"
+#include <TestSetData.h>
+#include <UnitTestResult.h>
 
 template <class T>
 class UnitTestLogger : public IUnitTestLogger<T>, public Uncopyable

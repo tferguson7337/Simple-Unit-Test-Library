@@ -3,7 +3,7 @@
 
 #include <Uncopyable.h>
 
-#include <Interface\IUnitTestResult.h>
+#include <IUnitTestResult.h>
 
 ///
 //

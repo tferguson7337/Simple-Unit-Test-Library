@@ -1,8 +1,8 @@
 #ifndef _TEST_SET_DATA_H
 #define _TEST_SET_DATA_H
 
-#include "Types.h"
-#include "Interface\\ITestSetData.h"
+#include <Types.h>
+#include <ITestSetData.h>
 
 template <class T>
 class TestSetData : public virtual ITestSetData<T>
