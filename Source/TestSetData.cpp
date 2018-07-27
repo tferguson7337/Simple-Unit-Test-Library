@@ -64,7 +64,7 @@ TestSetData<T>& TestSetData<T>::operator=(const TestSetData<T>& src) noexcept
     mCleanupExceptionCount = src.mCleanupExceptionCount;
     mUnhandledExceptionCount = src.mUnhandledExceptionCount;
     mTestSkipCount = src.mTestSkipCount;
-    
+
     mTestSetName = src.mTestSetName;
 
     return *this;
@@ -201,7 +201,7 @@ void TestSetData<T>::IncrementResultCounter(Result r)
         mCleanupFailureCount++;
         mTotalFailureCount++;
         break;
-        
+
     case Result::CleanupException:
         mCleanupExceptionCount++;
         mTotalFailureCount++;
@@ -225,13 +225,13 @@ void TestSetData<T>::SetTotalTestCount(uint64 c) noexcept
 
 template<class T>
 void TestSetData<T>::SetTestSetName(const std::basic_string<T>& name)
-{ 
+{
     mTestSetName = name;
 }
 
 template<class T>
 void TestSetData<T>::SetTestSetName(std::basic_string<T>&& name) noexcept
-{ 
+{
     mTestSetName = std::move(name);
 }
 
@@ -261,5 +261,6 @@ void TestSetData<T>::ClearAll( ) noexcept
 template <class T>
 long double TestSetData<T>::GetTestSetGrade( ) const noexcept
 {
-    return 100.0L * static_cast<long double>(mTestPassCount) / static_cast<long double>(mTotalTests - mTestSkipCount);
+    const uint64 testRunCount = mTotalTests - mTestSkipCount;
+    return (testRunCount > 0) ? 100.0L * static_cast<long double>(mTestPassCount) / static_cast<long double>(testRunCount) : 0.0L;
 }
