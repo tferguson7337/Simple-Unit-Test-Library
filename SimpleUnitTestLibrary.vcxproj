@@ -152,11 +152,16 @@
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(IntDir)*.pdb" $(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -174,12 +179,17 @@
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>LinkVerboseLib</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(IntDir)*.pdb" $(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -202,6 +212,8 @@
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,6 +221,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(IntDir)*.pdb" $(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -233,6 +248,8 @@
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -240,6 +257,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(IntDir)*.pdb" $(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

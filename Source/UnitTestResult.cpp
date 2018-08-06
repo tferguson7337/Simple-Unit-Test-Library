@@ -6,16 +6,11 @@
 
 UnitTestResult::UnitTestResult(Result r, const std::string& func, const std::string& file, uint64 l, const std::string& i) noexcept :
     mResult(r),
-    mFuncName(func),
-    mFileName(file),
+    mFuncName(func.empty( ) ? std::string( ) : ExtractFuncName(func.c_str( ), func.size( ))),
+    mFileName(file.empty( ) ? std::string( ) : ExtractFileName(file.c_str( ), file.size( ))),
     mLineNum(l),
     mResultInfo(i)
-{
-    if ( !mFileName.empty( ) )
-    {
-        mFileName = ExtractFileName(mFileName.c_str( ), mFileName.size( ));
-    }
-}
+{ }
 
 // Move Ctor
 UnitTestResult::UnitTestResult(UnitTestResult&& src) noexcept
@@ -46,15 +41,34 @@ UnitTestResult::operator bool( ) const noexcept
 
 constexpr const char* UnitTestResult::ExtractFileName(const char* f, const uint64 n) const noexcept
 {
-    if ( !f || !n)
+    if ( !f || !n )
     {
         return nullptr;
     }
 
     const char* fn = f + n;
-    while (fn >= f)
+    while ( fn >= f )
     {
         if ( IsPathSeparator(*(--fn)) )
+        {
+            break;
+        }
+    }
+
+    return fn + sizeof(*f);
+}
+
+constexpr const char* UnitTestResult::ExtractFuncName(const char* f, const uint64 n) const noexcept
+{
+    if ( !f || !n )
+    {
+        return nullptr;
+    }
+
+    const char* fn = f + n;
+    while ( fn >= f )
+    {
+        if ( IsWhitespace(*(--fn)) )
         {
             break;
         }
@@ -66,6 +80,11 @@ constexpr const char* UnitTestResult::ExtractFileName(const char* f, const uint6
 constexpr bool UnitTestResult::IsPathSeparator(const char c) const noexcept
 {
     return (c == '/' || c == '\\');
+}
+
+constexpr bool UnitTestResult::IsWhitespace(const char c) const noexcept
+{
+    return (c == ' ' || c == '\t');
 }
 
 

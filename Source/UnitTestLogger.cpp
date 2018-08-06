@@ -14,7 +14,7 @@ template <class T>
 UnitTestLogger<T>::UnitTestLogger(const std::basic_string<T>& file, bool consoleOutput) noexcept :
     mPrintToConsole(consoleOutput),
     mConsoleStream(InitConsoleStream( )),
-    mFileStream(file, std::ios_base::app | std::ios_base::out),
+    mFileStream(file, std::ios_base::binary| std::ios_base::app | std::ios_base::out),
     mTargetFile(file)
 { }
 
@@ -77,8 +77,6 @@ std::basic_ostream<wchar_t>& UnitTestLogger<wchar_t>::InitConsoleStream( )
 {
     return std::wcout;
 }
-
-
 
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTestSetHeaderString(const TestSetData<T>& data)
@@ -469,7 +467,7 @@ const std::basic_string<char>& UnitTestLogger<char>::GetResultFormat( )
     );
 
     static const std::basic_string<char> resultFormatA(
-        "File: %-24s  Test: %s\n"
+        "File: %s\nTest: %s\n"
         +
         lineBreak
         +
@@ -490,7 +488,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetResultFormat( )
     );
 
     static const std::basic_string<wchar_t> resultFormatW(
-        L"File: %-24S  Test: %S\n"
+        L"File: %S\nTest: %S\n"
         +
         lineBreak
         +
@@ -511,7 +509,7 @@ const std::basic_string<char>& UnitTestLogger<char>::GetExceptionFormat( )
     );
 
     static const std::basic_string<char> exceptionFormatA(
-        "File: %-24s  Test: %s\n"
+        "File: %s\nTest: %s\n"
         +
         lineBreak
         +
@@ -533,7 +531,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetExceptionFormat( )
     );
 
     static const std::basic_string<wchar_t> exceptionFormatW(
-        L"File: %-24S  Test: %S\n"
+        L"File: %S\nTest: %S\n"
         +
         lineBreak
         +
@@ -555,7 +553,7 @@ const std::basic_string<char>& UnitTestLogger<char>::GetSkipFormat( )
     );
 
     static const std::basic_string<char> skipFormatA(
-        "File: %-24s  Test: %s\n"
+        "File: %s\nTest: %s\n"
         +
         lineBreak
         +
@@ -577,7 +575,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSkipFormat( )
     );
 
     static const std::basic_string<wchar_t> skipFormatW(
-        L"File: %-24S  Test: %S\n"
+        L"File: %S\nTest: %S\n"
         +
         lineBreak
         +
