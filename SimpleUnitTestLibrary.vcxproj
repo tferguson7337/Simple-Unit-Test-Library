@@ -151,7 +151,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
@@ -178,7 +178,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
@@ -211,7 +211,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
@@ -247,7 +247,7 @@
       <UseFullPaths>true</UseFullPaths>
       <OmitDefaultLibName>true</OmitDefaultLibName>
       <EnablePREfast>true</EnablePREfast>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Common\;$(ProjectDir)Headers\Interfaces\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
