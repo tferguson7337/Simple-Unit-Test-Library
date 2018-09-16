@@ -19,20 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common\Types.h" />
-    <ClInclude Include="Common\Uncopyable.h" />
-    <ClInclude Include="Common\Unmovable.h" />
+    <ClInclude Include="Common\Headers\Macros.h" />
+    <ClInclude Include="Common\Headers\StringUtil.hpp" />
+    <ClInclude Include="Common\Headers\Types.h" />
+    <ClInclude Include="Common\Headers\Uncopyable.h" />
+    <ClInclude Include="Common\Headers\Unmovable.h" />
+    <ClInclude Include="Headers\Interfaces\ITestSetData.h" />
+    <ClInclude Include="Headers\Interfaces\IUnitTest.h" />
+    <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h" />
+    <ClInclude Include="Headers\Interfaces\IUnitTestResult.h" />
+    <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h" />
     <ClInclude Include="Headers\ResultEnums.h" />
     <ClInclude Include="Headers\TestSetData.h" />
     <ClInclude Include="Headers\UnitTest.h" />
     <ClInclude Include="Headers\UnitTestLogger.h" />
     <ClInclude Include="Headers\UnitTestResult.h" />
     <ClInclude Include="Headers\UnitTestRunner.h" />
-    <ClInclude Include="Interface\IUnitTest.h" />
-    <ClInclude Include="Interface\IUnitTestLogger.h" />
-    <ClInclude Include="Interface\IUnitTestResult.h" />
-    <ClInclude Include="Interface\IUnitTestRunner.h" />
-    <ClInclude Include="Interface\ITestSetData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TestSetData.cpp" />

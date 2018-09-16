@@ -246,10 +246,13 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(const UnitTestResult& res
     switch ( res.GetResult( ) )
     {
     case Result::Success:
+        logStr.append(BuildSuccessString(res));
+        break;
+
     case Result::SetupFailure:
     case Result::TestFailure:
     case Result::CleanupFailure:
-        logStr.append(BuildResultString(res));
+        logStr.append(BuildFailureString(res));
         break;
 
     case Result::SetupException:
@@ -304,14 +307,27 @@ std::basic_string<T> UnitTestLogger<T>::BuildTimeString( )
 }
 
 template <class T>
-std::basic_string<T> UnitTestLogger<T>::BuildResultString(const UnitTestResult& res)
+std::basic_string<T> UnitTestLogger<T>::BuildSuccessString(const UnitTestResult& res)
 {
     return stprintf(
-        &GetResultFormat( ),
+        &GetSuccessFormat( ),
         res.GetFileName( ).c_str( ),
         res.GetFunctionName( ).c_str( ),
         GetResultString(res.GetResult( )),
         res.GetLineNumber( )
+    );
+}
+
+template <class T>
+std::basic_string<T> UnitTestLogger<T>::BuildFailureString(const UnitTestResult& res)
+{
+    return stprintf(
+        &GetFailureFormat( ),
+        res.GetFileName( ).c_str( ),
+        res.GetFunctionName( ).c_str( ),
+        GetResultString(res.GetResult( )),
+        res.GetLineNumber( ),
+        res.GetResultInfo( ).c_str( )
     );
 }
 
@@ -460,7 +476,7 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTimeFormat( )
 }
 
 template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetResultFormat( )
+const std::basic_string<char>& UnitTestLogger<char>::GetSuccessFormat( )
 {
     static const std::basic_string<char> lineBreak(
         GetLineBreakLight( )
@@ -481,7 +497,7 @@ const std::basic_string<char>& UnitTestLogger<char>::GetResultFormat( )
 }
 
 template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetResultFormat( )
+const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSuccessFormat( )
 {
     static const std::basic_string<wchar_t> lineBreak(
         GetLineBreakLight( )
@@ -494,6 +510,50 @@ const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetResultFormat( )
         +
         L"    Result: %s\n"
         L"    Line: %llu\n"
+        +
+        lineBreak
+    );
+
+    return resultFormatW;
+}
+
+template <>
+const std::basic_string<char>& UnitTestLogger<char>::GetFailureFormat( )
+{
+    static const std::basic_string<char> lineBreak(
+        GetLineBreakLight( )
+    );
+
+    static const std::basic_string<char> resultFormatA(
+        "File: %s\nTest: %s\n"
+        +
+        lineBreak
+        +
+        "    Result: %s\n"
+        "    Line: %llu\n"
+        "    Failure: %s\n"
+        +
+        lineBreak
+    );
+
+    return resultFormatA;
+}
+
+template <>
+const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetFailureFormat( )
+{
+    static const std::basic_string<wchar_t> lineBreak(
+        GetLineBreakLight( )
+    );
+
+    static const std::basic_string<wchar_t> resultFormatW(
+        L"File: %S\nTest: %S\n"
+        +
+        lineBreak
+        +
+        L"    Result: %s\n"
+        L"    Line: %llu\n"
+        L"    Failure: %S\n"
         +
         lineBreak
     );

@@ -1,6 +1,8 @@
 #ifndef _UNIT_TEST_RESULT_H
 #define _UNIT_TEST_RESULT_H
 
+#include <Macros.h>
+
 #include <Uncopyable.h>
 
 #include <IUnitTestResult.h>
@@ -64,25 +66,25 @@ public:
     /// Unit Test Return Macros \\\
 
 // Success
-#define SUTL_TEST_SUCCESS()          return UnitTestResult(Result::Success, __FUNCSIG__, __FILE__, __LINE__)
+#define SUTL_TEST_SUCCESS()         return UnitTestResult(Result::Success, __FUNCSIG__, __FILE__, __LINE__)
 
 // Failures - No Exception Thrown
-#define SUTL_SETUP_FAILURE()         return UnitTestResult(Result::SetupFailure, __FUNCSIG__, __FILE__, __LINE__)
-#define SUTL_TEST_FAILURE()          return UnitTestResult(Result::TestFailure, __FUNCSIG__, __FILE__, __LINE__)
-#define SUTL_CLEANUP_FAILURE()       return UnitTestResult(Result::CleanupFailure, __FUNCSIG__, __FILE__, __LINE__)
+#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(Result::SetupFailure, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_TEST_FAILURE(str)      return UnitTestResult(Result::TestFailure, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(Result::CleanupFailure, __FUNCSIG__, __FILE__, __LINE__, str)
 
 // Failures - Exception Caught
-#define SUTL_SETUP_EXCEPTION(str)    return UnitTestResult(Result::SetupException, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_TEST_EXCEPTION(str)     return UnitTestResult(Result::TestException, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_CLEANUP_EXCEPTION(str)  return UnitTestResult(Result::CleanupException, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(Result::SetupException, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(Result::TestException, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(Result::CleanupException, __FUNCSIG__, __FILE__, __LINE__, str)
 
 // Test Asserts
-#define SUTL_SETUP_ASSERT(cond)      if (!!(cond) == false) SUTL_SETUP_FAILURE()
-#define SUTL_TEST_ASSERT(cond)       if (!!(cond) == false) SUTL_TEST_FAILURE()
-#define SUTL_CLEANUP_ASSERT(cond)    if (!!(cond) == false) SUTL_CLEANUP_FAILURE()
+#define SUTL_SETUP_ASSERT(cond)     if (!!(cond) == false) SUTL_SETUP_FAILURE(STRINGIFY(cond))
+#define SUTL_TEST_ASSERT(cond)      if (!!(cond) == false) SUTL_TEST_FAILURE(STRINGIFY(cond))
+#define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(STRINGIFY(cond))
 
 // Skip Test
-#define SUTL_SKIP_TEST(str)          return UnitTestResult(Result::NotRun, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_SKIP_TEST(str)         return UnitTestResult(Result::NotRun, __FUNCSIG__, __FILE__, __LINE__, str)
 };
 
 #endif // _UNIT_TEST_RESULT_H

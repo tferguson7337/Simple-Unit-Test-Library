@@ -36,29 +36,35 @@
     <ClInclude Include="Headers\UnitTestRunner.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\ITestSetData.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\IUnitTest.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\IUnitTestLogger.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\IUnitTestResult.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface\IUnitTestRunner.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Types.h">
+    <ClInclude Include="Common\Headers\Macros.h">
       <Filter>Headers\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Uncopyable.h">
+    <ClInclude Include="Common\Headers\StringUtil.hpp">
       <Filter>Headers\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Unmovable.h">
+    <ClInclude Include="Common\Headers\Types.h">
       <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Headers\Uncopyable.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Headers\Unmovable.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Interfaces\ITestSetData.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Interfaces\IUnitTest.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Interfaces\IUnitTestResult.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h">
+      <Filter>Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

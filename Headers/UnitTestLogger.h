@@ -44,14 +44,16 @@ private:
 
     std::basic_string<T> BuildLogString(const UnitTestResult&);
     std::basic_string<T> BuildTimeString( );
-    std::basic_string<T> BuildResultString(const UnitTestResult&);
+    std::basic_string<T> BuildSuccessString(const UnitTestResult&);
+    std::basic_string<T> BuildFailureString(const UnitTestResult&);
     std::basic_string<T> BuildExceptionString(const UnitTestResult&);
     std::basic_string<T> BuildSkipString(const UnitTestResult&);
     std::basic_string<T> BuildUnhandledExceptionString(const UnitTestResult&);
 
     const T* GetResultString(const Result);
     const std::basic_string<T>& GetTimeFormat( );
-    const std::basic_string<T>& GetResultFormat( );
+    const std::basic_string<T>& GetSuccessFormat( );
+    const std::basic_string<T>& GetFailureFormat( );
     const std::basic_string<T>& GetExceptionFormat( );
     const std::basic_string<T>& GetSkipFormat( );
     const std::basic_string<T>& GetUnhandledExceptionFormat( );
