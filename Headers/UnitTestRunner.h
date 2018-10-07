@@ -1,5 +1,4 @@
-#ifndef _UNIT_TEST_RUNNER_H
-#define _UNIT_TEST_RUNNER_H
+#pragma once
 
 #include <Uncopyable.h>
 #include <UnitTestLogger.h>
@@ -20,7 +19,6 @@ public:
 
     explicit UnitTestRunner(const std::basic_string<T>&);
     explicit UnitTestRunner(std::basic_string<T>&&) noexcept;
-    UnitTestRunner(UnitTestRunner&&) noexcept;
 
     /// Dtor \\\
 
@@ -33,13 +31,13 @@ public:
     /// Getters \\\
 
     const std::list<UnitTest>& GetUnitTests( ) const noexcept;
-    const std::basic_string<T>& GetLogFile( ) const noexcept;
+    const std::filesystem::path& GetLogFile( ) const noexcept;
     bool GetConsoleOutput( ) const noexcept;
     const TestSetData<T>& GetTestSetData( ) const noexcept;
 
     /// Setters \\\
 
-    bool SetLogFile(const std::basic_string<T>&);
+    bool SetLogFile(const std::filesystem::path&);
     void SetConsoleOutput(bool);
 
     /// Public Methods \\\
@@ -50,9 +48,4 @@ public:
     bool AddUnitTests(std::list<std::function<UnitTestResult(void)>>&&);
 
     bool RunUnitTests( );
-
-    bool PrintTestLogs( );
 };
-
-
-#endif // _UNIT_TEST_RUNNER_H

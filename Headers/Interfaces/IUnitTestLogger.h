@@ -1,9 +1,8 @@
-#ifndef _UNIT_TEST_LOGGER_INTERFACE_H
-#define _UNIT_TEST_LOGGER_INTERFACE_H
+#pragma once
 
-#include <string>
+#include <filesystem>
 
-/// Forward Declaration
+/// Forward Declarations
 template <class T>
 class UnitTestLogger;
 
@@ -21,14 +20,12 @@ public:
 
     virtual UnitTestLogger<T>& operator=(UnitTestLogger<T>&&) noexcept = 0;
 
-    virtual const std::basic_string<T>& GetTargetFile( ) const = 0;
+    virtual const std::filesystem::path& GetTargetFile( ) const = 0;
 
-    virtual bool SetTargetFile(const std::basic_string<T>&) = 0;
-    virtual bool SetTargetFile(std::basic_string<T>&&) = 0;
+    virtual bool SetTargetFile(const std::filesystem::path&) = 0;
+    virtual bool SetTargetFile(std::filesystem::path&&) = 0;
 
-    virtual bool LogTestSetHeader(const TestSetData<T>&) = 0;
-    virtual bool LogUnitTestResult(const UnitTestResult&) = 0;
-    virtual bool LogTestSetSummary(const TestSetData<T>&) = 0;
+    virtual void LogTestSetHeader(const TestSetData<T>&) = 0;
+    virtual void LogUnitTestResult(const UnitTestResult&) = 0;
+    virtual void LogTestSetSummary(const TestSetData<T>&) = 0;
 };
-
-#endif

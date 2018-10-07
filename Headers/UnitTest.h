@@ -1,11 +1,10 @@
-#ifndef _UNIT_TEST_H
-#define _UNIT_TEST_H
+#pragma once
 
 #include <Uncopyable.h>
 
-#include <IUnitTest.h>
 #include <UnitTestResult.h>
 
+#include <functional>
 #include <memory>
 
 ///
@@ -15,19 +14,20 @@
 //  Purpose:    Encapsulate unit test information.
 //
 ///
-class UnitTest final : public IUnitTest, public Uncopyable
+class UnitTest : public Uncopyable
 {
 private:
     /// Private Data Members \\\
 
-    std::unique_ptr<std::function<UnitTestResult(void)>> mTestFuncPtr;
+    std::function<UnitTestResult(void)> mTestFunc;
     UnitTestResult mTestResult;
 
 public:
     /// Ctors \\\
 
-    explicit UnitTest(const std::function<UnitTestResult(void)>&);
-    explicit UnitTest(UnitTest&&) noexcept;
+    UnitTest( ) = default;
+    explicit UnitTest(std::function<UnitTestResult(void)>&&) noexcept;
+    UnitTest(UnitTest&&) noexcept;
 
     /// Dtor \\\
 
@@ -39,16 +39,14 @@ public:
 
     /// Getters \\\
 
-    std::function<UnitTestResult(void)> GetUnitTestFunction( ) const;
+    const std::function<UnitTestResult(void)>& GetUnitTestFunction( ) const noexcept;
     const UnitTestResult& GetUnitTestResult( ) const noexcept;
 
     /// Setters \\\
 
-    void SetUnitTestFunction(std::function<UnitTestResult(void)>);
+    void SetUnitTestFunction(std::function<UnitTestResult(void)>&&) noexcept;
 
     /// Public Methods \\\
 
     const UnitTestResult& RunTest( );
 };
-
-#endif // _UNIT_TEST_H

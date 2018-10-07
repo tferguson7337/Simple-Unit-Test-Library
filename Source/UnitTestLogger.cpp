@@ -4,28 +4,25 @@
 #include <cstdarg>
 #include <ctime>
 
+
+#include <StringUtil.hpp>
+
 // Explicit Template Instantiation
-template class UnitTestLogger<char>;
-template class UnitTestLogger<wchar_t>;
+template class UnitTestLogger<utf8>;
+template class UnitTestLogger<utf16>;
 
 /// Ctors \\\
 
 template <class T>
-UnitTestLogger<T>::UnitTestLogger(const std::basic_string<T>& file, bool consoleOutput) noexcept :
+UnitTestLogger<T>::UnitTestLogger(const std::filesystem::path& file, bool consoleOutput) :
     mPrintToConsole(consoleOutput),
     mConsoleStream(InitConsoleStream( )),
-    mFileStream(file, std::ios_base::binary| std::ios_base::app | std::ios_base::out),
-    mTargetFile(file)
+    mFileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
+    mTargetFile(file),
+    mContinueWork(true),
+    mLogQueueSize(0),
+    mWorkerThread(&UnitTestLogger<T>::WorkerLoop, this)
 { }
-
-template <class T>
-UnitTestLogger<T>::UnitTestLogger(UnitTestLogger&& src) noexcept :
-    mConsoleStream(InitConsoleStream( )),
-    mPrintToConsole(true)
-{
-    *this = std::move(src);
-}
-
 
 /// Dtor \\\
 
@@ -60,22 +57,26 @@ UnitTestLogger<T>& UnitTestLogger<T>::operator=(UnitTestLogger&& src) noexcept
     return *this;
 }
 
-
 /// Method Definitions \\\
-
 
 // Private Helper Methods
 
-template <>
-std::basic_ostream<char>& UnitTestLogger<char>::InitConsoleStream( )
+template <class T>
+std::basic_ostream<T>& UnitTestLogger<T>::InitConsoleStream( )
 {
-    return std::cout;
-}
+    if constexpr ( std::is_same_v<T, utf8> )
+    {
+        return std::cout;
+    }
+    else if constexpr ( std::is_same_v<T, utf16> )
+    {
+        return reinterpret_cast<std::basic_ostream<utf16>&>(std::wcout);
+    }
+    else
+    {
+        throw std::runtime_error(__FUNCTION__": Unsupported type.");
+    }
 
-template <>
-std::basic_ostream<wchar_t>& UnitTestLogger<wchar_t>::InitConsoleStream( )
-{
-    return std::wcout;
 }
 
 template <class T>
@@ -112,131 +113,50 @@ std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryString(const TestSetD
     );
 }
 
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetTestSetHeaderFormat( )
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat( )
 {
-    static const size_t lineBreakLen = 64;
-
-    static const std::basic_string<char> headerFormatA(
-        GetLineBreakHeavy(lineBreakLen)
-        +
-        "  Test-Set Name: %-25s -- Total Tests: %zu"
-        +
-        GetLineBreakHeavy(lineBreakLen)
+    static const SupportedStringTuple headerFormats(
+        SUPSTR_MAKE_TUPLE(
+            "================================"
+            "================================\n"
+            "  Test-Set Name: %-25s -- Total Tests: %zu"
+            "================================"
+            "================================\n"
+        )
     );
 
-    return headerFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTestSetHeaderFormat( )
-{
-    static const size_t lineBreakLen = 64;
-
-    static const std::basic_string<wchar_t> headerFormatW(
-        GetLineBreakHeavy(lineBreakLen)
-        +
-        L"  Test-Set Name: %-25s -- Total Tests: %zu"
-        +
-        GetLineBreakHeavy(lineBreakLen)
-    );
-
-    return headerFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetTestSetSummaryFormat( )
-{
-    static const size_t lineBreakLen = 40;
-
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakHeavy(lineBreakLen)
-    );
-
-    static const std::basic_string<char> summaryFormatA(
-        lineBreak
-        +
-        "    \"%s\" Complete\n\n"
-        "  Total Test Count: %llu\n"
-        "  Total Tests Run:  %llu\n\n"
-        "   Successful Tests: %llu\n\n"
-        "   Failed Tests:     %llu\n"
-        "    Setup Failures:       %llu\n"
-        "    Setup Exceptions:     %llu\n"
-        "    Test Failures:        %llu\n"
-        "    Test Exceptions:      %llu\n"
-        "    Cleanup Failures:     %llu\n"
-        "    Cleanup Exceptions:   %llu\n"
-        "    Unhandled Exceptions: %llu\n\n"
-        "   Skipped Tests:    %llu\n\n"
-        "  Test Pass Grade:  %2.2f%% (%llu / %llu)"
-        +
-        lineBreak
-    );
-
-    return summaryFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTestSetSummaryFormat( )
-{
-    static const size_t lineBreakLen = 40;
-
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakHeavy(lineBreakLen)
-    );
-
-    static const std::basic_string<wchar_t> summaryFormatW(
-        lineBreak
-        +
-        L"    \"%s\" Complete\n\n"
-        L"  Total Test Count: %llu\n"
-        L"  Total Tests Run:  %llu\n\n"
-        L"   Successful Tests: %llu\n\n"
-        L"   Failed Tests:     %llu\n"
-        L"    Setup Failures:       %llu\n"
-        L"    Setup Exceptions:     %llu\n"
-        L"    Test Failures:        %llu\n"
-        L"    Test Exceptions:      %llu\n"
-        L"    Cleanup Failures:     %llu\n"
-        L"    Cleanup Exceptions:   %llu\n"
-        L"    Unhandled Exceptions: %llu\n\n"
-        L"   Skipped Tests:    %llu\n\n"
-        L"  Test Pass Grade:  %2.2f%% (%llu / %llu)"
-        +
-        lineBreak
-    );
-
-    return summaryFormatW;
+    return std::get<std::basic_string<T>>(headerFormats);
 }
 
 template <class T>
-std::basic_string<T> UnitTestLogger<T>::GetLineBreakLight(size_t len)
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFormat( )
 {
-    std::basic_string<T> lineBreak;
+    static const SupportedStringTuple summaryFormats(
+        SUPSTR_MAKE_TUPLE(
+            "===================="
+            "====================\n"
+            "    \"%s\" Complete\n\n"
+            "  Total Test Count: %llu\n"
+            "  Total Tests Run:  %llu\n\n"
+            "   Successful Tests: %llu\n\n"
+            "   Failed Tests:     %llu\n"
+            "    Setup Failures:       %llu\n"
+            "    Setup Exceptions:     %llu\n"
+            "    Test Failures:        %llu\n"
+            "    Test Exceptions:      %llu\n"
+            "    Cleanup Failures:     %llu\n"
+            "    Cleanup Exceptions:   %llu\n"
+            "    Unhandled Exceptions: %llu\n\n"
+            "   Skipped Tests:    %llu\n\n"
+            "  Test Pass Grade:  %2.2f%% (%llu / %llu)"
+            "===================="
+            "====================\n"
+        )
+    );
 
-    lineBreak.reserve(len + 1);
-    lineBreak.append(len, T('-'));
-    lineBreak.push_back(T('\n'));
-
-    return lineBreak;
+    return std::get<std::basic_string<T>>(summaryFormats);
 }
-
-template <class T>
-std::basic_string<T> UnitTestLogger<T>::GetLineBreakHeavy(size_t len)
-{
-    std::basic_string<T> lineBreak;
-
-    lineBreak.reserve(len + 4);
-    lineBreak.push_back(T('\n'));
-    lineBreak.push_back(T('\n'));
-    lineBreak.append(len, T('='));
-    lineBreak.push_back(T('\n'));
-    lineBreak.push_back(T('\n'));
-
-    return lineBreak;
-}
-
 
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildLogString(const UnitTestResult& res)
@@ -245,27 +165,27 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(const UnitTestResult& res
 
     switch ( res.GetResult( ) )
     {
-    case Result::Success:
+    case ResultType::Success:
         logStr.append(BuildSuccessString(res));
         break;
 
-    case Result::SetupFailure:
-    case Result::TestFailure:
-    case Result::CleanupFailure:
+    case ResultType::SetupFailure:
+    case ResultType::TestFailure:
+    case ResultType::CleanupFailure:
         logStr.append(BuildFailureString(res));
         break;
 
-    case Result::SetupException:
-    case Result::TestException:
-    case Result::CleanupException:
+    case ResultType::SetupException:
+    case ResultType::TestException:
+    case ResultType::CleanupException:
         logStr.append(BuildExceptionString(res));
         break;
 
-    case Result::NotRun:
+    case ResultType::NotRun:
         logStr.append(BuildSkipString(res));
         break;
 
-    case Result::UnhandledException:
+    case ResultType::UnhandledException:
         logStr.append(BuildUnhandledExceptionString(res));
         break;
 
@@ -279,7 +199,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(const UnitTestResult& res
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTimeString( )
 {
-    std::vector<T> buffer(mTimeBufferSize, T('\0'));
+    std::vector<T> buffer(mTimeBufferLength, T('\0'));
     const time_t time = std::time(nullptr);
 
     if ( !GetTime(buffer.data( ), &time) )
@@ -303,7 +223,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildTimeString( )
 
     buffer.push_back(T('\0'));
 
-    return std::basic_string<T>(std::move(buffer.data( )));
+    return std::basic_string<T>(buffer.data( ));
 }
 
 template <class T>
@@ -313,7 +233,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildSuccessString(const UnitTestResult&
         &GetSuccessFormat( ),
         res.GetFileName( ).c_str( ),
         res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )),
+        GetResultString(res.GetResult( )).c_str( ),
         res.GetLineNumber( )
     );
 }
@@ -325,7 +245,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildFailureString(const UnitTestResult&
         &GetFailureFormat( ),
         res.GetFileName( ).c_str( ),
         res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )),
+        GetResultString(res.GetResult( )).c_str( ),
         res.GetLineNumber( ),
         res.GetResultInfo( ).c_str( )
     );
@@ -338,7 +258,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildExceptionString(const UnitTestResul
         &GetExceptionFormat( ),
         res.GetFileName( ).c_str( ),
         res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )),
+        GetResultString(res.GetResult( )).c_str( ),
         res.GetLineNumber( ),
         res.GetResultInfo( ).c_str( )
     );
@@ -351,7 +271,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildSkipString(const UnitTestResult& re
         &GetSkipFormat( ),
         res.GetFileName( ).c_str( ),
         res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )),
+        GetResultString(res.GetResult( )).c_str( ),
         res.GetLineNumber( ),
         res.GetResultInfo( ).c_str( )
     );
@@ -362,361 +282,133 @@ std::basic_string<T> UnitTestLogger<T>::BuildUnhandledExceptionString(const Unit
 {
     return stprintf(
         &GetUnhandledExceptionFormat( ),
-        GetResultString(res.GetResult( )),
+        GetResultString(res.GetResult( )).c_str( ),
         res.GetResultInfo( ).c_str( )
     );
 }
 
-template <>
-const char* UnitTestLogger<char>::GetResultString(const Result r)
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetResultString(const ResultType& r)
 {
-    switch ( r )
+    return ResultTypeUtil::ToString<T>(r);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetTimeFormat( )
+{
+    static const SupportedStringTuple timeFormats(SUPSTR_MAKE_TUPLE("%c"));
+
+    return std::get<std::basic_string<T>>(timeFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetSuccessFormat( )
+{
+    static const SupportedStringTuple successFormats(
+        SUPSTR_MAKE_TUPLE(
+            "File: %hs\nTest: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+            "    Result: %s\n"
+            "    Line: %llu\n"
+            "--------------------------------"
+            "--------------------------------\n"
+        )
+    );
+
+    return std::get<std::basic_string<T>>(successFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetFailureFormat( )
+{
+    static const SupportedStringTuple failureFormats(
+        SUPSTR_MAKE_TUPLE(
+            "File: %hs\nTest: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+            "    Result: %s\n"
+            "    Line: %llu\n"
+            "    Failure: %s\n"
+            "--------------------------------"
+            "--------------------------------\n"
+        )
+    );
+
+    return std::get<std::basic_string<T>>(failureFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetExceptionFormat( )
+{
+    static const SupportedStringTuple exceptionFormats(
+        SUPSTR_MAKE_TUPLE(
+            "File: %hs\nTest: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+            "    Result: %s\n"
+            "    Line: %llu\n"
+            "    Exception: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+        )
+    );
+
+    return std::get<std::basic_string<T>>(exceptionFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetSkipFormat( )
+{
+    static const SupportedStringTuple skipFormats(
+        SUPSTR_MAKE_TUPLE(
+            "File: %hs\nTest: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+            "    Result: %s\n"
+            "    Line: %llu\n"
+            "    Reason: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+        )
+    );
+
+    return std::get<std::basic_string<T>>(skipFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
+{
+    static const SupportedStringTuple unhandledExceptionFormats(
+        SUPSTR_MAKE_TUPLE(
+            "Result: %hs\n"
+            "--------------------------------"
+            "--------------------------------\n"
+            "    Exception: %s\n"
+            "--------------------------------"
+            "--------------------------------\n"
+        )
+    );
+
+    return std::get<std::basic_string<T>>(unhandledExceptionFormats);
+}
+
+template <class T>
+bool UnitTestLogger<T>::GetTime(T* buffer, const time_t* t)
+{
+    if constexpr ( sizeof(T) == sizeof(byte) )
     {
-    case Result::NotRun:
-        return ("Not Run");
-        break;
-
-    case Result::Success:
-        return ("Success");
-        break;
-
-    case Result::SetupFailure:
-        return ("Setup Failure");
-        break;
-
-    case Result::SetupException:
-        return ("Setup Exception");
-        break;
-
-    case Result::TestFailure:
-        return ("Run Failure");
-        break;
-
-    case Result::TestException:
-        return ("Run Exception");
-        break;
-
-    case Result::CleanupFailure:
-        return ("Cleanup Failure");
-        break;
-
-    case Result::CleanupException:
-        return ("Cleanup Exception");
-        break;
-
-    case Result::UnhandledException:
-        return ("Unhandled Exception");
-        break;
-
-    default:
-        return ("<Unknown Result Code>");
+        return ctime_s(reinterpret_cast<char*>(buffer), mTimeBufferLength, t) == 0;
+    }
+    else if constexpr ( sizeof(T) == sizeof(dbyte) )
+    {
+        return _wctime_s(reinterpret_cast<wchar_t*>(buffer), mTimeBufferLength, t) == 0;
+    }
+    else
+    {
+        throw std::runtime_error(__FUNCTION__" - invalid buffer type.");
     }
 }
-
-template <>
-const wchar_t* UnitTestLogger<wchar_t>::GetResultString(const Result r)
-{
-    switch ( r )
-    {
-    case Result::NotRun:
-        return (L"Not Run");
-        break;
-
-    case Result::Success:
-        return (L"Success");
-        break;
-
-    case Result::SetupFailure:
-        return (L"Setup Failure");
-        break;
-
-    case Result::SetupException:
-        return (L"Setup Exception");
-        break;
-
-    case Result::TestFailure:
-        return (L"Run Failure");
-        break;
-
-    case Result::TestException:
-        return (L"Run Exception");
-        break;
-
-    case Result::CleanupFailure:
-        return (L"Cleanup Failure");
-        break;
-
-    case Result::CleanupException:
-        return (L"Cleanup Exception");
-        break;
-
-    case Result::UnhandledException:
-        return (L"Unhandled Exception");
-        break;
-
-    default:
-        return (L"<Unknown Result Code>");
-    }
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetTimeFormat( )
-{
-    static const std::basic_string<char> timeFormatA("%c");
-
-    return timeFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetTimeFormat( )
-{
-    static const std::basic_string<wchar_t> timeFormatW(L"%c");
-
-    return timeFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetSuccessFormat( )
-{
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<char> resultFormatA(
-        "File: %s\nTest: %s\n"
-        +
-        lineBreak
-        +
-        "    Result: %s\n"
-        "    Line: %llu\n"
-        +
-        lineBreak
-    );
-
-    return resultFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSuccessFormat( )
-{
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<wchar_t> resultFormatW(
-        L"File: %S\nTest: %S\n"
-        +
-        lineBreak
-        +
-        L"    Result: %s\n"
-        L"    Line: %llu\n"
-        +
-        lineBreak
-    );
-
-    return resultFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetFailureFormat( )
-{
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<char> resultFormatA(
-        "File: %s\nTest: %s\n"
-        +
-        lineBreak
-        +
-        "    Result: %s\n"
-        "    Line: %llu\n"
-        "    Failure: %s\n"
-        +
-        lineBreak
-    );
-
-    return resultFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetFailureFormat( )
-{
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<wchar_t> resultFormatW(
-        L"File: %S\nTest: %S\n"
-        +
-        lineBreak
-        +
-        L"    Result: %s\n"
-        L"    Line: %llu\n"
-        L"    Failure: %S\n"
-        +
-        lineBreak
-    );
-
-    return resultFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetExceptionFormat( )
-{
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<char> exceptionFormatA(
-        "File: %s\nTest: %s\n"
-        +
-        lineBreak
-        +
-        "    Result: %s\n"
-        "    Line: %llu\n"
-        "    Exception: %s\n"
-        +
-        lineBreak
-    );
-
-    return exceptionFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetExceptionFormat( )
-{
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<wchar_t> exceptionFormatW(
-        L"File: %S\nTest: %S\n"
-        +
-        lineBreak
-        +
-        L"    Result: %s\n"
-        L"    Line: %llu\n"
-        L"    Exception: %S\n"
-        +
-        lineBreak
-    );
-
-    return exceptionFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetSkipFormat( )
-{
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<char> skipFormatA(
-        "File: %s\nTest: %s\n"
-        +
-        lineBreak
-        +
-        "    Result: %s\n"
-        "    Line: %llu\n"
-        "    Reason: %s\n"
-        +
-        lineBreak
-    );
-
-    return skipFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetSkipFormat( )
-{
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<wchar_t> skipFormatW(
-        L"File: %S\nTest: %S\n"
-        +
-        lineBreak
-        +
-        L"    Result: %s\n"
-        L"    Line: %llu\n"
-        L"    Reason: %S\n"
-        +
-        lineBreak
-    );
-
-    return skipFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetUnhandledExceptionFormat( )
-{
-    static const std::basic_string<char> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<char> unhandledExceptionFormatA(
-        "Result: %s\n"
-        +
-        lineBreak
-        +
-        "    Exception: %s\n"
-        +
-        lineBreak
-    );
-
-    return unhandledExceptionFormatA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetUnhandledExceptionFormat( )
-{
-    static const std::basic_string<wchar_t> lineBreak(
-        GetLineBreakLight( )
-    );
-
-    static const std::basic_string<wchar_t> unhandledExceptionFormatW(
-        L"Result: %s\n"
-        +
-        lineBreak
-        +
-        L"    Exception: %S\n"
-        +
-        lineBreak
-    );
-
-    return unhandledExceptionFormatW;
-}
-
-template <>
-const std::basic_string<char>& UnitTestLogger<char>::GetDivider( )
-{
-    static const std::basic_string<char> dividerA(" -- ");
-
-    return dividerA;
-}
-
-template <>
-const std::basic_string<wchar_t>& UnitTestLogger<wchar_t>::GetDivider( )
-{
-    static const std::basic_string<wchar_t> dividerW(L" -- ");
-
-    return dividerW;
-}
-
-template <>
-bool UnitTestLogger<char>::GetTime(char* buffer, const time_t* t)
-{
-    return ctime_s(buffer, mTimeBufferSize, t) == 0;
-}
-
-template <>
-bool UnitTestLogger<wchar_t>::GetTime(wchar_t* buffer, const time_t* t)
-{
-    return _wctime_s(buffer, mTimeBufferSize, t) == 0;
-}
-
 
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::stprintf(const std::basic_string<T>* format, ...)
@@ -745,33 +437,66 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(const std::basic_string<T>* for
     return (bufferSize > 0) ? std::basic_string<T>(std::move(buffer.data( ))) : std::basic_string<T>( );
 }
 
-
-template <>
-int UnitTestLogger<char>::StringPrintWrapper(std::vector<char>& buffer, const std::basic_string<char>* format, va_list args)
+template <class T>
+int UnitTestLogger<T>::StringPrintWrapper(std::vector<T>& buffer, const std::basic_string<T>* format, va_list args)
 {
-    return (buffer.empty( )) ? _vscprintf(format->c_str( ), args) : vsnprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
-}
-
-template <>
-int UnitTestLogger<wchar_t>::StringPrintWrapper(std::vector<wchar_t>& buffer, const std::basic_string<wchar_t>* format, va_list args)
-{
-    return (buffer.empty( )) ? _vscwprintf(format->c_str( ), args) : vswprintf(buffer.data( ), buffer.size( ) - 1, format->c_str( ), args);
+    if constexpr ( std::is_same_v<T, utf8> )
+    {
+        if ( buffer.empty( ) )
+        {
+            return _vscprintf(
+                reinterpret_cast<const char*>(format->c_str( )), 
+                args
+            );
+        }
+        else
+        {
+            return vsnprintf(
+                reinterpret_cast<char*>(buffer.data( )),
+                buffer.size( ) - 1, 
+                reinterpret_cast<const char*>(format->c_str( )),
+                args
+            );
+        }
+    }
+    else if constexpr ( std::is_same_v<T, utf16> )
+    {
+        if ( buffer.empty( ) )
+        {
+            return _vscwprintf(
+                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                args
+            );
+        }
+        else
+        {
+            return vswprintf(
+                reinterpret_cast<wchar_t*>(buffer.data( )),
+                buffer.size( ) - 1,
+                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                args
+            );
+        }
+    }
+    else
+    {
+        throw std::runtime_error(__FUNCTION__": Unsupported type.");
+    }
 }
 
 
 /// Public Method Definitions \\\
 
-
 // Getters
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTargetFile( ) const
+const std::filesystem::path& UnitTestLogger<T>::GetTargetFile( ) const noexcept
 {
     return mTargetFile;
 }
 
 template <class T>
-bool UnitTestLogger<T>::GetPrintToConsole( ) const
+bool UnitTestLogger<T>::GetPrintToConsole( ) const noexcept
 {
     return mPrintToConsole;
 }
@@ -779,7 +504,7 @@ bool UnitTestLogger<T>::GetPrintToConsole( ) const
 // Setters
 
 template <class T>
-bool UnitTestLogger<T>::SetTargetFile(const std::basic_string<T>& filePath)
+bool UnitTestLogger<T>::SetTargetFile(const std::filesystem::path& filePath)
 {
     std::basic_ofstream<T> newFileStream(filePath);
 
@@ -796,7 +521,7 @@ bool UnitTestLogger<T>::SetTargetFile(const std::basic_string<T>& filePath)
 }
 
 template <class T>
-bool UnitTestLogger<T>::SetTargetFile(std::basic_string<T>&& filePath)
+bool UnitTestLogger<T>::SetTargetFile(std::filesystem::path&& filePath)
 {
     std::basic_ofstream<T> newFileStream(filePath);
 
@@ -822,56 +547,95 @@ void UnitTestLogger<T>::SetPrintToConsole(bool print)
 // Public Methods
 
 template <class T>
-bool UnitTestLogger<T>::LogTestSetHeader(const TestSetData<T>& data)
+void UnitTestLogger<T>::LogTestSetHeader(const TestSetData<T>& data)
 {
-    logBuffer.append(std::move(BuildTestSetHeaderString(data)));
-    logBuffer.append(2, T('\n'));
+    std::basic_string<T> buf(BuildTestSetHeaderString(data));
+    buf.append(2, static_cast<T>('\n'));
 
-    return true;
+    std::lock_guard<std::mutex> lg(mLogQueueMutex);
+    mLogQueue.push(std::move(buf));
+    mLogQueueSize++;
 }
 
 template <class T>
-bool UnitTestLogger<T>::LogUnitTestResult(const UnitTestResult& res)
+void UnitTestLogger<T>::LogUnitTestResult(const UnitTestResult& res)
 {
-    logBuffer.append(std::move(BuildLogString(res)));
-    logBuffer.append(2, T('\n'));
+    std::basic_string<T> buf(BuildLogString(res));
+    buf.append(2, static_cast<T>('\n'));
 
-    return true;
+    std::lock_guard<std::mutex> lg(mLogQueueMutex);
+    mLogQueue.push(std::move(buf));
+    mLogQueueSize++;
 }
 
 template <class T>
-bool UnitTestLogger<T>::LogTestSetSummary(const TestSetData<T>& data)
+void UnitTestLogger<T>::LogTestSetSummary(const TestSetData<T>& data)
 {
-    logBuffer.append(std::move(BuildTestSetSummaryString(data)));
-    logBuffer.append(2, T('\n'));
+    std::basic_string<T> buf(BuildTestSetSummaryString(data));
+    buf.append(2, static_cast<T>('\n'));
 
-    return true;
+    std::lock_guard<std::mutex> lg(mLogQueueMutex);
+    mLogQueue.push(std::move(buf));
+    mLogQueueSize++;
+}
+
+/// Logging Worker Thread Methods \\\
+
+template <class T>
+void UnitTestLogger<T>::WorkerLoop( )
+{
+    while ( WorkerPredicate( ) )
+    {
+        WaitForWork( );
+
+        PrintLogs( );
+    }
 }
 
 template <class T>
-bool UnitTestLogger<T>::PrintLogs( )
+void UnitTestLogger<T>::WaitForWork( )
 {
-    bool ret = true;
+    std::unique_lock<std::mutex> ul(mLogQueueMutex);
 
+    mCVSignaler.wait(ul, [this] ( ) -> bool { return this->WorkerPredicate( ); });
+}
+
+template <class T>
+void UnitTestLogger<T>::PrintLogs( )
+{
+    std::queue<std::basic_string<T>> logQueue;
+    {
+        std::lock_guard<std::mutex> lg(mLogQueueMutex);
+        std::swap(logQueue, mLogQueue);
+    }
+
+    mLogQueueSize -= logQueue.size( );
+
+    while ( !logQueue.empty( ) )
+    {
+        std::basic_string<T> logStr(logQueue.front( ));
+        logQueue.pop( );
+
+        PrintLog(logStr);
+    }
+}
+
+template <class T>
+void UnitTestLogger<T>::PrintLog(const std::basic_string<T>& str)
+{
     if ( mPrintToConsole && mConsoleStream )
     {
-        mConsoleStream << logBuffer;
-
-        if ( !mConsoleStream )
-        {
-            ret = false;
-        }
+        mConsoleStream << str;
     }
 
     if ( mFileStream )
     {
-        mFileStream << logBuffer;
-
-        if ( !mFileStream )
-        {
-            ret = false;
-        }
+        mFileStream << str;
     }
+}
 
-    return ret;
+template <class T>
+bool UnitTestLogger<T>::WorkerPredicate( )
+{
+    return mContinueWork && (mLogQueueSize > 0);
 }

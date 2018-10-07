@@ -1,24 +1,26 @@
-#ifndef _TEST_SET_DATA_H
-#define _TEST_SET_DATA_H
+#pragma once
 
 #include <Types.h>
-#include <ITestSetData.h>
+
+#include <ResultType.h>
+
+#include <string>
 
 template <class T>
-class TestSetData : public virtual ITestSetData<T>
+class TestSetData
 {
 private:
-    uint64 mTotalTests;
-    uint64 mTestPassCount;
-    uint64 mTotalFailureCount;
-    uint64 mSetupFailureCount;
-    uint64 mTestFailureCount;
-    uint64 mCleanupFailureCount;
-    uint64 mSetupExceptionCount;
-    uint64 mTestExceptionCount;
-    uint64 mCleanupExceptionCount;
-    uint64 mUnhandledExceptionCount;
-    uint64 mTestSkipCount;
+    uint32 mTotalTests;
+    uint32 mTestPassCount;
+    uint32 mTotalFailureCount;
+    uint32 mSetupFailureCount;
+    uint32 mTestFailureCount;
+    uint32 mCleanupFailureCount;
+    uint32 mSetupExceptionCount;
+    uint32 mTestExceptionCount;
+    uint32 mCleanupExceptionCount;
+    uint32 mUnhandledExceptionCount;
+    uint32 mTestSkipCount;
 
     std::basic_string<T> mTestSetName;
 
@@ -41,27 +43,27 @@ public:
 
     /// Getters \\\
 
-    uint64 GetTotalTestCount( ) const noexcept;
-    uint64 GetTestPassCount( ) const noexcept;
-    uint64 GetTotalFailureCount( ) const noexcept;
-    uint64 GetSetupFailureCount( ) const noexcept;
-    uint64 GetTestFailureCount( ) const noexcept;
-    uint64 GetCleanupFailureCount( ) const noexcept;
-    uint64 GetSetupExceptionCount( ) const noexcept;
-    uint64 GetTestExceptionCount( ) const noexcept;
-    uint64 GetCleanupExceptionCount( ) const noexcept;
-    uint64 GetUnhandledExceptionCount( ) const noexcept;
-    uint64 GetTestSkipCount( ) const noexcept;
+    uint32 GetTotalTestCount( ) const noexcept;
+    uint32 GetTestPassCount( ) const noexcept;
+    uint32 GetTotalFailureCount( ) const noexcept;
+    uint32 GetSetupFailureCount( ) const noexcept;
+    uint32 GetTestFailureCount( ) const noexcept;
+    uint32 GetCleanupFailureCount( ) const noexcept;
+    uint32 GetSetupExceptionCount( ) const noexcept;
+    uint32 GetTestExceptionCount( ) const noexcept;
+    uint32 GetCleanupExceptionCount( ) const noexcept;
+    uint32 GetUnhandledExceptionCount( ) const noexcept;
+    uint32 GetTestSkipCount( ) const noexcept;
 
     const std::basic_string<T>& GetTestSetName( ) const noexcept;
 
     /// Incrementers \\\
 
-    void IncrementResultCounter(Result);
+    void IncrementResultCounter(ResultType);
 
     /// Setters \\\
 
-    void SetTotalTestCount(uint64) noexcept;
+    void SetTotalTestCount(uint32) noexcept;
 
     void SetTestSetName(const std::basic_string<T>&);
     void SetTestSetName(std::basic_string<T>&&) noexcept;
@@ -72,5 +74,3 @@ public:
     void ClearAll( ) noexcept;
     long double GetTestSetGrade( ) const noexcept;
 };
-
-#endif

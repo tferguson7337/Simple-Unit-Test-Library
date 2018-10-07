@@ -5,24 +5,20 @@
 
 /// Ctors \\\
     
-UnitTest::UnitTest(const std::function<UnitTestResult(void)>& func) :
-    mTestFuncPtr(std::make_unique<std::function<UnitTestResult(void)>>(func))
-{
+UnitTest::UnitTest(std::function<UnitTestResult(void)>&& func) noexcept :
+    mTestFunc(std::move(func))
+{ }
 
-}
-
-UnitTest::UnitTest(UnitTest&& src) noexcept
-{
-    *this = std::move(src);
-    src.mTestFuncPtr.reset( );
-    src.mTestResult = std::move(UnitTestResult( ));
-}
+UnitTest::UnitTest(UnitTest&& src) noexcept :
+    mTestFunc(std::move(src.mTestFunc)),
+    mTestResult(std::move(src.mTestResult))
+{ }
 
 // Operator Overloads
 
 UnitTest& UnitTest::operator=(UnitTest&& src) noexcept
 {
-    mTestFuncPtr = std::move(src.mTestFuncPtr);
+    mTestFunc = std::move(src.mTestFunc);
     mTestResult = std::move(src.mTestResult);
 
     return *this;
@@ -30,9 +26,9 @@ UnitTest& UnitTest::operator=(UnitTest&& src) noexcept
 
 // Getters
 
-std::function<UnitTestResult(void)> UnitTest::GetUnitTestFunction( ) const
+const std::function<UnitTestResult(void)>& UnitTest::GetUnitTestFunction( ) const noexcept
 {
-    return (mTestFuncPtr) ? *mTestFuncPtr : std::function<UnitTestResult(void)>( );
+    return mTestFunc;
 }
 
 const UnitTestResult& UnitTest::GetUnitTestResult( ) const noexcept
@@ -40,20 +36,22 @@ const UnitTestResult& UnitTest::GetUnitTestResult( ) const noexcept
     return mTestResult;
 }
 
-
 // Setters
 
-void UnitTest::SetUnitTestFunction(std::function<UnitTestResult(void)> func)
+void UnitTest::SetUnitTestFunction(std::function<UnitTestResult(void)>&& func) noexcept
 {
-    mTestFuncPtr = std::move(std::make_unique<std::function<UnitTestResult(void)>>(std::move(func)));
-
+    mTestFunc = std::move(func);
     mTestResult = std::move(UnitTestResult( ));
 }
-
 
 // Public Methods
 
 const UnitTestResult& UnitTest::RunTest( )
 {
-    return mTestResult = (mTestFuncPtr) ? (*mTestFuncPtr)() : UnitTestResult( );
+    if ( !mTestFunc )
+    {
+        throw std::runtime_error(__FUNCTION__": No function is associated with this UnitTest.");
+    }
+
+    return mTestResult = mTestFunc( );
 }

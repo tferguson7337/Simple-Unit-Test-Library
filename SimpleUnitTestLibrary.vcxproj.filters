@@ -18,9 +18,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\ResultEnums.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\TestSetData.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -51,20 +48,14 @@
     <ClInclude Include="Common\Headers\Unmovable.h">
       <Filter>Headers\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\ITestSetData.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Interfaces\IUnitTest.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Interfaces\IUnitTestResult.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h">
       <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ResultType.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

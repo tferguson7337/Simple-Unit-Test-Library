@@ -93,67 +93,67 @@ TestSetData<T>& TestSetData<T>::operator=(TestSetData<T>&& src) noexcept
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTotalTestCount( ) const noexcept
+uint32 TestSetData<T>::GetTotalTestCount( ) const noexcept
 {
     return mTotalTests;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTestPassCount( ) const noexcept
+uint32 TestSetData<T>::GetTestPassCount( ) const noexcept
 {
     return mTestPassCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTotalFailureCount( ) const noexcept
+uint32 TestSetData<T>::GetTotalFailureCount( ) const noexcept
 {
     return mTotalFailureCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetSetupFailureCount( ) const noexcept
+uint32 TestSetData<T>::GetSetupFailureCount( ) const noexcept
 {
     return mSetupFailureCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTestFailureCount( ) const noexcept
+uint32 TestSetData<T>::GetTestFailureCount( ) const noexcept
 {
     return mTestFailureCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetCleanupFailureCount( ) const noexcept
+uint32 TestSetData<T>::GetCleanupFailureCount( ) const noexcept
 {
     return mCleanupFailureCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetSetupExceptionCount( ) const noexcept
+uint32 TestSetData<T>::GetSetupExceptionCount( ) const noexcept
 {
     return mSetupExceptionCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTestExceptionCount( ) const noexcept
+uint32 TestSetData<T>::GetTestExceptionCount( ) const noexcept
 {
     return mTestExceptionCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetCleanupExceptionCount( ) const noexcept
+uint32 TestSetData<T>::GetCleanupExceptionCount( ) const noexcept
 {
     return mCleanupExceptionCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetUnhandledExceptionCount( ) const noexcept
+uint32 TestSetData<T>::GetUnhandledExceptionCount( ) const noexcept
 {
     return mUnhandledExceptionCount;
 }
 
 template <class T>
-uint64 TestSetData<T>::GetTestSkipCount( ) const noexcept
+uint32 TestSetData<T>::GetTestSkipCount( ) const noexcept
 {
     return mTestSkipCount;
 }
@@ -165,49 +165,49 @@ const std::basic_string<T>& TestSetData<T>::GetTestSetName( ) const noexcept
 }
 
 template <class T>
-void TestSetData<T>::IncrementResultCounter(Result r)
+void TestSetData<T>::IncrementResultCounter(ResultType r)
 {
     switch ( r )
     {
-    case Result::NotRun:
+    case ResultType::NotRun:
         mTestSkipCount++;
         break;
 
-    case Result::Success:
+    case ResultType::Success:
         mTestPassCount++;
         break;
 
-    case Result::SetupFailure:
+    case ResultType::SetupFailure:
         mSetupFailureCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::SetupException:
+    case ResultType::SetupException:
         mSetupExceptionCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::TestFailure:
+    case ResultType::TestFailure:
         mTestFailureCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::TestException:
+    case ResultType::TestException:
         mTestExceptionCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::CleanupFailure:
+    case ResultType::CleanupFailure:
         mCleanupFailureCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::CleanupException:
+    case ResultType::CleanupException:
         mCleanupExceptionCount++;
         mTotalFailureCount++;
         break;
 
-    case Result::UnhandledException:
+    case ResultType::UnhandledException:
         mUnhandledExceptionCount++;
         mTotalFailureCount++;
         break;
@@ -218,7 +218,7 @@ void TestSetData<T>::IncrementResultCounter(Result r)
 }
 
 template <class T>
-void TestSetData<T>::SetTotalTestCount(uint64 c) noexcept
+void TestSetData<T>::SetTotalTestCount(uint32 c) noexcept
 {
     mTotalTests = c;
 }
@@ -261,6 +261,6 @@ void TestSetData<T>::ClearAll( ) noexcept
 template <class T>
 long double TestSetData<T>::GetTestSetGrade( ) const noexcept
 {
-    const uint64 testRunCount = mTotalTests - mTestSkipCount;
+    const uint32 testRunCount = mTotalTests - mTestSkipCount;
     return (testRunCount > 0) ? 100.0L * static_cast<long double>(mTestPassCount) / static_cast<long double>(testRunCount) : 0.0L;
 }
