@@ -4,7 +4,6 @@
 #include <cstdarg>
 #include <ctime>
 
-
 #include <StringUtil.hpp>
 
 // Explicit Template Instantiation
