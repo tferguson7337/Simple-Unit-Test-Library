@@ -123,7 +123,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat( )
 {
     static const SupportedStringTuple headerFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "================================"
             "================================\n"
             "  Test-Set Name: %-25s -- Total Tests: %zu"
@@ -139,7 +139,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFormat( )
 {
     static const SupportedStringTuple summaryFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "===================="
             "====================\n"
             "    \"%s\" Complete\n\n"
@@ -302,7 +302,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetResultString(const ResultType&
 template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetTimeFormat( )
 {
-    static const SupportedStringTuple timeFormats(SUPSTR_MAKE_TUPLE("%c"));
+    static const SupportedStringTuple timeFormats(MAKE_SUPSTR_TUPLE("%c"));
 
     return std::get<std::basic_string<T>>(timeFormats);
 }
@@ -311,7 +311,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetSuccessFormat( )
 {
     static const SupportedStringTuple successFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "File: %hs\nTest: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -329,7 +329,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetFailureFormat( )
 {
     static const SupportedStringTuple failureFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "File: %hs\nTest: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -348,7 +348,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetExceptionFormat( )
 {
     static const SupportedStringTuple exceptionFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "File: %hs\nTest: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -367,7 +367,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetSkipFormat( )
 {
     static const SupportedStringTuple skipFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "File: %hs\nTest: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -386,7 +386,7 @@ template <class T>
 const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
 {
     static const SupportedStringTuple unhandledExceptionFormats(
-        SUPSTR_MAKE_TUPLE(
+        MAKE_SUPSTR_TUPLE(
             "Result: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
