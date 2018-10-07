@@ -28,6 +28,13 @@ UnitTestLogger<T>::UnitTestLogger(const std::filesystem::path& file, bool consol
 template <class T>
 UnitTestLogger<T>::~UnitTestLogger( )
 {
+    if ( mWorkerThread.joinable( ) )
+    {
+        mContinueWork = false;
+        mCVSignaler.notify_all( );
+        mWorkerThread.join( );
+    }
+
     if ( mPrintToConsole && mConsoleStream )
     {
         mConsoleStream.flush( );
