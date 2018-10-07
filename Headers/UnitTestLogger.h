@@ -25,6 +25,10 @@ class UnitTestLogger : public IUnitTestLogger<T>, public Uncopyable
     template <class U>
     friend class UnitTestLogger;
 
+    // Allow UnitTestRunner to access private methods.
+    template <class U>
+    friend class UnitTestRunner;
+
 private:
     /// Private Data Members \\\
 
@@ -46,11 +50,15 @@ private:
 
     /// Private Logging Worker Thread Methods \\\
 
+    void InitializeWorkerThread( );
+    void TeardownWorkerThread( );
+
     void WorkerLoop( );
     void WaitForWork( );
     void PrintLogs( );
     void PrintLog(const std::basic_string<T>&);
     bool WorkerPredicate( );
+    bool TerminatePredicate( );
 
     /// Private Static Helper Methods \\\
 
@@ -82,6 +90,8 @@ private:
 
     static std::basic_string<T> stprintf(const std::basic_string<T>*, ...);
     static int StringPrintWrapper(std::vector<T>&, const std::basic_string<T>*, va_list);
+
+    void LogCommon(std::basic_string<T>&&);
 
 public:
     /// Ctors \\\

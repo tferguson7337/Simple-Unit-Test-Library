@@ -147,6 +147,8 @@ bool UnitTestRunner<T>::RunUnitTests( )
 {
     bool ret = true;
 
+    mLogger.InitializeWorkerThread( );
+
     mTestSetData.ResetCounters( );
     mTestSetData.SetTotalTestCount(static_cast<uint32>(mUnitTests.size( )));
 
@@ -191,6 +193,8 @@ bool UnitTestRunner<T>::RunUnitTests( )
     }
 
     mLogger.LogTestSetSummary(mTestSetData);
+
+    mLogger.TeardownWorkerThread( );
 
     return ret;
 }

@@ -17,10 +17,7 @@ UnitTestLogger<T>::UnitTestLogger(const std::filesystem::path& file, bool consol
     mPrintToConsole(consoleOutput),
     mConsoleStream(InitConsoleStream( )),
     mFileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
-    mTargetFile(file),
-    mContinueWork(true),
-    mLogQueueSize(0),
-    mWorkerThread(&UnitTestLogger<T>::WorkerLoop, this)
+    mTargetFile(file)
 { }
 
 /// Dtor \\\
@@ -126,7 +123,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat( )
         MAKE_SUPSTR_TUPLE(
             "================================"
             "================================\n"
-            "  Test-Set Name: %-25s -- Total Tests: %zu"
+            "  Test-Set Name: %-25s -- Total Tests: %zu\n"
             "================================"
             "================================\n"
         )
@@ -143,19 +140,19 @@ const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFormat( )
             "===================="
             "====================\n"
             "    \"%s\" Complete\n\n"
-            "  Total Test Count: %llu\n"
-            "  Total Tests Run:  %llu\n\n"
-            "   Successful Tests: %llu\n\n"
-            "   Failed Tests:     %llu\n"
-            "    Setup Failures:       %llu\n"
-            "    Setup Exceptions:     %llu\n"
-            "    Test Failures:        %llu\n"
-            "    Test Exceptions:      %llu\n"
-            "    Cleanup Failures:     %llu\n"
-            "    Cleanup Exceptions:   %llu\n"
-            "    Unhandled Exceptions: %llu\n\n"
-            "   Skipped Tests:    %llu\n\n"
-            "  Test Pass Grade:  %2.2f%% (%llu / %llu)"
+            "  Total Test Count: %u\n"
+            "  Total Tests Run:  %u\n\n"
+            "   Successful Tests: %u\n\n"
+            "   Failed Tests:     %u\n"
+            "    Setup Failures:       %u\n"
+            "    Setup Exceptions:     %u\n"
+            "    Test Failures:        %u\n"
+            "    Test Exceptions:      %u\n"
+            "    Cleanup Failures:     %u\n"
+            "    Cleanup Exceptions:   %u\n"
+            "    Unhandled Exceptions: %u\n\n"
+            "   Skipped Tests:    %u\n\n"
+            "  Test Pass Grade:  %2.2f%% (%u / %u)\n"
             "===================="
             "====================\n"
         )
@@ -316,7 +313,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetSuccessFormat( )
             "--------------------------------"
             "--------------------------------\n"
             "    Result: %s\n"
-            "    Line: %llu\n"
+            "    Line: %u\n"
             "--------------------------------"
             "--------------------------------\n"
         )
@@ -334,7 +331,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetFailureFormat( )
             "--------------------------------"
             "--------------------------------\n"
             "    Result: %s\n"
-            "    Line: %llu\n"
+            "    Line: %u\n"
             "    Failure: %s\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -353,7 +350,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetExceptionFormat( )
             "--------------------------------"
             "--------------------------------\n"
             "    Result: %s\n"
-            "    Line: %llu\n"
+            "    Line: %u\n"
             "    Exception: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -372,7 +369,7 @@ const std::basic_string<T>& UnitTestLogger<T>::GetSkipFormat( )
             "--------------------------------"
             "--------------------------------\n"
             "    Result: %s\n"
-            "    Line: %llu\n"
+            "    Line: %u\n"
             "    Reason: %hs\n"
             "--------------------------------"
             "--------------------------------\n"
@@ -490,6 +487,17 @@ int UnitTestLogger<T>::StringPrintWrapper(std::vector<T>& buffer, const std::bas
     }
 }
 
+template <class T>
+void UnitTestLogger<T>::LogCommon(std::basic_string<T>&& str)
+{
+    {
+        std::lock_guard<std::mutex> lg(mLogQueueMutex);
+        mLogQueue.push(std::move(str));
+        mLogQueueSize++;
+    }
+
+    mCVSignaler.notify_one( );
+}
 
 /// Public Method Definitions \\\
 
@@ -558,9 +566,7 @@ void UnitTestLogger<T>::LogTestSetHeader(const TestSetData<T>& data)
     std::basic_string<T> buf(BuildTestSetHeaderString(data));
     buf.append(2, static_cast<T>('\n'));
 
-    std::lock_guard<std::mutex> lg(mLogQueueMutex);
-    mLogQueue.push(std::move(buf));
-    mLogQueueSize++;
+    LogCommon(std::move(buf));
 }
 
 template <class T>
@@ -569,9 +575,7 @@ void UnitTestLogger<T>::LogUnitTestResult(const UnitTestResult& res)
     std::basic_string<T> buf(BuildLogString(res));
     buf.append(2, static_cast<T>('\n'));
 
-    std::lock_guard<std::mutex> lg(mLogQueueMutex);
-    mLogQueue.push(std::move(buf));
-    mLogQueueSize++;
+    LogCommon(std::move(buf));
 }
 
 template <class T>
@@ -580,17 +584,35 @@ void UnitTestLogger<T>::LogTestSetSummary(const TestSetData<T>& data)
     std::basic_string<T> buf(BuildTestSetSummaryString(data));
     buf.append(2, static_cast<T>('\n'));
 
-    std::lock_guard<std::mutex> lg(mLogQueueMutex);
-    mLogQueue.push(std::move(buf));
-    mLogQueueSize++;
+    LogCommon(std::move(buf));
 }
 
 /// Logging Worker Thread Methods \\\
 
 template <class T>
+void UnitTestLogger<T>::InitializeWorkerThread( )
+{
+    TeardownWorkerThread( );
+
+    mContinueWork = true;
+    mWorkerThread = std::thread(&UnitTestLogger<T>::WorkerLoop, this);
+}
+
+template <class T>
+void UnitTestLogger<T>::TeardownWorkerThread( )
+{
+    if ( mWorkerThread.joinable( ) )
+    {
+        mContinueWork = false;
+        mCVSignaler.notify_all( );
+        mWorkerThread.join( );
+    }
+}
+
+template <class T>
 void UnitTestLogger<T>::WorkerLoop( )
 {
-    while ( WorkerPredicate( ) )
+    while ( !TerminatePredicate( ) )
     {
         WaitForWork( );
 
@@ -613,9 +635,8 @@ void UnitTestLogger<T>::PrintLogs( )
     {
         std::lock_guard<std::mutex> lg(mLogQueueMutex);
         std::swap(logQueue, mLogQueue);
+        mLogQueueSize = 0;
     }
-
-    mLogQueueSize -= logQueue.size( );
 
     while ( !logQueue.empty( ) )
     {
@@ -643,5 +664,11 @@ void UnitTestLogger<T>::PrintLog(const std::basic_string<T>& str)
 template <class T>
 bool UnitTestLogger<T>::WorkerPredicate( )
 {
-    return mContinueWork && (mLogQueueSize > 0);
+    return mLogQueueSize != 0 || !mContinueWork;
+}
+
+template <class T>
+bool UnitTestLogger<T>::TerminatePredicate( )
+{
+    return !mContinueWork && (mLogQueueSize == 0);
 }
