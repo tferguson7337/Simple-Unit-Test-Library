@@ -1,8 +1,8 @@
 #include <TestSetData.h>
 
 // Explicit Template Instantiation
-template class TestSetData<char>;
-template class TestSetData<wchar_t>;
+template class TestSetData<utf8>;
+template class TestSetData<utf16>;
 
 template <class T>
 TestSetData<T>::TestSetData(const std::basic_string<T>& testSetName) noexcept :

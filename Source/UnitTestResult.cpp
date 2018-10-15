@@ -44,14 +44,14 @@ UnitTestResult::operator bool( ) const noexcept
 
 // Private Helpers \\
 
-constexpr const char* UnitTestResult::ExtractNameCommon(const ascii* str, const size_t len, ExtractPredicate pred) noexcept
+constexpr const utf8* UnitTestResult::ExtractNameCommon(const utf8* str, const size_t len, ExtractPredicate pred) noexcept
 {
     if ( !str || len == 0 )
     {
         return nullptr;
     }
 
-    const char* name = str + len;
+    const utf8* name = str + len;
     while ( name >= str )
     {
         if ( pred(*(--name)) )
@@ -60,25 +60,25 @@ constexpr const char* UnitTestResult::ExtractNameCommon(const ascii* str, const 
         }
     }
 
-    return name + sizeof(char);
+    return name + sizeof(utf8);
 }
 
-constexpr const char* UnitTestResult::ExtractFileName(const ascii* f, const size_t n) noexcept
+constexpr const utf8* UnitTestResult::ExtractFileName(const utf8* f, const size_t n) noexcept
 {
     return ExtractNameCommon(f, n, IsPathSeparator);
 }
 
-constexpr const char* UnitTestResult::ExtractFuncName(const ascii* f, const size_t n) noexcept
+constexpr const utf8* UnitTestResult::ExtractFuncName(const utf8* f, const size_t n) noexcept
 {
     return ExtractNameCommon(f, n, IsWhitespace);
 }
 
-constexpr bool UnitTestResult::IsPathSeparator(const ascii c) noexcept
+constexpr bool UnitTestResult::IsPathSeparator(const utf8 c) noexcept
 {
     return (c == '/' || c == '\\');
 }
 
-constexpr bool UnitTestResult::IsWhitespace(const ascii c) noexcept
+constexpr bool UnitTestResult::IsWhitespace(const utf8 c) noexcept
 {
     return (c == ' ' || c == '\t');
 }

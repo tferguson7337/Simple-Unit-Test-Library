@@ -399,13 +399,13 @@ const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
 template <class T>
 bool UnitTestLogger<T>::GetTime(T* buffer, const time_t* t)
 {
-    if constexpr ( sizeof(T) == sizeof(byte) )
+    if constexpr ( sizeof(T) == sizeof(utf8) )
     {
-        return ctime_s(reinterpret_cast<char*>(buffer), mTimeBufferLength, t) == 0;
+        return ctime_s(reinterpret_cast<utf8*>(buffer), mTimeBufferLength, t) == 0;
     }
-    else if constexpr ( sizeof(T) == sizeof(dbyte) )
+    else if constexpr ( sizeof(T) == sizeof(utf16) )
     {
-        return _wctime_s(reinterpret_cast<wchar_t*>(buffer), mTimeBufferLength, t) == 0;
+        return _wctime_s(reinterpret_cast<utf16*>(buffer), mTimeBufferLength, t) == 0;
     }
     else
     {
@@ -448,16 +448,16 @@ int UnitTestLogger<T>::StringPrintWrapper(std::vector<T>& buffer, const std::bas
         if ( buffer.empty( ) )
         {
             return _vscprintf(
-                reinterpret_cast<const char*>(format->c_str( )), 
+                reinterpret_cast<const utf8*>(format->c_str( )), 
                 args
             );
         }
         else
         {
             return vsnprintf(
-                reinterpret_cast<char*>(buffer.data( )),
+                reinterpret_cast<utf8*>(buffer.data( )),
                 buffer.size( ) - 1, 
-                reinterpret_cast<const char*>(format->c_str( )),
+                reinterpret_cast<const utf8*>(format->c_str( )),
                 args
             );
         }
@@ -467,16 +467,16 @@ int UnitTestLogger<T>::StringPrintWrapper(std::vector<T>& buffer, const std::bas
         if ( buffer.empty( ) )
         {
             return _vscwprintf(
-                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                reinterpret_cast<const utf16*>(format->c_str( )),
                 args
             );
         }
         else
         {
             return vswprintf(
-                reinterpret_cast<wchar_t*>(buffer.data( )),
+                reinterpret_cast<utf16*>(buffer.data( )),
                 buffer.size( ) - 1,
-                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                reinterpret_cast<const utf16*>(format->c_str( )),
                 args
             );
         }

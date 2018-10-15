@@ -26,12 +26,12 @@ private:
     std::string mFileName;
     std::string mResultInfo;
 
-    using ExtractPredicate = bool(*)(const char);
-    static constexpr const char* ExtractNameCommon(const ascii*, const size_t, ExtractPredicate) noexcept;
-    static constexpr const char* ExtractFileName(const ascii*, const size_t) noexcept;
-    static constexpr const char* ExtractFuncName(const ascii*, const size_t) noexcept;
-    static constexpr bool IsPathSeparator(const ascii) noexcept;
-    static constexpr bool IsWhitespace(const ascii) noexcept;
+    using ExtractPredicate = bool(*)(const utf8);
+    static constexpr const utf8* ExtractNameCommon(const utf8*, const size_t, ExtractPredicate) noexcept;
+    static constexpr const utf8* ExtractFileName(const utf8*, const size_t) noexcept;
+    static constexpr const utf8* ExtractFuncName(const utf8*, const size_t) noexcept;
+    static constexpr bool IsPathSeparator(const utf8) noexcept;
+    static constexpr bool IsWhitespace(const utf8) noexcept;
 
 public:
     /// Ctors \\\

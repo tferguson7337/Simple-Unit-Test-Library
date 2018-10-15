@@ -1,8 +1,8 @@
 #include <UnitTestRunner.h>
 
 // Explicit Template Instantiation
-template class UnitTestRunner<char>;
-template class UnitTestRunner<wchar_t>;
+template class UnitTestRunner<utf8>;
+template class UnitTestRunner<utf16>;
 
 /// Method Definitions \\\
 
