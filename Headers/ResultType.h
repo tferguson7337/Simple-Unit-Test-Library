@@ -73,15 +73,15 @@ public:
     {
         static const std::vector<SupportedStringTuple> vResultTypeStrings
         {
-            MAKE_SUPSTR_TUPLE("Not Run"),
-            MAKE_SUPSTR_TUPLE("Success"),
-            MAKE_SUPSTR_TUPLE("Setup Failure"),
-            MAKE_SUPSTR_TUPLE("Setup Exception"),
-            MAKE_SUPSTR_TUPLE("Run Failure"),
-            MAKE_SUPSTR_TUPLE("Run Exception"),
-            MAKE_SUPSTR_TUPLE("Cleanup Failure"),
-            MAKE_SUPSTR_TUPLE("Cleanup Exception"),
-            MAKE_SUPSTR_TUPLE("Unhandled Exception"),
+            MAKE_STR_TUPLE("Not Run"),
+            MAKE_STR_TUPLE("Success"),
+            MAKE_STR_TUPLE("Setup Failure"),
+            MAKE_STR_TUPLE("Setup Exception"),
+            MAKE_STR_TUPLE("Run Failure"),
+            MAKE_STR_TUPLE("Run Exception"),
+            MAKE_STR_TUPLE("Cleanup Failure"),
+            MAKE_STR_TUPLE("Cleanup Exception"),
+            MAKE_STR_TUPLE("Unhandled Exception"),
         };
 
         ValidateResultType(r, __FUNCTION__);
