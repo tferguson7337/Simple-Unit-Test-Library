@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Uncopyable.h>
-#include <UnitTestLogger.h>
-#include <IUnitTestRunner.h>
+#include "../Common/Headers/Uncopyable.h"
+#include "UnitTestLogger.h"
+#include "Interfaces/IUnitTestRunner.h"
 
-#include <TestSetData.h>
+#include "TestSetData.h"
 
 template <class T>
 class UnitTestRunner final : public virtual IUnitTestRunner<T>, public Uncopyable

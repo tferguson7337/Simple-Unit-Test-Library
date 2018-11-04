@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Types.h>
+#include "../Common/Headers/Types.h"
 
-#include <ResultType.h>
+#include "ResultType.h"
 
 #include <string>
 

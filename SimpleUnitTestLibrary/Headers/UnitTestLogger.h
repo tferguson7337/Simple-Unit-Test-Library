@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Uncopyable.h>
-#include <StringUtil.hpp>
+#include "../Common/Headers/Uncopyable.h"
+#include "../Common/Headers/StringUtil.hpp"
 
-#include <IUnitTestLogger.h>
+#include "Interfaces/IUnitTestLogger.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -15,8 +15,8 @@
 #include <queue>
 #include <thread>
 
-#include <TestSetData.h>
-#include <UnitTestResult.h>
+#include "TestSetData.h"
+#include "UnitTestResult.h"
 
 template <class T>
 class UnitTestLogger : public IUnitTestLogger<T>, public Uncopyable

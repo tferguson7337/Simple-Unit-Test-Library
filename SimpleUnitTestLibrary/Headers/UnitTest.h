@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Uncopyable.h>
+#include "../Common/Headers/Uncopyable.h"
 
-#include <UnitTestResult.h>
+#include "UnitTestResult.h"
 
 #include <functional>
 #include <memory>

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Macros.h>
-#include <Uncopyable.h>
-#include <Types.h>
+#include "../Common/Headers/Macros.h"
+#include "../Common/Headers/Uncopyable.h"
+#include "../Common/Headers/Types.h"
 
-#include <ResultType.h>
+#include "ResultType.h"
 
 #include <string>
 
