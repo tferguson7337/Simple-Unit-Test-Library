@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../Common/Headers/Uncopyable.h"
-#include "../Common/Headers/StringUtil.hpp"
+#include "../Common/Headers/StringUtil.h"
 
 #include "Interfaces/IUnitTestLogger.h"
 
@@ -19,7 +18,7 @@
 #include "UnitTestResult.h"
 
 template <class T>
-class UnitTestLogger : public IUnitTestLogger<T>, public Uncopyable
+class UnitTestLogger : public IUnitTestLogger<T>
 {
     // Allow other UnitTestLogger specializations to access private static methods.
     template <class U>
@@ -30,6 +29,11 @@ class UnitTestLogger : public IUnitTestLogger<T>, public Uncopyable
     friend class UnitTestRunner;
 
 private:
+
+    /// Static Private Data Members \\\
+
+    static const size_t mTimeBufferLength = 32;
+
     /// Private Data Members \\\
 
     bool mPrintToConsole; 
@@ -44,9 +48,7 @@ private:
     std::condition_variable mCVSignaler;
     std::queue<std::basic_string<T>> mLogQueue;
     
-    std::thread mWorkerThread;    
-
-    static const size_t mTimeBufferLength = 32;
+    std::thread mWorkerThread;
 
     /// Private Logging Worker Thread Methods \\\
 
@@ -56,7 +58,7 @@ private:
     void WorkerLoop( );
     void WaitForWork( );
     void PrintLogs( );
-    void PrintLog(const std::basic_string<T>&);
+    void PrintLog(_In_ const std::basic_string<T>&);
     bool WorkerPredicate( );
     bool TerminatePredicate( );
 
@@ -64,21 +66,21 @@ private:
 
     static std::basic_ostream<T>& InitConsoleStream( );
 
-    static std::basic_string<T> BuildTestSetHeaderString(const TestSetData<T>&);
-    static std::basic_string<T> BuildTestSetSummaryString(const TestSetData<T>&);
+    static std::basic_string<T> BuildTestSetHeaderString(_In_ const TestSetData<T>&);
+    static std::basic_string<T> BuildTestSetSummaryString(_In_ const TestSetData<T>&);
 
     static const std::basic_string<T>& GetTestSetHeaderFormat( );
     static const std::basic_string<T>& GetTestSetSummaryFormat( );
 
-    static std::basic_string<T> BuildLogString(const UnitTestResult&);
+    static std::basic_string<T> BuildLogString(_In_ const UnitTestResult&);
     static std::basic_string<T> BuildTimeString( );
-    static std::basic_string<T> BuildSuccessString(const UnitTestResult&);
-    static std::basic_string<T> BuildFailureString(const UnitTestResult&);
-    static std::basic_string<T> BuildExceptionString(const UnitTestResult&);
-    static std::basic_string<T> BuildSkipString(const UnitTestResult&);
-    static std::basic_string<T> BuildUnhandledExceptionString(const UnitTestResult&);
+    static std::basic_string<T> BuildSuccessString(_In_ const UnitTestResult&);
+    static std::basic_string<T> BuildFailureString(_In_ const UnitTestResult&);
+    static std::basic_string<T> BuildExceptionString(_In_ const UnitTestResult&);
+    static std::basic_string<T> BuildSkipString(_In_ const UnitTestResult&);
+    static std::basic_string<T> BuildUnhandledExceptionString(_In_ const UnitTestResult&);
 
-    static const std::basic_string<T>& GetResultString(const ResultType&);
+    static const std::basic_string<T>& GetResultString(_In_ const ResultType&);
     static const std::basic_string<T>& GetTimeFormat( );
     static const std::basic_string<T>& GetSuccessFormat( );
     static const std::basic_string<T>& GetFailureFormat( );
@@ -86,17 +88,17 @@ private:
     static const std::basic_string<T>& GetSkipFormat( );
     static const std::basic_string<T>& GetUnhandledExceptionFormat( );
 
-    static bool GetTime(T*, const time_t*);
+    static bool GetTime(_In_ T*, _In_ const time_t*);
 
-    static std::basic_string<T> stprintf(const std::basic_string<T>*, ...);
-    static int StringPrintWrapper(std::vector<T>&, const std::basic_string<T>*, va_list);
+    static std::basic_string<T> stprintf(_In_ const std::basic_string<T>*, ...);
+    static int StringPrintWrapper(_Inout_ std::vector<T>&, _In_ const std::basic_string<T>*, _In_ va_list);
 
-    void LogCommon(std::basic_string<T>&&);
+    void LogCommon(_In_ std::basic_string<T>&&);
 
 public:
     /// Ctors \\\
 
-    UnitTestLogger(const std::filesystem::path& = std::filesystem::path( ), bool = true);
+    UnitTestLogger(_In_ const std::filesystem::path& = std::filesystem::path( ), _In_ bool = true);
 
     /// Dtor \\\
 
@@ -104,7 +106,7 @@ public:
 
     /// Operator Overload \\\
 
-    UnitTestLogger& operator=(UnitTestLogger&&) noexcept;
+    UnitTestLogger& operator=(_In_ UnitTestLogger&&) noexcept;
 
     /// Getters \\\
 
@@ -113,13 +115,13 @@ public:
 
     /// Setters \\\
 
-    bool SetTargetFile(const std::filesystem::path&);
-    bool SetTargetFile(std::filesystem::path&&);
-    void SetPrintToConsole(bool);
+    bool SetTargetFile(_In_ const std::filesystem::path&);
+    bool SetTargetFile(_In_ std::filesystem::path&&);
+    void SetPrintToConsole(_In_ bool);
 
     /// Public Methods \\\
 
-    void LogTestSetHeader(const TestSetData<T>&);
-    void LogUnitTestResult(const UnitTestResult&);
-    void LogTestSetSummary(const TestSetData<T>&);
+    void LogTestSetHeader(_In_ const TestSetData<T>&);
+    void LogUnitTestResult(_In_ const UnitTestResult&);
+    void LogTestSetSummary(_In_ const TestSetData<T>&);
 };

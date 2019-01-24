@@ -27,10 +27,10 @@ private:
 public:
     /// Ctors \\\
 
-    explicit TestSetData(const std::basic_string<T>& = std::basic_string<T>( )) noexcept;
-    explicit TestSetData(std::basic_string<T>&&) noexcept;
-    TestSetData(const TestSetData&) noexcept;
-    TestSetData(TestSetData&&) noexcept;
+    explicit TestSetData(_In_ const std::basic_string<T>& testSetName = std::basic_string<T>( )) noexcept;
+    explicit TestSetData(_In_ std::basic_string<T>&& testSetName) noexcept;
+    TestSetData(_In_ const TestSetData& src) noexcept;
+    TestSetData(_In_ TestSetData&& src) noexcept;
 
     /// Dtor \\\
 
@@ -38,8 +38,8 @@ public:
 
     /// Assignment Overloads \\\
 
-    TestSetData& operator=(const TestSetData&) noexcept;
-    TestSetData& operator=(TestSetData&&) noexcept;
+    TestSetData& operator=(_In_ const TestSetData& src) noexcept;
+    TestSetData& operator=(_In_ TestSetData&& src) noexcept;
 
     /// Getters \\\
 
@@ -59,14 +59,14 @@ public:
 
     /// Incrementers \\\
 
-    void IncrementResultCounter(ResultType);
+    void IncrementResultCounter(_In_ const ResultType& r);
 
     /// Setters \\\
 
-    void SetTotalTestCount(uint32) noexcept;
+    void SetTotalTestCount(_In_ const uint32& c) noexcept;
 
-    void SetTestSetName(const std::basic_string<T>&);
-    void SetTestSetName(std::basic_string<T>&&) noexcept;
+    void SetTestSetName(_In_ const std::basic_string<T>& name);
+    void SetTestSetName(_In_ std::basic_string<T>&& name) noexcept;
 
     /// Public Methods \\\
 

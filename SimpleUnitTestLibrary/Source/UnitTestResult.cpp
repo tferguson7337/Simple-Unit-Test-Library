@@ -4,7 +4,7 @@
 
 /// Ctors \\\
 
-UnitTestResult::UnitTestResult(ResultType result, const std::string& func, const std::string& file, uint32 line, const std::string& info) noexcept :
+UnitTestResult::UnitTestResult(_In_ ResultType result, _In_ const std::string& func, _In_ const std::string& file, _In_ const uint32& line, _In_ const std::string& info) noexcept :
     mResult(result),
     mFuncName(func.empty( ) ? std::string( ) : ExtractFuncName(func.c_str( ), func.size( ))),
     mFileName(file.empty( ) ? std::string( ) : ExtractFileName(file.c_str( ), file.size( ))),
@@ -13,7 +13,7 @@ UnitTestResult::UnitTestResult(ResultType result, const std::string& func, const
 { }
 
 // Move Ctor
-UnitTestResult::UnitTestResult(UnitTestResult&& src) noexcept :
+UnitTestResult::UnitTestResult(_In_ UnitTestResult&& src) noexcept :
     mResult(src.mResult),
     mLineNum(src.mLineNum),
     mFuncName(std::move(src.mFuncName)),
@@ -23,7 +23,7 @@ UnitTestResult::UnitTestResult(UnitTestResult&& src) noexcept :
 
 // Operator Overloads \\
 
-UnitTestResult& UnitTestResult::operator=(UnitTestResult&& src) noexcept
+UnitTestResult& UnitTestResult::operator=(_In_ UnitTestResult&& src) noexcept
 {
     if ( this != &src )
     {
@@ -44,7 +44,7 @@ UnitTestResult::operator bool( ) const noexcept
 
 // Private Helpers \\
 
-constexpr const utf8* UnitTestResult::ExtractNameCommon(const utf8* str, const size_t len, ExtractPredicate pred) noexcept
+constexpr const utf8* UnitTestResult::ExtractNameCommon(_In_ const utf8* str, _In_ const size_t& len, _In_ ExtractPredicate pred) noexcept
 {
     if ( !str || len == 0 )
     {
@@ -63,22 +63,22 @@ constexpr const utf8* UnitTestResult::ExtractNameCommon(const utf8* str, const s
     return name + sizeof(utf8);
 }
 
-constexpr const utf8* UnitTestResult::ExtractFileName(const utf8* f, const size_t n) noexcept
+constexpr const utf8* UnitTestResult::ExtractFileName(_In_ const utf8* f, _In_ const size_t& n) noexcept
 {
     return ExtractNameCommon(f, n, IsPathSeparator);
 }
 
-constexpr const utf8* UnitTestResult::ExtractFuncName(const utf8* f, const size_t n) noexcept
+constexpr const utf8* UnitTestResult::ExtractFuncName(_In_ const utf8* f, _In_ const size_t& n) noexcept
 {
     return ExtractNameCommon(f, n, IsWhitespace);
 }
 
-constexpr bool UnitTestResult::IsPathSeparator(const utf8 c) noexcept
+constexpr bool UnitTestResult::IsPathSeparator(_In_ const utf8& c) noexcept
 {
     return (c == '/' || c == '\\');
 }
 
-constexpr bool UnitTestResult::IsWhitespace(const utf8 c) noexcept
+constexpr bool UnitTestResult::IsWhitespace(_In_ const utf8& c) noexcept
 {
     return (c == ' ' || c == '\t');
 }
@@ -116,27 +116,27 @@ const std::string& UnitTestResult::GetResultInfo( ) const noexcept
 
 // Setters \\
 
-void UnitTestResult::SetResult(const ResultType& res) noexcept
+void UnitTestResult::SetResult(_In_ const ResultType& res) noexcept
 {
     mResult = res;
 }
 
-void UnitTestResult::SetFunctionName(const std::string& func)
+void UnitTestResult::SetFunctionName(_In_ const std::string& func)
 {
     mFuncName = func;
 }
 
-void UnitTestResult::SetFileName(const std::string& file)
+void UnitTestResult::SetFileName(_In_ const std::string& file)
 {
     mFileName = file;
 }
 
-void UnitTestResult::SetLineNumber(const uint32& line) noexcept
+void UnitTestResult::SetLineNumber(_In_ const uint32& line) noexcept
 {
     mLineNum = line;
 }
 
-void UnitTestResult::SetResultInfo(const std::string& info)
+void UnitTestResult::SetResultInfo(_In_ const std::string& info)
 {
     mResultInfo = info;
 }

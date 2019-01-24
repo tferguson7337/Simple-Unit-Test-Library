@@ -9,7 +9,7 @@ template class UnitTestRunner<utf16>;
 /// Ctors \\\
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& testName) :
+UnitTestRunner<T>::UnitTestRunner(_In_ const std::basic_string<T>& testName) :
     mTestSetData(testName),
     mLogger()
 {
@@ -17,7 +17,7 @@ UnitTestRunner<T>::UnitTestRunner(const std::basic_string<T>& testName) :
 }
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(std::basic_string<T>&& testName) noexcept :
+UnitTestRunner<T>::UnitTestRunner(_In_ std::basic_string<T>&& testName) noexcept :
     mTestSetData(std::move(testName))
 {
     
@@ -26,7 +26,7 @@ UnitTestRunner<T>::UnitTestRunner(std::basic_string<T>&& testName) noexcept :
 /// Operator Overloads \\\
 
 template <class T>
-UnitTestRunner<T>& UnitTestRunner<T>::operator=(UnitTestRunner&& src) noexcept
+UnitTestRunner<T>& UnitTestRunner<T>::operator=(_In_ UnitTestRunner&& src) noexcept
 {
     mUnitTests = std::move(src.mUnitTests);
 
@@ -62,13 +62,13 @@ const TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) const noexcept
 // Setters
 
 template <class T>
-bool UnitTestRunner<T>::SetLogFile(const std::filesystem::path& log)
+bool UnitTestRunner<T>::SetLogFile(_In_ const std::filesystem::path& log)
 {
     return mLogger.SetTargetFile(log);
 }
 
 template <class T>
-void UnitTestRunner<T>::SetConsoleOutput(bool consoleOut)
+void UnitTestRunner<T>::SetConsoleOutput(_In_ const bool& consoleOut)
 {
     mLogger.SetPrintToConsole(consoleOut);
 }
@@ -77,7 +77,7 @@ void UnitTestRunner<T>::SetConsoleOutput(bool consoleOut)
 // Public Methods
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTest(UnitTest&& test)
+bool UnitTestRunner<T>::AddUnitTest(_In_ UnitTest&& test)
 {
     try
     {
@@ -92,7 +92,7 @@ bool UnitTestRunner<T>::AddUnitTest(UnitTest&& test)
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTest(std::function<UnitTestResult(void)>&& test)
+bool UnitTestRunner<T>::AddUnitTest(_In_ std::function<UnitTestResult(void)>&& test)
 {
     try
     {
@@ -107,7 +107,7 @@ bool UnitTestRunner<T>::AddUnitTest(std::function<UnitTestResult(void)>&& test)
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTests(std::list<UnitTest>&& tests)
+bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<UnitTest>&& tests)
 {
     try
     {
@@ -123,7 +123,7 @@ bool UnitTestRunner<T>::AddUnitTests(std::list<UnitTest>&& tests)
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTests(std::list<std::function<UnitTestResult(void)>>&& tests)
+bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&& tests)
 {
     try
     {

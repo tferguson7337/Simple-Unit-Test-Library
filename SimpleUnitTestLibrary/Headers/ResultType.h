@@ -32,8 +32,8 @@ enum class ResultType : ResultTypeUnderlyingType
     UnhandledException,
 
     // Enum Boundaries
-    MAX,
-    BEGIN = NotRun
+    IterationEnd,
+    IterationBegin = NotRun
 };
 
 
@@ -51,41 +51,17 @@ class ResultTypeUtil
     ResultTypeUtil& operator=(ResultTypeUtil&&) = delete;
 
 private:
+    /// Private Data Members \\\
 
-    static bool ValidateResultType(const ResultType& r, const std::string& f)
-    {
-        if ( r < ResultType::BEGIN || r > ResultType::MAX )
-        {
-            throw std::invalid_argument(
-                f + ": Invalid ResultType argument provided[" +
-                std::to_string(static_cast<ResultTypeUnderlyingType>(r)) +
-                "]."
-            );
-        }
+    static const std::vector<SupportedStringTuple> m_svResultTypeStrings;
 
-        return true;
-    }
+    /// Private Helper Methods \\\
+
+    static void ValidateResultType(_In_ const ResultType&, _In_ const std::string&);
 
 public:
-
-    template <typename CharType, typename Enabled = std::enable_if_t<IsSupportedCharType<CharType>( )>>
-    static const std::basic_string<CharType>& ToString(const ResultType& r)
-    {
-        static const std::vector<SupportedStringTuple> vResultTypeStrings
-        {
-            MAKE_STR_TUPLE("Not Run"),
-            MAKE_STR_TUPLE("Success"),
-            MAKE_STR_TUPLE("Setup Failure"),
-            MAKE_STR_TUPLE("Setup Exception"),
-            MAKE_STR_TUPLE("Run Failure"),
-            MAKE_STR_TUPLE("Run Exception"),
-            MAKE_STR_TUPLE("Cleanup Failure"),
-            MAKE_STR_TUPLE("Cleanup Exception"),
-            MAKE_STR_TUPLE("Unhandled Exception"),
-        };
-
-        ValidateResultType(r, __FUNCTION__);
-        
-        return std::get<std::basic_string<CharType>>(vResultTypeStrings[static_cast<size_t>(r)]);
-    }
+    /// Public Methods \\\
+    
+    template <typename CharType, typename Enabled = typename std::enable_if_t<IsSupportedCharType<CharType>( )>>
+    static const std::basic_string<CharType>& ToString(_In_ const ResultType& r);
 };

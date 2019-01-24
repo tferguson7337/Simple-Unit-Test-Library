@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../Common/Headers/Uncopyable.h"
 #include "UnitTestLogger.h"
 #include "Interfaces/IUnitTestRunner.h"
 
 #include "TestSetData.h"
 
 template <class T>
-class UnitTestRunner final : public virtual IUnitTestRunner<T>, public Uncopyable
+class UnitTestRunner final : public virtual IUnitTestRunner<T>
 {
 private:
     std::list<UnitTest> mUnitTests;
@@ -17,8 +16,8 @@ private:
 public:
     /// Ctors \\\
 
-    explicit UnitTestRunner(const std::basic_string<T>&);
-    explicit UnitTestRunner(std::basic_string<T>&&) noexcept;
+    explicit UnitTestRunner(_In_ const std::basic_string<T>&);
+    explicit UnitTestRunner(_In_ std::basic_string<T>&&) noexcept;
 
     /// Dtor \\\
 
@@ -26,7 +25,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestRunner& operator=(UnitTestRunner&&) noexcept;
+    UnitTestRunner& operator=(_In_ UnitTestRunner&&) noexcept;
 
     /// Getters \\\
 
@@ -37,15 +36,15 @@ public:
 
     /// Setters \\\
 
-    bool SetLogFile(const std::filesystem::path&);
-    void SetConsoleOutput(bool);
+    bool SetLogFile(_In_ const std::filesystem::path&);
+    void SetConsoleOutput(_In_ const bool&);
 
     /// Public Methods \\\
 
-    bool AddUnitTest(UnitTest&&);
-    bool AddUnitTest(std::function<UnitTestResult(void)>&&);
-    bool AddUnitTests(std::list<UnitTest>&&);
-    bool AddUnitTests(std::list<std::function<UnitTestResult(void)>>&&);
+    bool AddUnitTest(_In_ UnitTest&&);
+    bool AddUnitTest(_In_ std::function<UnitTestResult(void)>&&);
+    bool AddUnitTests(_In_ std::list<UnitTest>&&);
+    bool AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&&);
 
     bool RunUnitTests( );
 };

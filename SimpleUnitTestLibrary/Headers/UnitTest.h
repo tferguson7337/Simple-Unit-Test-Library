@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Common/Headers/Uncopyable.h"
-
 #include "UnitTestResult.h"
 
 #include <functional>
@@ -14,7 +12,7 @@
 //  Purpose:    Encapsulate unit test information.
 //
 ///
-class UnitTest : public Uncopyable
+class UnitTest
 {
 private:
     /// Private Data Members \\\
@@ -26,8 +24,8 @@ public:
     /// Ctors \\\
 
     UnitTest( ) = default;
-    explicit UnitTest(std::function<UnitTestResult(void)>&&) noexcept;
-    UnitTest(UnitTest&&) noexcept;
+    explicit UnitTest(_In_ std::function<UnitTestResult(void)>&&) noexcept;
+    UnitTest(_In_ UnitTest&&) noexcept;
 
     /// Dtor \\\
 
@@ -35,7 +33,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTest& operator=(UnitTest&&) noexcept;
+    UnitTest& operator=(_In_ UnitTest&&) noexcept;
 
     /// Getters \\\
 
@@ -44,7 +42,7 @@ public:
 
     /// Setters \\\
 
-    void SetUnitTestFunction(std::function<UnitTestResult(void)>&&) noexcept;
+    void SetUnitTestFunction(_In_ std::function<UnitTestResult(void)>&&) noexcept;
 
     /// Public Methods \\\
 

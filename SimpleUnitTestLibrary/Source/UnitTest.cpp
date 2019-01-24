@@ -5,18 +5,18 @@
 
 /// Ctors \\\
     
-UnitTest::UnitTest(std::function<UnitTestResult(void)>&& func) noexcept :
+UnitTest::UnitTest(_In_ std::function<UnitTestResult(void)>&& func) noexcept :
     mTestFunc(std::move(func))
 { }
 
-UnitTest::UnitTest(UnitTest&& src) noexcept :
+UnitTest::UnitTest(_In_ UnitTest&& src) noexcept :
     mTestFunc(std::move(src.mTestFunc)),
     mTestResult(std::move(src.mTestResult))
 { }
 
 // Operator Overloads
 
-UnitTest& UnitTest::operator=(UnitTest&& src) noexcept
+UnitTest& UnitTest::operator=(_In_ UnitTest&& src) noexcept
 {
     mTestFunc = std::move(src.mTestFunc);
     mTestResult = std::move(src.mTestResult);
@@ -38,7 +38,7 @@ const UnitTestResult& UnitTest::GetUnitTestResult( ) const noexcept
 
 // Setters
 
-void UnitTest::SetUnitTestFunction(std::function<UnitTestResult(void)>&& func) noexcept
+void UnitTest::SetUnitTestFunction(_In_ std::function<UnitTestResult(void)>&& func) noexcept
 {
     mTestFunc = std::move(func);
     mTestResult = std::move(UnitTestResult( ));

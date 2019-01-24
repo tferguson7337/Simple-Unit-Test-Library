@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Common/Headers/Macros.h"
-#include "../Common/Headers/Uncopyable.h"
 #include "../Common/Headers/Types.h"
 
 #include "ResultType.h"
@@ -15,7 +14,7 @@
 //  Purpose:    Encapsulates the result of a unit test.
 //
 ///
-class UnitTestResult final : public Uncopyable
+class UnitTestResult final
 {
 private:
     /// Private Data Members \\\
@@ -26,20 +25,20 @@ private:
     std::string mFileName;
     std::string mResultInfo;
 
-    using ExtractPredicate = bool(*)(const utf8);
-    static constexpr const utf8* ExtractNameCommon(const utf8*, const size_t, ExtractPredicate) noexcept;
-    static constexpr const utf8* ExtractFileName(const utf8*, const size_t) noexcept;
-    static constexpr const utf8* ExtractFuncName(const utf8*, const size_t) noexcept;
-    static constexpr bool IsPathSeparator(const utf8) noexcept;
-    static constexpr bool IsWhitespace(const utf8) noexcept;
+    using ExtractPredicate = bool(*)(const utf8&);
+    static constexpr const utf8* ExtractNameCommon(_In_ const utf8*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
+    static constexpr const utf8* ExtractFileName(_In_ const utf8*, _In_ const size_t&) noexcept;
+    static constexpr const utf8* ExtractFuncName(_In_ const utf8*, _In_ const size_t&) noexcept;
+    static constexpr bool IsPathSeparator(_In_ const utf8&) noexcept;
+    static constexpr bool IsWhitespace(_In_ const utf8&) noexcept;
 
 public:
     /// Ctors \\\
 
-    UnitTestResult(ResultType = ResultType::NotRun, const std::string& = "", const std::string& = "", uint32 = 0, const std::string& = "") noexcept;
+    UnitTestResult(_In_ ResultType = ResultType::NotRun, _In_ const std::string& = "", _In_ const std::string& = "", _In_ const uint32& = 0, _In_ const std::string& = "") noexcept;
 
     // Move Ctor
-    UnitTestResult(UnitTestResult&&) noexcept;
+    UnitTestResult(_In_ UnitTestResult&&) noexcept;
 
     /// Dtor \\\
 
@@ -47,7 +46,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestResult& operator=(UnitTestResult&&) noexcept;
+    UnitTestResult& operator=(_In_ UnitTestResult&&) noexcept;
     explicit operator bool( ) const noexcept;
 
     /// Getters \\\
@@ -60,11 +59,11 @@ public:
 
     /// Setters \\\
 
-    void SetResult(const ResultType&) noexcept;
-    void SetFunctionName(const std::string&);
-    void SetFileName(const std::string&);
-    void SetLineNumber(const uint32&) noexcept;
-    void SetResultInfo(const std::string&);
+    void SetResult(_In_ const ResultType&) noexcept;
+    void SetFunctionName(_In_ const std::string&);
+    void SetFileName(_In_ const std::string&);
+    void SetLineNumber(_In_ const uint32&) noexcept;
+    void SetResultInfo(_In_ const std::string&);
 
     /// Unit Test Return Macros \\\
 

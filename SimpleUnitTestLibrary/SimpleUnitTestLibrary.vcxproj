@@ -34,6 +34,7 @@
     <ClInclude Include="Headers\UnitTestRunner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ResultType.cpp" />
     <ClCompile Include="Source\TestSetData.cpp" />
     <ClCompile Include="Source\UnitTest.cpp" />
     <ClCompile Include="Source\UnitTestLogger.cpp" />

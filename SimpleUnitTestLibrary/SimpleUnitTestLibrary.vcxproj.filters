@@ -16,6 +16,9 @@
     <ClCompile Include="Source\UnitTestRunner.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ResultType.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\TestSetData.h">

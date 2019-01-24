@@ -5,7 +5,7 @@ template class TestSetData<utf8>;
 template class TestSetData<utf16>;
 
 template <class T>
-TestSetData<T>::TestSetData(const std::basic_string<T>& testSetName) noexcept :
+TestSetData<T>::TestSetData(_In_ const std::basic_string<T>& testSetName) noexcept :
     mTotalTests(0),
     mTestPassCount(0),
     mTotalFailureCount(0),
@@ -21,7 +21,7 @@ TestSetData<T>::TestSetData(const std::basic_string<T>& testSetName) noexcept :
 { }
 
 template <class T>
-TestSetData<T>::TestSetData(std::basic_string<T>&& testSetName) noexcept :
+TestSetData<T>::TestSetData(_In_ std::basic_string<T>&& testSetName) noexcept :
     mTotalTests(0),
     mTestPassCount(0),
     mTotalFailureCount(0),
@@ -37,22 +37,27 @@ TestSetData<T>::TestSetData(std::basic_string<T>&& testSetName) noexcept :
 { }
 
 template <class T>
-TestSetData<T>::TestSetData(const TestSetData<T>& src) noexcept :
+TestSetData<T>::TestSetData(_In_ const TestSetData<T>& src) noexcept :
     TestSetData( )
 {
     *this = src;
 }
 
 template <class T>
-TestSetData<T>::TestSetData(TestSetData<T>&& src) noexcept :
+TestSetData<T>::TestSetData(_In_ TestSetData<T>&& src) noexcept :
     TestSetData( )
 {
     *this = std::move(src);
 }
 
 template <class T>
-TestSetData<T>& TestSetData<T>::operator=(const TestSetData<T>& src) noexcept
+TestSetData<T>& TestSetData<T>::operator=(_In_ const TestSetData<T>& src) noexcept
 {
+    if ( this == &src )
+    {
+        return *this;
+    }
+
     mTotalTests = src.mTotalTests;
     mTestPassCount = src.mTestPassCount;
     mTotalFailureCount = src.mTotalFailureCount;
@@ -71,8 +76,13 @@ TestSetData<T>& TestSetData<T>::operator=(const TestSetData<T>& src) noexcept
 }
 
 template <class T>
-TestSetData<T>& TestSetData<T>::operator=(TestSetData<T>&& src) noexcept
+TestSetData<T>& TestSetData<T>::operator=(_In_ TestSetData<T>&& src) noexcept
 {
+    if ( this == &src )
+    {
+        return *this;
+    }
+
     mTotalTests = src.mTotalTests;
     mTestPassCount = src.mTestPassCount;
     mTotalFailureCount = src.mTotalFailureCount;
@@ -165,7 +175,7 @@ const std::basic_string<T>& TestSetData<T>::GetTestSetName( ) const noexcept
 }
 
 template <class T>
-void TestSetData<T>::IncrementResultCounter(ResultType r)
+void TestSetData<T>::IncrementResultCounter(_In_ const ResultType& r)
 {
     switch ( r )
     {
@@ -218,19 +228,19 @@ void TestSetData<T>::IncrementResultCounter(ResultType r)
 }
 
 template <class T>
-void TestSetData<T>::SetTotalTestCount(uint32 c) noexcept
+void TestSetData<T>::SetTotalTestCount(_In_ const uint32& c) noexcept
 {
     mTotalTests = c;
 }
 
 template<class T>
-void TestSetData<T>::SetTestSetName(const std::basic_string<T>& name)
+void TestSetData<T>::SetTestSetName(_In_ const std::basic_string<T>& name)
 {
     mTestSetName = name;
 }
 
 template<class T>
-void TestSetData<T>::SetTestSetName(std::basic_string<T>&& name) noexcept
+void TestSetData<T>::SetTestSetName(_In_ std::basic_string<T>&& name) noexcept
 {
     mTestSetName = std::move(name);
 }
