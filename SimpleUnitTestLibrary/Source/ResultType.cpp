@@ -37,3 +37,8 @@ const std::basic_string<CharType>& ResultTypeUtil::ToString(_In_ const ResultTyp
     ValidateResultType(r, __FUNCTION__);
     return std::get<std::basic_string<CharType>>(m_svResultTypeStrings[static_cast<size_t>(r)]);
 }
+
+/// Explicit Template Instantiation \\\
+
+template const std::basic_string<utf8>& ResultTypeUtil::ToString(_In_ const ResultType& r);
+template const std::basic_string<utf16>& ResultTypeUtil::ToString(_In_ const ResultType& r);
