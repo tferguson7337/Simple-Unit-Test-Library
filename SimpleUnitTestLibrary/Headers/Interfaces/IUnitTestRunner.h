@@ -29,7 +29,7 @@ public:
     virtual bool GetConsoleOutput( ) const = 0;
 
     virtual bool SetLogFile(const std::filesystem::path&) = 0;
-    virtual void SetConsoleOutput(bool) = 0;
+    virtual void SetConsoleOutput(const bool&) = 0;
 
     virtual bool AddUnitTest(UnitTest&&) = 0;
     virtual bool RunUnitTests( ) = 0;
