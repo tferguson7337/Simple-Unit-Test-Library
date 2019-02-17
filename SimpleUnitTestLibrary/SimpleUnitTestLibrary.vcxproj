@@ -106,7 +106,8 @@
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets />
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -120,7 +121,8 @@
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets />
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -133,7 +135,8 @@
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets />
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -146,7 +149,8 @@
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets />
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -187,17 +191,17 @@
       </Command>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>
-      </Message>
+      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -240,17 +244,17 @@
       </Command>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>
-      </Message>
+      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -299,17 +303,17 @@
       </Command>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>
-      </Message>
+      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -360,17 +364,17 @@
       </Command>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>
-      </Message>
+      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
