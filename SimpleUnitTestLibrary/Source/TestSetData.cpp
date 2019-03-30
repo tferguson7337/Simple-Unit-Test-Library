@@ -1,8 +1,8 @@
 #include <TestSetData.h>
 
 // Explicit Template Instantiation
-template class TestSetData<utf8>;
-template class TestSetData<utf16>;
+template class TestSetData<char>;
+template class TestSetData<wchar_t>;
 
 template <class T>
 TestSetData<T>::TestSetData(_In_ const std::basic_string<T>& testSetName) noexcept :
@@ -103,67 +103,67 @@ TestSetData<T>& TestSetData<T>::operator=(_In_ TestSetData<T>&& src) noexcept
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTotalTestCount( ) const noexcept
+uint32_t TestSetData<T>::GetTotalTestCount( ) const noexcept
 {
     return mTotalTests;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTestPassCount( ) const noexcept
+uint32_t TestSetData<T>::GetTestPassCount( ) const noexcept
 {
     return mTestPassCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTotalFailureCount( ) const noexcept
+uint32_t TestSetData<T>::GetTotalFailureCount( ) const noexcept
 {
     return mTotalFailureCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetSetupFailureCount( ) const noexcept
+uint32_t TestSetData<T>::GetSetupFailureCount( ) const noexcept
 {
     return mSetupFailureCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTestFailureCount( ) const noexcept
+uint32_t TestSetData<T>::GetTestFailureCount( ) const noexcept
 {
     return mTestFailureCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetCleanupFailureCount( ) const noexcept
+uint32_t TestSetData<T>::GetCleanupFailureCount( ) const noexcept
 {
     return mCleanupFailureCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetSetupExceptionCount( ) const noexcept
+uint32_t TestSetData<T>::GetSetupExceptionCount( ) const noexcept
 {
     return mSetupExceptionCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTestExceptionCount( ) const noexcept
+uint32_t TestSetData<T>::GetTestExceptionCount( ) const noexcept
 {
     return mTestExceptionCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetCleanupExceptionCount( ) const noexcept
+uint32_t TestSetData<T>::GetCleanupExceptionCount( ) const noexcept
 {
     return mCleanupExceptionCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetUnhandledExceptionCount( ) const noexcept
+uint32_t TestSetData<T>::GetUnhandledExceptionCount( ) const noexcept
 {
     return mUnhandledExceptionCount;
 }
 
 template <class T>
-uint32 TestSetData<T>::GetTestSkipCount( ) const noexcept
+uint32_t TestSetData<T>::GetTestSkipCount( ) const noexcept
 {
     return mTestSkipCount;
 }
@@ -228,7 +228,7 @@ void TestSetData<T>::IncrementResultCounter(_In_ const ResultType& r)
 }
 
 template <class T>
-void TestSetData<T>::SetTotalTestCount(_In_ const uint32& c) noexcept
+void TestSetData<T>::SetTotalTestCount(_In_ const uint32_t& c) noexcept
 {
     mTotalTests = c;
 }
@@ -271,6 +271,6 @@ void TestSetData<T>::ClearAll( ) noexcept
 template <class T>
 long double TestSetData<T>::GetTestSetGrade( ) const noexcept
 {
-    const uint32 testRunCount = mTotalTests - mTestSkipCount;
+    const uint32_t testRunCount = mTotalTests - mTestSkipCount;
     return (testRunCount > 0) ? 100.0L * static_cast<long double>(mTestPassCount) / static_cast<long double>(testRunCount) : 0.0L;
 }

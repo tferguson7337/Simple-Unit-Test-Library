@@ -36,21 +36,6 @@
     <ClInclude Include="Headers\UnitTestRunner.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Headers\Macros.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Headers\StringUtil.hpp">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Headers\Types.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Headers\Uncopyable.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Headers\Unmovable.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -70,9 +55,6 @@
     </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{5878500d-2877-4748-aecb-d5a7a35da411}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Common">
-      <UniqueIdentifier>{9c973966-a030-4e11-9a55-068f4a788bb9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

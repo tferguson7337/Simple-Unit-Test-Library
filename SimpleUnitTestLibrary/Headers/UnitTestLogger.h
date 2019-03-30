@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Common/Headers/StringUtil.h"
-
 #include "Interfaces/IUnitTestLogger.h"
 
 #include <atomic>

@@ -1,8 +1,8 @@
 #include <UnitTestRunner.h>
 
 // Explicit Template Instantiation
-template class UnitTestRunner<utf8>;
-template class UnitTestRunner<utf16>;
+template class UnitTestRunner<char>;
+template class UnitTestRunner<wchar_t>;
 
 /// Method Definitions \\\
 
@@ -150,7 +150,7 @@ bool UnitTestRunner<T>::RunUnitTests( )
     mLogger.InitializeWorkerThread( );
 
     mTestSetData.ResetCounters( );
-    mTestSetData.SetTotalTestCount(static_cast<uint32>(mUnitTests.size( )));
+    mTestSetData.SetTotalTestCount(static_cast<uint32_t>(mUnitTests.size( )));
 
     mLogger.LogTestSetHeader(mTestSetData);
 
@@ -188,7 +188,7 @@ bool UnitTestRunner<T>::RunUnitTests( )
         {
             const std::string& funcName = test.GetUnitTestResult( ).GetFunctionName( );
             const std::string& fileName = test.GetUnitTestResult( ).GetFileName( );
-            const uint32& line = test.GetUnitTestResult( ).GetLineNumber( );
+            const uint32_t& line = test.GetUnitTestResult( ).GetLineNumber( );
 
             mLogger.LogUnitTestResult(UnitTestResult(r, funcName.c_str( ), funcName.size( ), fileName.c_str( ), fileName.size( ), line, eStr));
         }

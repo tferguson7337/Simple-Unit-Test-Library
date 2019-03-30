@@ -19,11 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common\Headers\Macros.h" />
-    <ClInclude Include="Common\Headers\StringUtil.hpp" />
-    <ClInclude Include="Common\Headers\Types.h" />
-    <ClInclude Include="Common\Headers\Uncopyable.h" />
-    <ClInclude Include="Common\Headers\Unmovable.h" />
     <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h" />
     <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h" />
     <ClInclude Include="Headers\ResultType.h" />

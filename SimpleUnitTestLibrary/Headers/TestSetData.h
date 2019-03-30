@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Common/Headers/Types.h"
-
 #include "ResultType.h"
 
 #include <string>
@@ -10,17 +8,17 @@ template <class T>
 class TestSetData
 {
 private:
-    uint32 mTotalTests;
-    uint32 mTestPassCount;
-    uint32 mTotalFailureCount;
-    uint32 mSetupFailureCount;
-    uint32 mTestFailureCount;
-    uint32 mCleanupFailureCount;
-    uint32 mSetupExceptionCount;
-    uint32 mTestExceptionCount;
-    uint32 mCleanupExceptionCount;
-    uint32 mUnhandledExceptionCount;
-    uint32 mTestSkipCount;
+    uint32_t mTotalTests;
+    uint32_t mTestPassCount;
+    uint32_t mTotalFailureCount;
+    uint32_t mSetupFailureCount;
+    uint32_t mTestFailureCount;
+    uint32_t mCleanupFailureCount;
+    uint32_t mSetupExceptionCount;
+    uint32_t mTestExceptionCount;
+    uint32_t mCleanupExceptionCount;
+    uint32_t mUnhandledExceptionCount;
+    uint32_t mTestSkipCount;
 
     std::basic_string<T> mTestSetName;
 
@@ -43,17 +41,17 @@ public:
 
     /// Getters \\\
 
-    uint32 GetTotalTestCount( ) const noexcept;
-    uint32 GetTestPassCount( ) const noexcept;
-    uint32 GetTotalFailureCount( ) const noexcept;
-    uint32 GetSetupFailureCount( ) const noexcept;
-    uint32 GetTestFailureCount( ) const noexcept;
-    uint32 GetCleanupFailureCount( ) const noexcept;
-    uint32 GetSetupExceptionCount( ) const noexcept;
-    uint32 GetTestExceptionCount( ) const noexcept;
-    uint32 GetCleanupExceptionCount( ) const noexcept;
-    uint32 GetUnhandledExceptionCount( ) const noexcept;
-    uint32 GetTestSkipCount( ) const noexcept;
+    uint32_t GetTotalTestCount( ) const noexcept;
+    uint32_t GetTestPassCount( ) const noexcept;
+    uint32_t GetTotalFailureCount( ) const noexcept;
+    uint32_t GetSetupFailureCount( ) const noexcept;
+    uint32_t GetTestFailureCount( ) const noexcept;
+    uint32_t GetCleanupFailureCount( ) const noexcept;
+    uint32_t GetSetupExceptionCount( ) const noexcept;
+    uint32_t GetTestExceptionCount( ) const noexcept;
+    uint32_t GetCleanupExceptionCount( ) const noexcept;
+    uint32_t GetUnhandledExceptionCount( ) const noexcept;
+    uint32_t GetTestSkipCount( ) const noexcept;
 
     const std::basic_string<T>& GetTestSetName( ) const noexcept;
 
@@ -63,7 +61,7 @@ public:
 
     /// Setters \\\
 
-    void SetTotalTestCount(_In_ const uint32& c) noexcept;
+    void SetTotalTestCount(_In_ const uint32_t& c) noexcept;
 
     void SetTestSetName(_In_ const std::basic_string<T>& name);
     void SetTestSetName(_In_ std::basic_string<T>&& name) noexcept;

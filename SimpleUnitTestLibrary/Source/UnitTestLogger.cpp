@@ -4,11 +4,9 @@
 #include <cstdarg>
 #include <ctime>
 
-#include "../../Common/Headers/StringUtil.h"
-
 // Explicit Template Instantiation
-template class UnitTestLogger<utf8>;
-template class UnitTestLogger<utf16>;
+template class UnitTestLogger<char>;
+template class UnitTestLogger<wchar_t>;
 
 /// Non-Member Static Variables \\\
 
@@ -168,13 +166,13 @@ UnitTestLogger<T>& UnitTestLogger<T>::operator=(_In_ UnitTestLogger&& src) noexc
 template <class T>
 std::basic_ostream<T>& UnitTestLogger<T>::InitConsoleStream( )
 {
-    if constexpr ( std::is_same_v<T, utf8> )
+    if constexpr ( std::is_same_v<T, char> )
     {
         return std::cout;
     }
-    else if constexpr ( std::is_same_v<T, utf16> )
+    else if constexpr ( std::is_same_v<T, wchar_t> )
     {
-        return reinterpret_cast<std::basic_ostream<utf16>&>(std::wcout);
+        return reinterpret_cast<std::basic_ostream<wchar_t>&>(std::wcout);
     }
     else
     {
@@ -403,11 +401,11 @@ const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
 template <class T>
 bool UnitTestLogger<T>::GetTime(_In_ T* buffer, _In_ const time_t* t)
 {
-    if constexpr ( std::is_same_v<T, utf8> )
+    if constexpr ( std::is_same_v<T, char> )
     {
         return ctime_s(buffer, mTimeBufferLength, t) == 0;
     }
-    else if constexpr ( std::is_same_v<T, utf16> )
+    else if constexpr ( std::is_same_v<T, wchar_t> )
     {
         return _wctime_s(buffer, mTimeBufferLength, t) == 0;
     }
@@ -447,40 +445,40 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(_In_ const std::basic_string<T>
 template <class T>
 int UnitTestLogger<T>::StringPrintWrapper(_Inout_ std::vector<T>& buffer, _In_ const std::basic_string<T>* format, _In_ va_list args)
 {
-    if constexpr ( std::is_same_v<T, utf8> )
+    if constexpr ( std::is_same_v<T, char> )
     {
         if ( buffer.empty( ) )
         {
             return _vscprintf(
-                reinterpret_cast<const utf8*>(format->c_str( )), 
+                reinterpret_cast<const char*>(format->c_str( )), 
                 args
             );
         }
         else
         {
             return vsnprintf(
-                reinterpret_cast<utf8*>(buffer.data( )),
+                reinterpret_cast<char*>(buffer.data( )),
                 buffer.size( ) - 1, 
-                reinterpret_cast<const utf8*>(format->c_str( )),
+                reinterpret_cast<const char*>(format->c_str( )),
                 args
             );
         }
     }
-    else if constexpr ( std::is_same_v<T, utf16> )
+    else if constexpr ( std::is_same_v<T, wchar_t> )
     {
         if ( buffer.empty( ) )
         {
             return _vscwprintf(
-                reinterpret_cast<const utf16*>(format->c_str( )),
+                reinterpret_cast<const wchar_t*>(format->c_str( )),
                 args
             );
         }
         else
         {
             return vswprintf(
-                reinterpret_cast<utf16*>(buffer.data( )),
+                reinterpret_cast<wchar_t*>(buffer.data( )),
                 buffer.size( ) - 1,
-                reinterpret_cast<const utf16*>(format->c_str( )),
+                reinterpret_cast<const wchar_t*>(format->c_str( )),
                 args
             );
         }

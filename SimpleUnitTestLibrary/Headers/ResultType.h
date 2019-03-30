@@ -1,12 +1,19 @@
 #pragma once
 
-#include "../Common/Headers/Macros.h"
-
 #include <vector>
+
+using NarrowString = std::basic_string<char>;
+using WideString = std::basic_string<wchar_t>;
+
+using SupportedStringTuple = std::tuple<NarrowString, WideString>;
+
+#ifndef MAKE_STR_TUPLE
+#define MAKE_STR_TUPLE(str) SupportedStringTuple(str, L##str)
+#endif
 
 /// Unit Test ResultType Enum Flags \\\
 
-using ResultTypeUnderlyingType = uint8;
+using ResultTypeUnderlyingType = size_t;
 
 enum class ResultType : ResultTypeUnderlyingType
 {
@@ -62,6 +69,6 @@ private:
 public:
     /// Public Methods \\\
     
-    template <typename CharType, typename Enabled = typename std::enable_if_t<IsSupportedCharType<CharType>( )>>
-    static const std::basic_string<CharType>& ToString(_In_ const ResultType& r);
+    template <typename T>
+    static const std::basic_string<T>& ToString(_In_ const ResultType& r);
 };

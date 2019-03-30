@@ -4,12 +4,20 @@
 
 /// Ctors \\\
 
+UnitTestResult::UnitTestResult( ) noexcept :
+    mResult(ResultType::NotRun),
+    mFuncName(std::string( )),
+    mFileName(std::string( )),
+    mLineNum(0),
+    mResultInfo(std::string( ))
+{ }
+
 UnitTestResult::UnitTestResult(
     _In_ ResultType result, 
-    _In_ const utf8* func, _In_ const size_t& funcLen,
-    _In_ const utf8* file, _In_ const size_t& fileLen, _In_ const uint32& line, 
+    _In_ const char* func, _In_ const size_t& funcLen,
+    _In_ const char* file, _In_ const size_t& fileLen, _In_ const uint32_t& line, 
     _In_ const std::string& info
-) noexcept :
+) :
     mResult(result),
     mFuncName(ExtractFuncName(func, funcLen)),
     mFileName(ExtractFileName(file, fileLen)),
@@ -49,14 +57,14 @@ UnitTestResult::operator bool( ) const noexcept
 
 // Private Helpers \\
 
-constexpr const utf8* UnitTestResult::ExtractNameCommon(_In_ const utf8* str, _In_ const size_t& len, _In_ ExtractPredicate pred) noexcept
+constexpr const char* UnitTestResult::ExtractNameCommon(_In_ const char* str, _In_ const size_t& len, _In_ ExtractPredicate pred) noexcept
 {
     if ( !str || len == 0 )
     {
         return nullptr;
     }
 
-    const utf8* name = str + len;
+    const char* name = str + len;
     while ( name >= str )
     {
         if ( pred(*(--name)) )
@@ -65,27 +73,27 @@ constexpr const utf8* UnitTestResult::ExtractNameCommon(_In_ const utf8* str, _I
         }
     }
 
-    return name + sizeof(utf8);
+    return name + sizeof(char);
 }
 
-constexpr const utf8* UnitTestResult::ExtractFileName(_In_ const utf8* f, _In_ const size_t& n) noexcept
+constexpr const char* UnitTestResult::ExtractFileName(_In_ const char* f, _In_ const size_t& n) noexcept
 {
-    const utf8* p = ExtractNameCommon(f, n, IsPathSeparator);
+    const char* p = ExtractNameCommon(f, n, IsPathSeparator);
     return p ? p : "<BAD_FILE_NAME>";
 }
 
-constexpr const utf8* UnitTestResult::ExtractFuncName(_In_ const utf8* f, _In_ const size_t& n) noexcept
+constexpr const char* UnitTestResult::ExtractFuncName(_In_ const char* f, _In_ const size_t& n) noexcept
 {
-    const utf8* p = ExtractNameCommon(f, n, IsWhitespace);
+    const char* p = ExtractNameCommon(f, n, IsWhitespace);
     return p ? p : "<BAD_FUNC_NAME>";
 }
 
-constexpr bool UnitTestResult::IsPathSeparator(_In_ const utf8& c) noexcept
+constexpr bool UnitTestResult::IsPathSeparator(_In_ const char& c) noexcept
 {
     return (c == '/' || c == '\\');
 }
 
-constexpr bool UnitTestResult::IsWhitespace(_In_ const utf8& c) noexcept
+constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c) noexcept
 {
     return (c == ' ' || c == '\t');
 }
@@ -108,7 +116,7 @@ const std::string& UnitTestResult::GetFileName( ) const noexcept
     return mFileName;
 }
 
-const uint32& UnitTestResult::GetLineNumber( ) const noexcept
+const uint32_t& UnitTestResult::GetLineNumber( ) const noexcept
 {
     return mLineNum;
 }
@@ -138,7 +146,7 @@ void UnitTestResult::SetFileName(_In_ const std::string& file)
     mFileName = file;
 }
 
-void UnitTestResult::SetLineNumber(_In_ const uint32& line) noexcept
+void UnitTestResult::SetLineNumber(_In_ const uint32_t& line) noexcept
 {
     mLineNum = line;
 }

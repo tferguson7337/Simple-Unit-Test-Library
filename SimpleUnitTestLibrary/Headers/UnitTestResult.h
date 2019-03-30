@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../Common/Headers/Macros.h"
-#include "../Common/Headers/Types.h"
-
 #include "ResultType.h"
 
 #include <string>
@@ -20,27 +17,29 @@ private:
     /// Private Data Members \\\
 
     ResultType mResult;
-    uint32 mLineNum;
+    uint32_t mLineNum;
     std::string mFuncName;
     std::string mFileName;
     std::string mResultInfo;
 
-    using ExtractPredicate = bool(*)(const utf8&);
-    static constexpr const utf8* ExtractNameCommon(_In_ const utf8*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
-    static constexpr const utf8* ExtractFileName(_In_ const utf8*, _In_ const size_t&) noexcept;
-    static constexpr const utf8* ExtractFuncName(_In_ const utf8*, _In_ const size_t&) noexcept;
-    static constexpr bool IsPathSeparator(_In_ const utf8&) noexcept;
-    static constexpr bool IsWhitespace(_In_ const utf8&) noexcept;
+    using ExtractPredicate = bool(*)(const char&);
+    static constexpr const char* ExtractNameCommon(_In_ const char*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
+    static constexpr const char* ExtractFileName(_In_ const char*, _In_ const size_t&) noexcept;
+    static constexpr const char* ExtractFuncName(_In_ const char*, _In_ const size_t&) noexcept;
+    static constexpr bool IsPathSeparator(_In_ const char&) noexcept;
+    static constexpr bool IsWhitespace(_In_ const char&) noexcept;
 
 public:
     /// Ctors \\\
 
+    UnitTestResult( ) noexcept;
+
     UnitTestResult(
-        _In_ ResultType result = ResultType::NotRun,
-        _In_ const utf8* func = nullptr, _In_ const size_t& funcLen = 0,
-        _In_ const utf8* file = nullptr, _In_ const size_t& fileLen = 0, _In_ const uint32& line = 0,
+        _In_ ResultType result,
+        _In_ const char* func, _In_ const size_t& funcLen,
+        _In_ const char* file, _In_ const size_t& fileLen, _In_ const uint32_t& line,
         _In_ const std::string& info = ""
-    ) noexcept;
+    );
 
     // Move Ctor
     UnitTestResult(_In_ UnitTestResult&&) noexcept;
@@ -59,7 +58,7 @@ public:
     const ResultType& GetResult( ) const noexcept;
     const std::string& GetFunctionName( ) const noexcept;
     const std::string& GetFileName( ) const noexcept;
-    const uint32& GetLineNumber( ) const noexcept;
+    const uint32_t& GetLineNumber( ) const noexcept;
     const std::string& GetResultInfo( ) const noexcept;
 
     /// Setters \\\
@@ -67,7 +66,7 @@ public:
     void SetResult(_In_ const ResultType&) noexcept;
     void SetFunctionName(_In_ const std::string&);
     void SetFileName(_In_ const std::string&);
-    void SetLineNumber(_In_ const uint32&) noexcept;
+    void SetLineNumber(_In_ const uint32_t&) noexcept;
     void SetResultInfo(_In_ const std::string&);
 
     /// Unit Test Return Macros \\\
