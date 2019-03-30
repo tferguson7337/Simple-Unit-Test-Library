@@ -35,7 +35,12 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestResult(_In_ ResultType = ResultType::NotRun, _In_ const std::string& = "", _In_ const std::string& = "", _In_ const uint32& = 0, _In_ const std::string& = "") noexcept;
+    UnitTestResult(
+        _In_ ResultType result = ResultType::NotRun,
+        _In_ const utf8* func = nullptr, _In_ const size_t& funcLen = 0,
+        _In_ const utf8* file = nullptr, _In_ const size_t& fileLen = 0, _In_ const uint32& line = 0,
+        _In_ const std::string& info = ""
+    ) noexcept;
 
     // Move Ctor
     UnitTestResult(_In_ UnitTestResult&&) noexcept;
@@ -68,17 +73,17 @@ public:
     /// Unit Test Return Macros \\\
 
 // Success
-#define SUTL_TEST_SUCCESS( )        return UnitTestResult(ResultType::Success, __FUNCSIG__, __FILE__, __LINE__)
+#define SUTL_TEST_SUCCESS( )        return UnitTestResult(ResultType::Success, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__)
 
 // Failures - No Exception Thrown
-#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
 
 // Failures - Exception Caught
-#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(ResultType::SetupException, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, __FUNCSIG__, __FILE__, __LINE__, str)
-#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(ResultType::SetupException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
 
 // Test Asserts
 #define SUTL_SETUP_ASSERT(cond)     if (!!(cond) == false) SUTL_SETUP_FAILURE(STRINGIFY(cond))
@@ -86,5 +91,5 @@ public:
 #define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(STRINGIFY(cond))
 
 // Skip Test
-#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, __FUNCSIG__, __FILE__, __LINE__, str)
+#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
 };

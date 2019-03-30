@@ -186,7 +186,11 @@ bool UnitTestRunner<T>::RunUnitTests( )
         }
         else
         {
-            mLogger.LogUnitTestResult(UnitTestResult(r, test.GetUnitTestResult( ).GetFunctionName( ), "", 0, eStr));
+            const std::string& funcName = test.GetUnitTestResult( ).GetFunctionName( );
+            const std::string& fileName = test.GetUnitTestResult( ).GetFileName( );
+            const uint32& line = test.GetUnitTestResult( ).GetLineNumber( );
+
+            mLogger.LogUnitTestResult(UnitTestResult(r, funcName.c_str( ), funcName.size( ), fileName.c_str( ), fileName.size( ), line, eStr));
         }
 
         mTestSetData.IncrementResultCounter(r);
