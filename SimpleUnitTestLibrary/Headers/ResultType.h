@@ -5,10 +5,10 @@
 using NarrowString = std::basic_string<char>;
 using WideString = std::basic_string<wchar_t>;
 
-using SupportedStringTuple = std::tuple<NarrowString, WideString>;
+using StrTuple = std::tuple<NarrowString, WideString>;
 
-#ifndef MAKE_STR_TUPLE
-#define MAKE_STR_TUPLE(str) SupportedStringTuple(str, L##str)
+#ifndef _MAKE_STRING_TUPLE_
+#define _MAKE_STRING_TUPLE_(str) StrTuple(str, L##str)
 #endif
 
 /// Unit Test ResultType Enum Flags \\\
@@ -60,7 +60,7 @@ class ResultTypeUtil
 private:
     /// Private Data Members \\\
 
-    static const std::vector<SupportedStringTuple> m_svResultTypeStrings;
+    static const std::vector<StrTuple> m_svResultTypeStrings;
 
     /// Private Helper Methods \\\
 

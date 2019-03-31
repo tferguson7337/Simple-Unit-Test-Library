@@ -4,17 +4,17 @@
 
 /// Static Data Member Initialization \\\
 
-const std::vector<SupportedStringTuple> ResultTypeUtil::m_svResultTypeStrings
+const std::vector<StrTuple> ResultTypeUtil::m_svResultTypeStrings
 {
-    MAKE_STR_TUPLE("Not Run"),
-    MAKE_STR_TUPLE("Success"),
-    MAKE_STR_TUPLE("Setup Failure"),
-    MAKE_STR_TUPLE("Setup Exception"),
-    MAKE_STR_TUPLE("Run Failure"),
-    MAKE_STR_TUPLE("Run Exception"),
-    MAKE_STR_TUPLE("Cleanup Failure"),
-    MAKE_STR_TUPLE("Cleanup Exception"),
-    MAKE_STR_TUPLE("Unhandled Exception")
+    _MAKE_STRING_TUPLE_("Not Run"),
+    _MAKE_STRING_TUPLE_("Success"),
+    _MAKE_STRING_TUPLE_("Setup Failure"),
+    _MAKE_STRING_TUPLE_("Setup Exception"),
+    _MAKE_STRING_TUPLE_("Run Failure"),
+    _MAKE_STRING_TUPLE_("Run Exception"),
+    _MAKE_STRING_TUPLE_("Cleanup Failure"),
+    _MAKE_STRING_TUPLE_("Cleanup Exception"),
+    _MAKE_STRING_TUPLE_("Unhandled Exception")
 };
 
 /// Static Private Methods \\\

@@ -10,8 +10,8 @@ template class UnitTestLogger<wchar_t>;
 
 /// Non-Member Static Variables \\\
 
-static const SupportedStringTuple s_HeaderFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_HeaderFormats(
+    _MAKE_STRING_TUPLE_(
         "================================"
         "================================\n"
         "  Test-Set Name: %-25s -- Total Tests: %zu\n"
@@ -20,8 +20,8 @@ static const SupportedStringTuple s_HeaderFormats(
     )
 );
 
-static const SupportedStringTuple s_SummaryFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_SummaryFormats(
+    _MAKE_STRING_TUPLE_(
         "===================="
         "====================\n"
         "    \"%s\" Complete\n\n"
@@ -43,12 +43,12 @@ static const SupportedStringTuple s_SummaryFormats(
     )
 );
 
-static const SupportedStringTuple s_TimeFormats(
-    MAKE_STR_TUPLE("%c")
+static const StrTuple s_TimeFormats(
+    _MAKE_STRING_TUPLE_("%c")
 );
 
-static const SupportedStringTuple s_SuccessFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_SuccessFormats(
+    _MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -59,8 +59,8 @@ static const SupportedStringTuple s_SuccessFormats(
     )
 );
 
-static const SupportedStringTuple s_FailureFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_FailureFormats(
+    _MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -72,8 +72,8 @@ static const SupportedStringTuple s_FailureFormats(
     )
 );
 
-static const SupportedStringTuple s_ExceptionFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_ExceptionFormats(
+    _MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -85,8 +85,8 @@ static const SupportedStringTuple s_ExceptionFormats(
     )
 );
 
-static const SupportedStringTuple s_SkipFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_SkipFormats(
+    _MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -98,8 +98,8 @@ static const SupportedStringTuple s_SkipFormats(
     )
 );
 
-static const SupportedStringTuple s_UnhandledExceptionFormats(
-    MAKE_STR_TUPLE(
+static const StrTuple s_UnhandledExceptionFormats(
+    _MAKE_STRING_TUPLE_(
         "Result: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
