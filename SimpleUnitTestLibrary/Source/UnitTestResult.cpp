@@ -67,7 +67,7 @@ constexpr const char* UnitTestResult::ExtractNameCommon(_In_ const char* str, _I
     const char* name = str + len;
     while ( name >= str )
     {
-        if ( pred(*(--name)) )
+        if ( pred(*(--name), mLTGTCounter) && mLTGTCounter == 0 )
         {
             break;
         }
@@ -88,14 +88,23 @@ constexpr const char* UnitTestResult::ExtractFuncName(_In_ const char* f, _In_ c
     return p ? p : "<BAD_FUNC_NAME>";
 }
 
-constexpr bool UnitTestResult::IsPathSeparator(_In_ const char& c) noexcept
+constexpr bool UnitTestResult::IsPathSeparator(_In_ const char& c, _Inout_ uint32_t&) noexcept
 {
     return (c == '/' || c == '\\');
 }
 
-constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c) noexcept
+constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c, _Inout_ uint32_t& counter) noexcept
 {
-    return (c == ' ' || c == '\t');
+    if ( c == '>' )
+    {
+        counter++;
+    }
+    else if ( c == '<' )
+    {
+        counter--;
+    }
+
+    return (c == ' ');
 }
 
 

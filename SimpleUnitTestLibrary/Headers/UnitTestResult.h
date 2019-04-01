@@ -16,18 +16,20 @@ class UnitTestResult final
 private:
     /// Private Data Members \\\
 
+    uint32_t mLTGTCounter = 0;
+
     ResultType mResult;
     uint32_t mLineNum;
     std::string mFuncName;
     std::string mFileName;
     std::string mResultInfo;
 
-    using ExtractPredicate = bool(*)(const char&);
-    static constexpr const char* ExtractNameCommon(_In_ const char*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
-    static constexpr const char* ExtractFileName(_In_ const char*, _In_ const size_t&) noexcept;
-    static constexpr const char* ExtractFuncName(_In_ const char*, _In_ const size_t&) noexcept;
-    static constexpr bool IsPathSeparator(_In_ const char&) noexcept;
-    static constexpr bool IsWhitespace(_In_ const char&) noexcept;
+    using ExtractPredicate = bool(*)(const char&, uint32_t&);
+    constexpr const char* ExtractNameCommon(_In_ const char*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
+    constexpr const char* ExtractFileName(_In_ const char*, _In_ const size_t&) noexcept;
+    constexpr const char* ExtractFuncName(_In_ const char*, _In_ const size_t&) noexcept;
+    static constexpr bool IsPathSeparator(_In_ const char&, _Inout_ uint32_t&) noexcept;
+    static constexpr bool IsWhitespace(_In_ const char&, _Inout_ uint32_t&) noexcept;
 
 public:
     /// Ctors \\\
