@@ -42,15 +42,15 @@ const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests( ) const noexcept
 }
 
 template <class T>
-const std::filesystem::path& UnitTestRunner<T>::GetLogFile( ) const noexcept
+IUnitTestLogger<T>& UnitTestRunner<T>::GetLogger( ) const noexcept
 {
-    return mLogger.GetTargetFile( );
+    return mLogger;
 }
 
-template <class T>
-bool UnitTestRunner<T>::GetConsoleOutput( ) const noexcept
+template<class T>
+TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) noexcept
 {
-    return mLogger.GetPrintToConsole( );
+    return mTestSetData;
 }
 
 template<class T>
@@ -58,21 +58,6 @@ const TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) const noexcept
 {
     return mTestSetData;
 }
-
-// Setters
-
-template <class T>
-bool UnitTestRunner<T>::SetLogFile(_In_ const std::filesystem::path& log)
-{
-    return mLogger.SetTargetFile(log);
-}
-
-template <class T>
-void UnitTestRunner<T>::SetConsoleOutput(_In_ const bool& consoleOut)
-{
-    mLogger.SetPrintToConsole(consoleOut);
-}
-
 
 // Public Methods
 
@@ -143,6 +128,12 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult
 }
 
 template <class T>
+void UnitTestRunner<T>::ClearUnitTests( ) noexcept
+{
+    mUnitTests.clear( );
+}
+
+template <class T>
 bool UnitTestRunner<T>::RunUnitTests( )
 {
     bool ret = true;
@@ -175,7 +166,7 @@ bool UnitTestRunner<T>::RunUnitTests( )
             eStr = "<Unknown Unhandled Exception>";
         }
 
-        if ( r != ResultType::Success )
+        if ( r != ResultType::Success && r != ResultType::NotRun )
         {
             ret = false;
         }

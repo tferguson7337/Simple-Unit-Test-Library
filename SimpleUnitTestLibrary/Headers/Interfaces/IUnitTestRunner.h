@@ -1,6 +1,8 @@
 #pragma once
 
+#include "TestSetData.h"
 #include "UnitTest.h"
+#include "../Interfaces/IUnitTestLogger.h"
 
 #include <filesystem>
 #include <list>
@@ -23,15 +25,18 @@ public:
     IUnitTestRunner( ) = default;
     virtual ~IUnitTestRunner( ) = default;
 
-    virtual UnitTestRunner<T>& operator=(UnitTestRunner<T>&&) noexcept = 0;
-
     virtual const std::list<UnitTest>& GetUnitTests( ) const = 0;
-    virtual const std::filesystem::path& GetLogFile( ) const = 0;
-    virtual bool GetConsoleOutput( ) const = 0;
-
-    virtual bool SetLogFile(const std::filesystem::path&) = 0;
-    virtual void SetConsoleOutput(const bool&) = 0;
+    virtual IUnitTestLogger<T>& GetLogger( ) const noexcept = 0;
+    virtual TestSetData<T>& GetTestSetData( ) noexcept = 0;
+    virtual const TestSetData<T>& GetTestSetData( ) const noexcept = 0;
 
     virtual bool AddUnitTest(UnitTest&&) = 0;
+    virtual bool AddUnitTest(std::function<UnitTestResult(void)>&&) = 0;
+
+    virtual bool AddUnitTests(std::list<UnitTest>&&) = 0;
+    virtual bool AddUnitTests(std::list<std::function<UnitTestResult(void)>>&&) = 0;
+
+    virtual void ClearUnitTests( ) noexcept = 0;
+
     virtual bool RunUnitTests( ) = 0;
 };

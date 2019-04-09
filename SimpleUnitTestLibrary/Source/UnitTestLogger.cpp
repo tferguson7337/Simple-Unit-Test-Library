@@ -112,8 +112,9 @@ static const StrTuple s_UnhandledExceptionFormats(
 /// Ctors \\\
 
 template <class T>
-UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ bool consoleOutput) :
+UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ const bool& consoleOutput, _In_ const bool& onlyLogFailures) :
     mPrintToConsole(consoleOutput),
+    mOnlyLogFailures(onlyLogFailures),
     mConsoleStream(InitConsoleStream( )),
     mFileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
     mTargetFile(file)
@@ -517,6 +518,12 @@ bool UnitTestLogger<T>::GetPrintToConsole( ) const noexcept
     return mPrintToConsole;
 }
 
+template <class T>
+bool UnitTestLogger<T>::GetOnlyLogFailures( ) const noexcept
+{
+    return mOnlyLogFailures;
+}
+
 // Setters
 
 template <class T>
@@ -554,11 +561,16 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ std::filesystem::path&& filePath)
 }
 
 template <class T>
-void UnitTestLogger<T>::SetPrintToConsole(_In_ bool print)
+void UnitTestLogger<T>::SetPrintToConsole(_In_ const bool& print) noexcept
 {
     mPrintToConsole = print;
 }
 
+template <class T>
+void UnitTestLogger<T>::SetOnlyLogFailures(_In_ const bool& log) noexcept
+{
+    mOnlyLogFailures = log;
+}
 
 // Public Methods
 
@@ -573,6 +585,11 @@ void UnitTestLogger<T>::LogTestSetHeader(_In_ const TestSetData<T>& data)
 template <class T>
 void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 {
+    if ( mOnlyLogFailures && res.GetResult( ) == ResultType::Success )
+    {
+        return;
+    }
+
     std::basic_string<T> buf(BuildLogString(res));
     buf.append(2, static_cast<T>('\n'));
     LogCommon(std::move(buf));

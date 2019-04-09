@@ -86,10 +86,13 @@ public:
 #define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
 #define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
 
+#define ___SUTL_STRINGIFY___(s)   #s
+#define __SUTL_STRINGIFY__(s)    ___SUTL_STRINGIFY___(s)
+
 // Test Asserts
-#define SUTL_SETUP_ASSERT(cond)     if (!!(cond) == false) SUTL_SETUP_FAILURE(STRINGIFY(cond))
-#define SUTL_TEST_ASSERT(cond)      if (!!(cond) == false) SUTL_TEST_FAILURE(STRINGIFY(cond))
-#define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(STRINGIFY(cond))
+#define SUTL_SETUP_ASSERT(cond)     if (!!(cond) == false) SUTL_SETUP_FAILURE(__SUTL_STRINGIFY__(cond))
+#define SUTL_TEST_ASSERT(cond)      if (!!(cond) == false) SUTL_TEST_FAILURE(__SUTL_STRINGIFY__(cond))
+#define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(__SUTL_STRINGIFY__(cond))
 
 // Skip Test
 #define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)

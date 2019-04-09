@@ -10,13 +10,13 @@ class UnitTestRunner final : public virtual IUnitTestRunner<T>
 {
 private:
     std::list<UnitTest> mUnitTests;
-    UnitTestLogger<T> mLogger;
+    mutable UnitTestLogger<T> mLogger;
     TestSetData<T> mTestSetData;
 
 public:
     /// Ctors \\\
 
-    explicit UnitTestRunner(_In_ const std::basic_string<T>&);
+    explicit UnitTestRunner(_In_ const std::basic_string<T>& = "No Test Set Name");
     explicit UnitTestRunner(_In_ std::basic_string<T>&&) noexcept;
 
     /// Dtor \\\
@@ -30,21 +30,19 @@ public:
     /// Getters \\\
 
     const std::list<UnitTest>& GetUnitTests( ) const noexcept;
-    const std::filesystem::path& GetLogFile( ) const noexcept;
-    bool GetConsoleOutput( ) const noexcept;
+    IUnitTestLogger<T>& GetLogger( ) const noexcept;
+    TestSetData<T>& GetTestSetData( ) noexcept;
     const TestSetData<T>& GetTestSetData( ) const noexcept;
-
-    /// Setters \\\
-
-    bool SetLogFile(_In_ const std::filesystem::path&);
-    void SetConsoleOutput(_In_ const bool&);
 
     /// Public Methods \\\
 
     bool AddUnitTest(_In_ UnitTest&&);
     bool AddUnitTest(_In_ std::function<UnitTestResult(void)>&&);
+
     bool AddUnitTests(_In_ std::list<UnitTest>&&);
     bool AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&&);
+
+    void ClearUnitTests( ) noexcept;
 
     bool RunUnitTests( );
 };

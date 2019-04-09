@@ -34,7 +34,8 @@ private:
 
     /// Private Data Members \\\
 
-    bool mPrintToConsole; 
+    bool mPrintToConsole;
+    bool mOnlyLogFailures;
     std::basic_ostream<T>& mConsoleStream;
     std::filesystem::path mTargetFile;
     std::basic_ofstream<T> mFileStream;
@@ -96,7 +97,7 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestLogger(_In_ const std::filesystem::path& = std::filesystem::path( ), _In_ bool = true);
+    UnitTestLogger(_In_ const std::filesystem::path& = std::filesystem::path( ), _In_ const bool& = true, _In_ const bool& = true);
 
     /// Dtor \\\
 
@@ -110,12 +111,14 @@ public:
 
     const std::filesystem::path& GetTargetFile( ) const noexcept;
     bool GetPrintToConsole( ) const noexcept;
+    bool GetOnlyLogFailures( ) const noexcept;
 
     /// Setters \\\
 
     bool SetTargetFile(_In_ const std::filesystem::path&);
     bool SetTargetFile(_In_ std::filesystem::path&&);
-    void SetPrintToConsole(_In_ bool);
+    void SetPrintToConsole(_In_ const bool&) noexcept;
+    void SetOnlyLogFailures(_In_ const bool&) noexcept;
 
     /// Public Methods \\\
 
