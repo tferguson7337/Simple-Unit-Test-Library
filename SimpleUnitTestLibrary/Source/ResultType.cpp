@@ -1,6 +1,7 @@
 #include <ResultType.h>
 
 #include <string>
+#include <stdexcept>
 
 /// Static Data Member Initialization \\\
 

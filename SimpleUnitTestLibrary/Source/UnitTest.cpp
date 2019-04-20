@@ -1,5 +1,6 @@
 #include <UnitTest.h>
 
+#include <stdexcept>
 
 /// Method Definitons \\\
 

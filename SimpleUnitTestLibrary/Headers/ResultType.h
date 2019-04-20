@@ -1,11 +1,10 @@
 #pragma once
 
+#include <string>
+#include <tuple>
 #include <vector>
 
-using NarrowString = std::basic_string<char>;
-using WideString = std::basic_string<wchar_t>;
-
-using StrTuple = std::tuple<NarrowString, WideString>;
+using StrTuple = std::tuple<std::basic_string<char>, std::basic_string<wchar_t>>;
 
 #ifndef _MAKE_STRING_TUPLE_
 #define _MAKE_STRING_TUPLE_(str) StrTuple(str, L##str)
