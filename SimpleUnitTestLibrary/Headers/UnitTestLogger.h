@@ -46,7 +46,7 @@ private:
     std::mutex mLogQueueMutex;
     std::condition_variable mCVSignaler;
     std::queue<std::basic_string<T>> mLogQueue;
-    
+
     std::thread mWorkerThread;
 
     /// Private Logging Worker Thread Methods \\\
@@ -97,7 +97,7 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestLogger(_In_ const std::filesystem::path& = std::filesystem::path( ), _In_ const bool& = true, _In_ const bool& = true);
+    UnitTestLogger(_In_ const std::filesystem::path & = std::filesystem::path( ), _In_ const bool& = true, _In_ const bool& = true);
 
     /// Dtor \\\
 
