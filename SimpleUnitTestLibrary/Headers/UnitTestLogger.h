@@ -66,10 +66,12 @@ private:
     static std::basic_ostream<T>& InitConsoleStream( );
 
     static std::basic_string<T> BuildTestSetHeaderString(_In_ const TestSetData<T>&);
-    static std::basic_string<T> BuildTestSetSummaryString(_In_ const TestSetData<T>&);
+    static std::basic_string<T> BuildTestSetSummaryNoFailuresString(_In_ const TestSetData<T>&);
+    static std::basic_string<T> BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData<T>&);
 
     static const std::basic_string<T>& GetTestSetHeaderFormat( );
-    static const std::basic_string<T>& GetTestSetSummaryFormat( );
+    static const std::basic_string<T>& GetTestSetSummaryNoFailuresFormat( );
+    static const std::basic_string<T>& GetTestSetSummaryFailureDetailsFormat( );
 
     static std::basic_string<T> BuildLogString(_In_ const UnitTestResult&);
     static std::basic_string<T> BuildTimeString( );

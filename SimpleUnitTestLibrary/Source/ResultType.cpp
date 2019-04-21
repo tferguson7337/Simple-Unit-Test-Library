@@ -7,15 +7,15 @@
 
 const std::vector<StrTuple> ResultTypeUtil::m_svResultTypeStrings
 {
-    _MAKE_STRING_TUPLE_("Not Run"),
-    _MAKE_STRING_TUPLE_("Success"),
-    _MAKE_STRING_TUPLE_("Setup Failure"),
-    _MAKE_STRING_TUPLE_("Setup Exception"),
-    _MAKE_STRING_TUPLE_("Run Failure"),
-    _MAKE_STRING_TUPLE_("Run Exception"),
-    _MAKE_STRING_TUPLE_("Cleanup Failure"),
-    _MAKE_STRING_TUPLE_("Cleanup Exception"),
-    _MAKE_STRING_TUPLE_("Unhandled Exception")
+    _SUTL_MAKE_STRING_TUPLE_("Not Run"),
+    _SUTL_MAKE_STRING_TUPLE_("Success"),
+    _SUTL_MAKE_STRING_TUPLE_("Setup Failure"),
+    _SUTL_MAKE_STRING_TUPLE_("Setup Exception"),
+    _SUTL_MAKE_STRING_TUPLE_("Run Failure"),
+    _SUTL_MAKE_STRING_TUPLE_("Run Exception"),
+    _SUTL_MAKE_STRING_TUPLE_("Cleanup Failure"),
+    _SUTL_MAKE_STRING_TUPLE_("Cleanup Exception"),
+    _SUTL_MAKE_STRING_TUPLE_("Unhandled Exception")
 };
 
 /// Static Private Methods \\\

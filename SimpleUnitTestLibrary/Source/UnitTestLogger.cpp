@@ -11,7 +11,7 @@ template class UnitTestLogger<wchar_t>;
 /// Non-Member Static Variables \\\
 
 static const StrTuple s_HeaderFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "================================"
         "================================\n"
         "  Test-Set Name: %-25s -- Total Tests: %zu\n"
@@ -20,8 +20,24 @@ static const StrTuple s_HeaderFormats(
     )
 );
 
-static const StrTuple s_SummaryFormats(
-    _MAKE_STRING_TUPLE_(
+static const StrTuple s_SummaryNoFailuresFormats(
+    _SUTL_MAKE_STRING_TUPLE_(
+        "===================="
+        "====================\n"
+        "    \"%s\" Complete\n\n"
+        "  Total Test Count: %u\n"
+        "  Total Tests Run:  %u\n\n"
+        "   Successful Tests: %u\n\n"
+        "   Failed Tests:     %u\n\n"
+        "   Skipped Tests:    %u\n\n"
+        "  Test Pass Grade:  %2.2f%% (%u / %u)\n"
+        "===================="
+        "====================\n"
+    )
+);
+
+static const StrTuple s_SummaryFailureDetailsFormats(
+    _SUTL_MAKE_STRING_TUPLE_(
         "===================="
         "====================\n"
         "    \"%s\" Complete\n\n"
@@ -44,11 +60,11 @@ static const StrTuple s_SummaryFormats(
 );
 
 static const StrTuple s_TimeFormats(
-    _MAKE_STRING_TUPLE_("%c")
+    _SUTL_MAKE_STRING_TUPLE_("%c")
 );
 
 static const StrTuple s_SuccessFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -60,7 +76,7 @@ static const StrTuple s_SuccessFormats(
 );
 
 static const StrTuple s_FailureFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -73,7 +89,7 @@ static const StrTuple s_FailureFormats(
 );
 
 static const StrTuple s_ExceptionFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -86,7 +102,7 @@ static const StrTuple s_ExceptionFormats(
 );
 
 static const StrTuple s_SkipFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
@@ -99,11 +115,11 @@ static const StrTuple s_SkipFormats(
 );
 
 static const StrTuple s_UnhandledExceptionFormats(
-    _MAKE_STRING_TUPLE_(
+    _SUTL_MAKE_STRING_TUPLE_(
         "Result: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
-        "    Exception: %s\n"
+        "    Unhandled Exception: %s\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -193,10 +209,27 @@ std::basic_string<T> UnitTestLogger<T>::BuildTestSetHeaderString(_In_ const Test
 }
 
 template <class T>
-std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryString(_In_ const TestSetData<T>& data)
+std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryNoFailuresString(_In_ const TestSetData<T>& data)
 {
     return stprintf(
-        &GetTestSetSummaryFormat( ),
+        &GetTestSetSummaryNoFailuresFormat( ),
+        data.GetTestSetName( ).c_str( ),
+        data.GetTotalTestCount( ),
+        data.GetTotalTestCount( ) - data.GetTestSkipCount( ),
+        data.GetTestPassCount( ),
+        data.GetTotalFailureCount( ),
+        data.GetTestSkipCount( ),
+        data.GetTestSetGrade( ),
+        data.GetTestPassCount( ),
+        data.GetTotalTestCount( ) - data.GetTestSkipCount( )
+    );
+}
+
+template <class T>
+std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData<T>& data)
+{
+    return stprintf(
+        &GetTestSetSummaryFailureDetailsFormat( ),
         data.GetTestSetName( ).c_str( ),
         data.GetTotalTestCount( ),
         data.GetTotalTestCount( ) - data.GetTestSkipCount( ),
@@ -223,9 +256,15 @@ const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat( )
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryNoFailuresFormat( )
 {
-    return std::get<std::basic_string<T>>(s_SummaryFormats);
+    return std::get<std::basic_string<T>>(s_SummaryNoFailuresFormats);
+}
+
+template <class T>
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFailureDetailsFormat( )
+{
+    return std::get<std::basic_string<T>>(s_SummaryFailureDetailsFormats);
 }
 
 template <class T>
@@ -598,7 +637,10 @@ void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 template <class T>
 void UnitTestLogger<T>::LogTestSetSummary(_In_ const TestSetData<T>& data)
 {
-    std::basic_string<T> buf(BuildTestSetSummaryString(data));
+    std::basic_string<T> buf = (data.GetTestFailureCount( ) == 0) 
+        ? BuildTestSetSummaryNoFailuresString(data)
+        : BuildTestSetSummaryFailureDetailsString(data);
+
     buf.append(2, static_cast<T>('\n'));
     LogCommon(std::move(buf));
 }

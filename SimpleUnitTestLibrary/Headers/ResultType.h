@@ -6,8 +6,8 @@
 
 using StrTuple = std::tuple<std::basic_string<char>, std::basic_string<wchar_t>>;
 
-#ifndef _MAKE_STRING_TUPLE_
-#define _MAKE_STRING_TUPLE_(str) StrTuple(str, L##str)
+#ifndef _SUTL_MAKE_STRING_TUPLE_
+#define _SUTL_MAKE_STRING_TUPLE_(str) StrTuple(str, L##str)
 #endif
 
 /// Unit Test ResultType Enum Flags \\\
