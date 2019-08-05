@@ -626,7 +626,7 @@ void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 {
     if ( mOnlyLogFailures )
     {
-        ResultType& rt = res.GetResult( );
+        const ResultType& rt = res.GetResult( );
         if ( (rt == ResultType::Success) || (rt == ResultType::NotRun) )
         {
             return;
