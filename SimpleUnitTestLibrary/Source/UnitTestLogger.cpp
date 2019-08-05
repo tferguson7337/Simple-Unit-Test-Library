@@ -624,9 +624,13 @@ void UnitTestLogger<T>::LogTestSetHeader(_In_ const TestSetData<T>& data)
 template <class T>
 void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 {
-    if ( mOnlyLogFailures && res.GetResult( ) == ResultType::Success )
+    if ( mOnlyLogFailures )
     {
-        return;
+        ResultType& rt = res.GetResult( );
+        if ( (rt == ResultType::Success) || (rt == ResultType::NotRun) )
+        {
+            return;
+        }
     }
 
     std::basic_string<T> buf(BuildLogString(res));
