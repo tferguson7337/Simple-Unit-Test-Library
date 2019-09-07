@@ -45,6 +45,9 @@
     <ClInclude Include="Headers\ResultType.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\TestQuantity.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interfaces">

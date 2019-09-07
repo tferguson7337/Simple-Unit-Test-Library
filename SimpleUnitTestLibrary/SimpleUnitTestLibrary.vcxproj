@@ -22,6 +22,7 @@
     <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h" />
     <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h" />
     <ClInclude Include="Headers\ResultType.h" />
+    <ClInclude Include="Headers\TestQuantity.h" />
     <ClInclude Include="Headers\TestSetData.h" />
     <ClInclude Include="Headers\UnitTest.h" />
     <ClInclude Include="Headers\UnitTestLogger.h" />
