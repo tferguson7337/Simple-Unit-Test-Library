@@ -25,14 +25,14 @@ private:
 public:
     /// Ctors \\\
 
-    explicit TestSetData(_In_ const std::basic_string<T>& testSetName = std::basic_string<T>( )) noexcept;
+    explicit TestSetData(_In_ const std::basic_string<T>& testSetName = std::basic_string<T>()) noexcept;
     explicit TestSetData(_In_ std::basic_string<T>&& testSetName) noexcept;
     TestSetData(_In_ const TestSetData& src) noexcept;
     TestSetData(_In_ TestSetData&& src) noexcept;
 
     /// Dtor \\\
 
-    ~TestSetData( ) = default;
+    ~TestSetData() = default;
 
     /// Assignment Overloads \\\
 
@@ -41,19 +41,19 @@ public:
 
     /// Getters \\\
 
-    uint32_t GetTotalTestCount( ) const noexcept;
-    uint32_t GetTestPassCount( ) const noexcept;
-    uint32_t GetTotalFailureCount( ) const noexcept;
-    uint32_t GetSetupFailureCount( ) const noexcept;
-    uint32_t GetTestFailureCount( ) const noexcept;
-    uint32_t GetCleanupFailureCount( ) const noexcept;
-    uint32_t GetSetupExceptionCount( ) const noexcept;
-    uint32_t GetTestExceptionCount( ) const noexcept;
-    uint32_t GetCleanupExceptionCount( ) const noexcept;
-    uint32_t GetUnhandledExceptionCount( ) const noexcept;
-    uint32_t GetTestSkipCount( ) const noexcept;
+    uint32_t GetTotalTestCount() const noexcept;
+    uint32_t GetTestPassCount() const noexcept;
+    uint32_t GetTotalFailureCount() const noexcept;
+    uint32_t GetSetupFailureCount() const noexcept;
+    uint32_t GetTestFailureCount() const noexcept;
+    uint32_t GetCleanupFailureCount() const noexcept;
+    uint32_t GetSetupExceptionCount() const noexcept;
+    uint32_t GetTestExceptionCount() const noexcept;
+    uint32_t GetCleanupExceptionCount() const noexcept;
+    uint32_t GetUnhandledExceptionCount() const noexcept;
+    uint32_t GetTestSkipCount() const noexcept;
 
-    const std::basic_string<T>& GetTestSetName( ) const noexcept;
+    const std::basic_string<T>& GetTestSetName() const noexcept;
 
     /// Incrementers \\\
 
@@ -68,7 +68,7 @@ public:
 
     /// Public Methods \\\
 
-    void ResetCounters( ) noexcept;
-    void ClearAll( ) noexcept;
-    long double GetTestSetGrade( ) const noexcept;
+    void ResetCounters() noexcept;
+    void ClearAll() noexcept;
+    long double GetTestSetGrade() const noexcept;
 };

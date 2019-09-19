@@ -4,18 +4,18 @@
 
 /// Ctors \\\
 
-UnitTestResult::UnitTestResult( ) noexcept :
+UnitTestResult::UnitTestResult() noexcept :
     mResult(ResultType::NotRun),
-    mFuncName(std::string( )),
-    mFileName(std::string( )),
+    mFuncName(std::string()),
+    mFileName(std::string()),
     mLineNum(0),
-    mResultInfo(std::string( ))
+    mResultInfo(std::string())
 { }
 
 UnitTestResult::UnitTestResult(
-    _In_ ResultType result, 
+    _In_ ResultType result,
     _In_ const char* func, _In_ const size_t& funcLen,
-    _In_ const char* file, _In_ const size_t& fileLen, _In_ const uint32_t& line, 
+    _In_ const char* file, _In_ const size_t& fileLen, _In_ const uint32_t& line,
     _In_ const std::string& info
 ) :
     mResult(result),
@@ -38,7 +38,7 @@ UnitTestResult::UnitTestResult(_In_ UnitTestResult&& src) noexcept :
 
 UnitTestResult& UnitTestResult::operator=(_In_ UnitTestResult&& src) noexcept
 {
-    if ( this != &src )
+    if (this != &src)
     {
         mResult = src.mResult;
         mLineNum = src.mLineNum;
@@ -46,11 +46,11 @@ UnitTestResult& UnitTestResult::operator=(_In_ UnitTestResult&& src) noexcept
         mFileName.assign(std::move(src.mFileName));
         mResultInfo.assign(std::move(src.mResultInfo));
     }
-    
+
     return *this;
 }
 
-UnitTestResult::operator bool( ) const noexcept
+UnitTestResult::operator bool() const noexcept
 {
     return mResult == ResultType::Success;
 }
@@ -59,15 +59,15 @@ UnitTestResult::operator bool( ) const noexcept
 
 constexpr const char* UnitTestResult::ExtractNameCommon(_In_ const char* str, _In_ const size_t& len, _In_ ExtractPredicate pred) noexcept
 {
-    if ( !str || len == 0 )
+    if (!str || len == 0)
     {
         return nullptr;
     }
 
     const char* name = str + len;
-    while ( name >= str )
+    while (name >= str)
     {
-        if ( pred(*(--name), mLTGTCounter) && mLTGTCounter == 0 )
+        if (pred(*(--name), mLTGTCounter) && mLTGTCounter == 0)
         {
             break;
         }
@@ -95,11 +95,11 @@ constexpr bool UnitTestResult::IsPathSeparator(_In_ const char& c, _Inout_ uint3
 
 constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c, _Inout_ uint32_t& counter) noexcept
 {
-    if ( c == '>' )
+    if (c == '>')
     {
         counter++;
     }
-    else if ( c == '<' )
+    else if (c == '<')
     {
         counter--;
     }
@@ -110,31 +110,31 @@ constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c, _Inout_ uint32_t
 
 // Getters \\
 
-const ResultType& UnitTestResult::GetResult( ) const noexcept
+const ResultType& UnitTestResult::GetResult() const noexcept
 {
     return mResult;
 }
 
-const std::string& UnitTestResult::GetFunctionName( ) const noexcept
+const std::string& UnitTestResult::GetFunctionName() const noexcept
 {
     return mFuncName;
 }
 
-const std::string& UnitTestResult::GetFileName( ) const noexcept
+const std::string& UnitTestResult::GetFileName() const noexcept
 {
     return mFileName;
 }
 
-const uint32_t& UnitTestResult::GetLineNumber( ) const noexcept
+const uint32_t& UnitTestResult::GetLineNumber() const noexcept
 {
     return mLineNum;
 }
 
-const std::string& UnitTestResult::GetResultInfo( ) const noexcept
+const std::string& UnitTestResult::GetResultInfo() const noexcept
 {
     static const std::string unknownStr("<NULL>");
 
-    return (mResultInfo.empty( )) ? unknownStr : mResultInfo;
+    return (mResultInfo.empty()) ? unknownStr : mResultInfo;
 }
 
 

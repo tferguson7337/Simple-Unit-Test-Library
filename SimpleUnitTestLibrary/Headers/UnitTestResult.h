@@ -34,7 +34,7 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestResult( ) noexcept;
+    UnitTestResult() noexcept;
 
     UnitTestResult(
         _In_ ResultType result,
@@ -48,20 +48,20 @@ public:
 
     /// Dtor \\\
 
-    ~UnitTestResult( ) = default;
+    ~UnitTestResult() = default;
 
     /// Operator Overloads \\\
 
     UnitTestResult& operator=(_In_ UnitTestResult&&) noexcept;
-    explicit operator bool( ) const noexcept;
+    explicit operator bool() const noexcept;
 
     /// Getters \\\
 
-    const ResultType& GetResult( ) const noexcept;
-    const std::string& GetFunctionName( ) const noexcept;
-    const std::string& GetFileName( ) const noexcept;
-    const uint32_t& GetLineNumber( ) const noexcept;
-    const std::string& GetResultInfo( ) const noexcept;
+    const ResultType& GetResult() const noexcept;
+    const std::string& GetFunctionName() const noexcept;
+    const std::string& GetFileName() const noexcept;
+    const uint32_t& GetLineNumber() const noexcept;
+    const std::string& GetResultInfo() const noexcept;
 
     /// Setters \\\
 

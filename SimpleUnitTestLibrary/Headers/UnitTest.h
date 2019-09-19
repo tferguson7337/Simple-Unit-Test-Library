@@ -23,13 +23,13 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTest( ) = default;
+    UnitTest() = default;
     explicit UnitTest(_In_ std::function<UnitTestResult(void)>&&) noexcept;
     UnitTest(_In_ UnitTest&&) noexcept;
 
     /// Dtor \\\
 
-    ~UnitTest( ) = default;
+    ~UnitTest() = default;
 
     /// Operator Overloads \\\
 
@@ -37,8 +37,8 @@ public:
 
     /// Getters \\\
 
-    const std::function<UnitTestResult(void)>& GetUnitTestFunction( ) const noexcept;
-    const UnitTestResult& GetUnitTestResult( ) const noexcept;
+    const std::function<UnitTestResult(void)>& GetUnitTestFunction() const noexcept;
+    const UnitTestResult& GetUnitTestResult() const noexcept;
 
     /// Setters \\\
 
@@ -46,5 +46,5 @@ public:
 
     /// Public Methods \\\
 
-    const UnitTestResult& RunTest( );
+    const UnitTestResult& RunTest();
 };

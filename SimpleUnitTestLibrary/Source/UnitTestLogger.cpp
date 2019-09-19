@@ -131,7 +131,7 @@ template <class T>
 UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ const bool& consoleOutput, _In_ const bool& onlyLogFailures) :
     mPrintToConsole(consoleOutput),
     mOnlyLogFailures(onlyLogFailures),
-    mConsoleStream(InitConsoleStream( )),
+    mConsoleStream(InitConsoleStream()),
     mFileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
     mTargetFile(file)
 { }
@@ -139,23 +139,23 @@ UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ c
 /// Dtor \\\
 
 template <class T>
-UnitTestLogger<T>::~UnitTestLogger( )
+UnitTestLogger<T>::~UnitTestLogger()
 {
-    if ( mWorkerThread.joinable( ) )
+    if (mWorkerThread.joinable())
     {
         mContinueWork = false;
-        mCVSignaler.notify_all( );
-        mWorkerThread.join( );
+        mCVSignaler.notify_all();
+        mWorkerThread.join();
     }
 
-    if ( mPrintToConsole && mConsoleStream )
+    if (mPrintToConsole && mConsoleStream)
     {
-        mConsoleStream.flush( );
+        mConsoleStream.flush();
     }
 
-    if ( mFileStream )
+    if (mFileStream)
     {
-        mFileStream.flush( );
+        mFileStream.flush();
     }
 }
 
@@ -169,9 +169,9 @@ UnitTestLogger<T>& UnitTestLogger<T>::operator=(_In_ UnitTestLogger&& src) noexc
     mTargetFile = std::move(src.mTargetFile);
 
     src.mPrintToConsole = false;
-    src.mConsoleStream.flush( );
-    src.mFileStream.close( );
-    src.mTargetFile.clear( );
+    src.mConsoleStream.flush();
+    src.mFileStream.close();
+    src.mTargetFile.clear();
 
     return *this;
 }
@@ -181,13 +181,13 @@ UnitTestLogger<T>& UnitTestLogger<T>::operator=(_In_ UnitTestLogger&& src) noexc
 // Private Helper Methods
 
 template <class T>
-std::basic_ostream<T>& UnitTestLogger<T>::InitConsoleStream( )
+std::basic_ostream<T>& UnitTestLogger<T>::InitConsoleStream()
 {
-    if constexpr ( std::is_same_v<T, char> )
+    if constexpr (std::is_same_v<T, char>)
     {
         return std::cout;
     }
-    else if constexpr ( std::is_same_v<T, wchar_t> )
+    else if constexpr (std::is_same_v<T, wchar_t>)
     {
         return reinterpret_cast<std::basic_ostream<wchar_t>&>(std::wcout);
     }
@@ -202,9 +202,9 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTestSetHeaderString(_In_ const TestSetData<T>& data)
 {
     return stprintf(
-        &GetTestSetHeaderFormat( ),
-        data.GetTestSetName( ).c_str( ),
-        data.GetTotalTestCount( )
+        &GetTestSetHeaderFormat(),
+        data.GetTestSetName().c_str(),
+        data.GetTotalTestCount()
     );
 }
 
@@ -212,16 +212,16 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryNoFailuresString(_In_ const TestSetData<T>& data)
 {
     return stprintf(
-        &GetTestSetSummaryNoFailuresFormat( ),
-        data.GetTestSetName( ).c_str( ),
-        data.GetTotalTestCount( ),
-        data.GetTotalTestCount( ) - data.GetTestSkipCount( ),
-        data.GetTestPassCount( ),
-        data.GetTotalFailureCount( ),
-        data.GetTestSkipCount( ),
-        data.GetTestSetGrade( ),
-        data.GetTestPassCount( ),
-        data.GetTotalTestCount( ) - data.GetTestSkipCount( )
+        &GetTestSetSummaryNoFailuresFormat(),
+        data.GetTestSetName().c_str(),
+        data.GetTotalTestCount(),
+        data.GetTotalTestCount() - data.GetTestSkipCount(),
+        data.GetTestPassCount(),
+        data.GetTotalFailureCount(),
+        data.GetTestSkipCount(),
+        data.GetTestSetGrade(),
+        data.GetTestPassCount(),
+        data.GetTotalTestCount() - data.GetTestSkipCount()
     );
 }
 
@@ -229,40 +229,40 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData<T>& data)
 {
     return stprintf(
-        &GetTestSetSummaryFailureDetailsFormat( ),
-        data.GetTestSetName( ).c_str( ),
-        data.GetTotalTestCount( ),
-        data.GetTotalTestCount( ) - data.GetTestSkipCount( ),
-        data.GetTestPassCount( ),
-        data.GetTotalFailureCount( ),
-        data.GetSetupFailureCount( ),
-        data.GetSetupExceptionCount( ),
-        data.GetTestFailureCount( ),
-        data.GetTestExceptionCount( ),
-        data.GetCleanupFailureCount( ),
-        data.GetCleanupExceptionCount( ),
-        data.GetUnhandledExceptionCount( ),
-        data.GetTestSkipCount( ),
-        data.GetTestSetGrade( ),
-        data.GetTestPassCount( ),
-        data.GetTotalTestCount( ) - data.GetTestSkipCount( )
+        &GetTestSetSummaryFailureDetailsFormat(),
+        data.GetTestSetName().c_str(),
+        data.GetTotalTestCount(),
+        data.GetTotalTestCount() - data.GetTestSkipCount(),
+        data.GetTestPassCount(),
+        data.GetTotalFailureCount(),
+        data.GetSetupFailureCount(),
+        data.GetSetupExceptionCount(),
+        data.GetTestFailureCount(),
+        data.GetTestExceptionCount(),
+        data.GetCleanupFailureCount(),
+        data.GetCleanupExceptionCount(),
+        data.GetUnhandledExceptionCount(),
+        data.GetTestSkipCount(),
+        data.GetTestSetGrade(),
+        data.GetTestPassCount(),
+        data.GetTotalTestCount() - data.GetTestSkipCount()
     );
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetHeaderFormat()
 {
     return std::get<std::basic_string<T>>(s_HeaderFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryNoFailuresFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryNoFailuresFormat()
 {
     return std::get<std::basic_string<T>>(s_SummaryNoFailuresFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFailureDetailsFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetTestSetSummaryFailureDetailsFormat()
 {
     return std::get<std::basic_string<T>>(s_SummaryFailureDetailsFormats);
 }
@@ -272,7 +272,7 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(_In_ const UnitTestResult
 {
     std::basic_string<T> logStr;
 
-    switch ( res.GetResult( ) )
+    switch (res.GetResult())
     {
     case ResultType::Success:
         logStr.append(BuildSuccessString(res));
@@ -299,51 +299,51 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(_In_ const UnitTestResult
         break;
 
     default:
-        logStr.clear( );
+        logStr.clear();
     }
 
     return logStr;
 }
 
 template <class T>
-std::basic_string<T> UnitTestLogger<T>::BuildTimeString( )
+std::basic_string<T> UnitTestLogger<T>::BuildTimeString()
 {
     std::vector<T> buffer(mTimeBufferLength, T('\0'));
     const time_t time = std::time(nullptr);
 
-    if ( !GetTime(buffer.data( ), &time) )
+    if (!GetTime(buffer.data(), &time))
     {
-        return std::basic_string<T>( );
+        return std::basic_string<T>();
     }
 
-    while ( !buffer.empty( ) && buffer.back( ) != T('\n') )
+    while (!buffer.empty() && buffer.back() != T('\n'))
     {
-        buffer.pop_back( );
+        buffer.pop_back();
     }
 
-    if ( buffer.size( ) <= 1 )
+    if (buffer.size() <= 1)
     {
-        return std::basic_string<T>( );
+        return std::basic_string<T>();
     }
     else
     {
-        buffer.pop_back( );
+        buffer.pop_back();
     }
 
     buffer.push_back(T('\0'));
 
-    return std::basic_string<T>(buffer.data( ));
+    return std::basic_string<T>(buffer.data());
 }
 
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildSuccessString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &GetSuccessFormat( ),
-        res.GetFileName( ).c_str( ),
-        res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )).c_str( ),
-        res.GetLineNumber( )
+        &GetSuccessFormat(),
+        res.GetFileName().c_str(),
+        res.GetFunctionName().c_str(),
+        GetResultString(res.GetResult()).c_str(),
+        res.GetLineNumber()
     );
 }
 
@@ -351,12 +351,12 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildFailureString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &GetFailureFormat( ),
-        res.GetFileName( ).c_str( ),
-        res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )).c_str( ),
-        res.GetLineNumber( ),
-        res.GetResultInfo( ).c_str( )
+        &GetFailureFormat(),
+        res.GetFileName().c_str(),
+        res.GetFunctionName().c_str(),
+        GetResultString(res.GetResult()).c_str(),
+        res.GetLineNumber(),
+        res.GetResultInfo().c_str()
     );
 }
 
@@ -364,12 +364,12 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildExceptionString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &GetExceptionFormat( ),
-        res.GetFileName( ).c_str( ),
-        res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )).c_str( ),
-        res.GetLineNumber( ),
-        res.GetResultInfo( ).c_str( )
+        &GetExceptionFormat(),
+        res.GetFileName().c_str(),
+        res.GetFunctionName().c_str(),
+        GetResultString(res.GetResult()).c_str(),
+        res.GetLineNumber(),
+        res.GetResultInfo().c_str()
     );
 }
 
@@ -377,12 +377,12 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildSkipString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &GetSkipFormat( ),
-        res.GetFileName( ).c_str( ),
-        res.GetFunctionName( ).c_str( ),
-        GetResultString(res.GetResult( )).c_str( ),
-        res.GetLineNumber( ),
-        res.GetResultInfo( ).c_str( )
+        &GetSkipFormat(),
+        res.GetFileName().c_str(),
+        res.GetFunctionName().c_str(),
+        GetResultString(res.GetResult()).c_str(),
+        res.GetLineNumber(),
+        res.GetResultInfo().c_str()
     );
 }
 
@@ -390,9 +390,9 @@ template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildUnhandledExceptionString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &GetUnhandledExceptionFormat( ),
-        GetResultString(res.GetResult( )).c_str( ),
-        res.GetResultInfo( ).c_str( )
+        &GetUnhandledExceptionFormat(),
+        GetResultString(res.GetResult()).c_str(),
+        res.GetResultInfo().c_str()
     );
 }
 
@@ -403,37 +403,37 @@ const std::basic_string<T>& UnitTestLogger<T>::GetResultString(_In_ const Result
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetTimeFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetTimeFormat()
 {
     return std::get<std::basic_string<T>>(s_TimeFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetSuccessFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetSuccessFormat()
 {
     return std::get<std::basic_string<T>>(s_SuccessFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetFailureFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetFailureFormat()
 {
     return std::get<std::basic_string<T>>(s_FailureFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetExceptionFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetExceptionFormat()
 {
     return std::get<std::basic_string<T>>(s_ExceptionFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetSkipFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetSkipFormat()
 {
     return std::get<std::basic_string<T>>(s_SkipFormats);
 }
 
 template <class T>
-const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
+const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat()
 {
     return std::get<std::basic_string<T>>(s_UnhandledExceptionFormats);
 }
@@ -441,11 +441,11 @@ const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat( )
 template <class T>
 bool UnitTestLogger<T>::GetTime(_In_ T* buffer, _In_ const time_t* t)
 {
-    if constexpr ( std::is_same_v<T, char> )
+    if constexpr (std::is_same_v<T, char>)
     {
         return ctime_s(buffer, mTimeBufferLength, t) == 0;
     }
-    else if constexpr ( std::is_same_v<T, wchar_t> )
+    else if constexpr (std::is_same_v<T, wchar_t>)
     {
         return _wctime_s(buffer, mTimeBufferLength, t) == 0;
     }
@@ -462,16 +462,16 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(_In_ const std::basic_string<T>
     std::vector<T> buffer;
     int bufferSize = 0;
 
-    if ( !format || format->empty( ) )
+    if (!format || format->empty())
     {
-        return std::basic_string<T>( );
+        return std::basic_string<T>();
     }
 
     va_start(args, format);
 
     bufferSize = StringPrintWrapper(buffer, format, args);
 
-    if ( bufferSize > 0 )
+    if (bufferSize > 0)
     {
         buffer = std::move(std::vector<T>(static_cast<size_t>(bufferSize) + 2, T('\0')));
         bufferSize = StringPrintWrapper(buffer, format, args);
@@ -479,46 +479,46 @@ std::basic_string<T> UnitTestLogger<T>::stprintf(_In_ const std::basic_string<T>
 
     va_end(args);
 
-    return (bufferSize > 0) ? std::basic_string<T>(std::move(buffer.data( ))) : std::basic_string<T>( );
+    return (bufferSize > 0) ? std::basic_string<T>(std::move(buffer.data())) : std::basic_string<T>();
 }
 
 template <class T>
 int UnitTestLogger<T>::StringPrintWrapper(_Inout_ std::vector<T>& buffer, _In_ const std::basic_string<T>* format, _In_ va_list args)
 {
-    if constexpr ( std::is_same_v<T, char> )
+    if constexpr (std::is_same_v<T, char>)
     {
-        if ( buffer.empty( ) )
+        if (buffer.empty())
         {
             return _vscprintf(
-                reinterpret_cast<const char*>(format->c_str( )), 
+                reinterpret_cast<const char*>(format->c_str()),
                 args
             );
         }
         else
         {
             return vsnprintf(
-                reinterpret_cast<char*>(buffer.data( )),
-                buffer.size( ) - 1, 
-                reinterpret_cast<const char*>(format->c_str( )),
+                reinterpret_cast<char*>(buffer.data()),
+                buffer.size() - 1,
+                reinterpret_cast<const char*>(format->c_str()),
                 args
             );
         }
     }
-    else if constexpr ( std::is_same_v<T, wchar_t> )
+    else if constexpr (std::is_same_v<T, wchar_t>)
     {
-        if ( buffer.empty( ) )
+        if (buffer.empty())
         {
             return _vscwprintf(
-                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                reinterpret_cast<const wchar_t*>(format->c_str()),
                 args
             );
         }
         else
         {
             return vswprintf(
-                reinterpret_cast<wchar_t*>(buffer.data( )),
-                buffer.size( ) - 1,
-                reinterpret_cast<const wchar_t*>(format->c_str( )),
+                reinterpret_cast<wchar_t*>(buffer.data()),
+                buffer.size() - 1,
+                reinterpret_cast<const wchar_t*>(format->c_str()),
                 args
             );
         }
@@ -538,7 +538,7 @@ void UnitTestLogger<T>::LogCommon(_In_ std::basic_string<T>&& str)
         mLogQueueSize++;
     }
 
-    mCVSignaler.notify_one( );
+    mCVSignaler.notify_one();
 }
 
 /// Public Method Definitions \\\
@@ -546,19 +546,19 @@ void UnitTestLogger<T>::LogCommon(_In_ std::basic_string<T>&& str)
 // Getters
 
 template <class T>
-const std::filesystem::path& UnitTestLogger<T>::GetTargetFile( ) const noexcept
+const std::filesystem::path& UnitTestLogger<T>::GetTargetFile() const noexcept
 {
     return mTargetFile;
 }
 
 template <class T>
-bool UnitTestLogger<T>::GetPrintToConsole( ) const noexcept
+bool UnitTestLogger<T>::GetPrintToConsole() const noexcept
 {
     return mPrintToConsole;
 }
 
 template <class T>
-bool UnitTestLogger<T>::GetOnlyLogFailures( ) const noexcept
+bool UnitTestLogger<T>::GetOnlyLogFailures() const noexcept
 {
     return mOnlyLogFailures;
 }
@@ -570,12 +570,12 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ const std::filesystem::path& filePath
 {
     std::basic_ofstream<T> newFileStream(filePath);
 
-    if ( !newFileStream )
+    if (!newFileStream)
     {
         return false;
     }
 
-    mFileStream.flush( );
+    mFileStream.flush();
     std::swap(newFileStream, mFileStream);
     mTargetFile.assign(filePath);
 
@@ -587,12 +587,12 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ std::filesystem::path&& filePath)
 {
     std::basic_ofstream<T> newFileStream(filePath);
 
-    if ( !newFileStream )
+    if (!newFileStream)
     {
         return false;
     }
 
-    mFileStream.flush( );
+    mFileStream.flush();
     std::swap(newFileStream, mFileStream);
     mTargetFile.assign(std::move(filePath));
 
@@ -624,10 +624,10 @@ void UnitTestLogger<T>::LogTestSetHeader(_In_ const TestSetData<T>& data)
 template <class T>
 void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 {
-    if ( mOnlyLogFailures )
+    if (mOnlyLogFailures)
     {
-        const ResultType& rt = res.GetResult( );
-        if ( (rt == ResultType::Success) || (rt == ResultType::NotRun) )
+        const ResultType& rt = res.GetResult();
+        if ((rt == ResultType::Success) || (rt == ResultType::NotRun))
         {
             return;
         }
@@ -641,7 +641,7 @@ void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 template <class T>
 void UnitTestLogger<T>::LogTestSetSummary(_In_ const TestSetData<T>& data)
 {
-    std::basic_string<T> buf = (data.GetTestFailureCount( ) == 0) 
+    std::basic_string<T> buf = (data.GetTestFailureCount() == 0)
         ? BuildTestSetSummaryNoFailuresString(data)
         : BuildTestSetSummaryFailureDetailsString(data);
 
@@ -652,44 +652,44 @@ void UnitTestLogger<T>::LogTestSetSummary(_In_ const TestSetData<T>& data)
 /// Logging Worker Thread Methods \\\
 
 template <class T>
-void UnitTestLogger<T>::InitializeWorkerThread( )
+void UnitTestLogger<T>::InitializeWorkerThread()
 {
-    TeardownWorkerThread( );
+    TeardownWorkerThread();
 
     mContinueWork = true;
     mWorkerThread = std::thread(&UnitTestLogger<T>::WorkerLoop, this);
 }
 
 template <class T>
-void UnitTestLogger<T>::TeardownWorkerThread( )
+void UnitTestLogger<T>::TeardownWorkerThread()
 {
-    if ( mWorkerThread.joinable( ) )
+    if (mWorkerThread.joinable())
     {
         mContinueWork = false;
-        mCVSignaler.notify_all( );
-        mWorkerThread.join( );
+        mCVSignaler.notify_all();
+        mWorkerThread.join();
     }
 }
 
 template <class T>
-void UnitTestLogger<T>::WorkerLoop( )
+void UnitTestLogger<T>::WorkerLoop()
 {
-    while ( !TerminatePredicate( ) )
+    while (!TerminatePredicate())
     {
-        WaitForWork( );
-        PrintLogs( );
+        WaitForWork();
+        PrintLogs();
     }
 }
 
 template <class T>
-void UnitTestLogger<T>::WaitForWork( )
+void UnitTestLogger<T>::WaitForWork()
 {
     std::unique_lock<std::mutex> ul(mLogQueueMutex);
-    mCVSignaler.wait(ul, [this] ( ) -> bool { return this->WorkerPredicate( ); });
+    mCVSignaler.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
 }
 
 template <class T>
-void UnitTestLogger<T>::PrintLogs( )
+void UnitTestLogger<T>::PrintLogs()
 {
     std::queue<std::basic_string<T>> logQueue;
     {
@@ -698,10 +698,10 @@ void UnitTestLogger<T>::PrintLogs( )
         mLogQueueSize = 0;
     }
 
-    while ( !logQueue.empty( ) )
+    while (!logQueue.empty())
     {
-        std::basic_string<T> logStr(logQueue.front( ));
-        logQueue.pop( );
+        std::basic_string<T> logStr(logQueue.front());
+        logQueue.pop();
 
         PrintLog(logStr);
     }
@@ -710,25 +710,25 @@ void UnitTestLogger<T>::PrintLogs( )
 template <class T>
 void UnitTestLogger<T>::PrintLog(_In_ const std::basic_string<T>& str)
 {
-    if ( mPrintToConsole && mConsoleStream )
+    if (mPrintToConsole && mConsoleStream)
     {
         mConsoleStream << str;
     }
 
-    if ( mFileStream )
+    if (mFileStream)
     {
         mFileStream << str;
     }
 }
 
 template <class T>
-bool UnitTestLogger<T>::WorkerPredicate( )
+bool UnitTestLogger<T>::WorkerPredicate()
 {
     return (mLogQueueSize != 0) || (!mContinueWork);
 }
 
 template <class T>
-bool UnitTestLogger<T>::TerminatePredicate( )
+bool UnitTestLogger<T>::TerminatePredicate()
 {
     return (!mContinueWork) && (mLogQueueSize == 0);
 }

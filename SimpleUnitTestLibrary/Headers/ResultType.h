@@ -50,7 +50,7 @@ enum class ResultType : ResultTypeUnderlyingType
 ///
 class ResultTypeUtil
 {
-    ResultTypeUtil( ) = delete;
+    ResultTypeUtil() = delete;
     ResultTypeUtil(const ResultTypeUtil&) = delete;
     ResultTypeUtil(ResultTypeUtil&&) = delete;
     ResultTypeUtil& operator=(const ResultTypeUtil&) = delete;

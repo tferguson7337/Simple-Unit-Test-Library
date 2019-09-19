@@ -20,7 +20,7 @@ template <class T>
 UnitTestRunner<T>::UnitTestRunner(_In_ std::basic_string<T>&& testName) noexcept :
     mTestSetData(std::move(testName))
 {
-    
+
 }
 
 /// Operator Overloads \\\
@@ -36,25 +36,25 @@ UnitTestRunner<T>& UnitTestRunner<T>::operator=(_In_ UnitTestRunner&& src) noexc
 // Getters
 
 template <class T>
-const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests( ) const noexcept
+const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests() const noexcept
 {
     return mUnitTests;
 }
 
 template <class T>
-IUnitTestLogger<T>& UnitTestRunner<T>::GetLogger( ) const noexcept
+IUnitTestLogger<T>& UnitTestRunner<T>::GetLogger() const noexcept
 {
     return mLogger;
 }
 
 template<class T>
-TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) noexcept
+TestSetData<T>& UnitTestRunner<T>::GetTestSetData() noexcept
 {
     return mTestSetData;
 }
 
 template<class T>
-const TestSetData<T> & UnitTestRunner<T>::GetTestSetData( ) const noexcept
+const TestSetData<T>& UnitTestRunner<T>::GetTestSetData() const noexcept
 {
     return mTestSetData;
 }
@@ -68,7 +68,7 @@ bool UnitTestRunner<T>::AddUnitTest(_In_ UnitTest&& test)
     {
         mUnitTests.push_back(std::move(test));
     }
-    catch ( ... )
+    catch (...)
     {
         return false;
     }
@@ -83,7 +83,7 @@ bool UnitTestRunner<T>::AddUnitTest(_In_ std::function<UnitTestResult(void)>&& t
     {
         mUnitTests.emplace_back(std::move(test));
     }
-    catch ( ... )
+    catch (...)
     {
         return false;
     }
@@ -96,10 +96,10 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<UnitTest>&& tests)
 {
     try
     {
-        mUnitTests.splice(mUnitTests.end( ), tests);
-        tests.clear( );
+        mUnitTests.splice(mUnitTests.end(), tests);
+        tests.clear();
     }
-    catch ( ... )
+    catch (...)
     {
         return false;
     }
@@ -112,14 +112,14 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult
 {
     try
     {
-        for ( auto& t : tests )
+        for (auto& t : tests)
         {
             mUnitTests.emplace_back(std::move(t));
         }
 
-        tests.clear( );
+        tests.clear();
     }
-    catch ( ... )
+    catch (...)
     {
         return false;
     }
@@ -128,60 +128,60 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult
 }
 
 template <class T>
-void UnitTestRunner<T>::ClearUnitTests( ) noexcept
+void UnitTestRunner<T>::ClearUnitTests() noexcept
 {
-    mUnitTests.clear( );
+    mUnitTests.clear();
 }
 
 template <class T>
-bool UnitTestRunner<T>::RunUnitTests( )
+bool UnitTestRunner<T>::RunUnitTests()
 {
     bool ret = true;
 
-    mLogger.InitializeWorkerThread( );
+    mLogger.InitializeWorkerThread();
 
-    mTestSetData.ResetCounters( );
-    mTestSetData.SetTotalTestCount(static_cast<uint32_t>(mUnitTests.size( )));
+    mTestSetData.ResetCounters();
+    mTestSetData.SetTotalTestCount(static_cast<uint32_t>(mUnitTests.size()));
 
     mLogger.LogTestSetHeader(mTestSetData);
 
-    for ( UnitTest& test : mUnitTests )
+    for (UnitTest& test : mUnitTests)
     {
         ResultType r = ResultType::NotRun;
         std::string eStr = "";
 
         try
         {
-            test.RunTest( );
-            r = test.GetUnitTestResult( ).GetResult( );
+            test.RunTest();
+            r = test.GetUnitTestResult().GetResult();
         }
-        catch ( const std::exception& e )
+        catch (const std::exception& e)
         {
             r = ResultType::UnhandledException;
-            eStr = e.what( );
+            eStr = e.what();
         }
-        catch ( ... )
+        catch (...)
         {
             r = ResultType::UnhandledException;
             eStr = "<Unknown Unhandled Exception>";
         }
 
-        if ( r != ResultType::Success && r != ResultType::NotRun )
+        if (r != ResultType::Success && r != ResultType::NotRun)
         {
             ret = false;
         }
 
-        if ( r != ResultType::UnhandledException )
+        if (r != ResultType::UnhandledException)
         {
-            mLogger.LogUnitTestResult(test.GetUnitTestResult( ));
+            mLogger.LogUnitTestResult(test.GetUnitTestResult());
         }
         else
         {
-            const std::string& funcName = test.GetUnitTestResult( ).GetFunctionName( );
-            const std::string& fileName = test.GetUnitTestResult( ).GetFileName( );
-            const uint32_t& line = test.GetUnitTestResult( ).GetLineNumber( );
+            const std::string& funcName = test.GetUnitTestResult().GetFunctionName();
+            const std::string& fileName = test.GetUnitTestResult().GetFileName();
+            const uint32_t& line = test.GetUnitTestResult().GetLineNumber();
 
-            mLogger.LogUnitTestResult(UnitTestResult(r, funcName.c_str( ), funcName.size( ), fileName.c_str( ), fileName.size( ), line, eStr));
+            mLogger.LogUnitTestResult(UnitTestResult(r, funcName.c_str(), funcName.size(), fileName.c_str(), fileName.size(), line, eStr));
         }
 
         mTestSetData.IncrementResultCounter(r);
@@ -189,7 +189,7 @@ bool UnitTestRunner<T>::RunUnitTests( )
 
     mLogger.LogTestSetSummary(mTestSetData);
 
-    mLogger.TeardownWorkerThread( );
+    mLogger.TeardownWorkerThread();
 
     return ret;
 }

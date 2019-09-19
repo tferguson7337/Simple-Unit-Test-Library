@@ -51,30 +51,30 @@ private:
 
     /// Private Logging Worker Thread Methods \\\
 
-    void InitializeWorkerThread( );
-    void TeardownWorkerThread( );
+    void InitializeWorkerThread();
+    void TeardownWorkerThread();
 
-    void WorkerLoop( );
-    void WaitForWork( );
-    void PrintLogs( );
+    void WorkerLoop();
+    void WaitForWork();
+    void PrintLogs();
     void PrintLog(_In_ const std::basic_string<T>&);
-    bool WorkerPredicate( );
-    bool TerminatePredicate( );
+    bool WorkerPredicate();
+    bool TerminatePredicate();
 
     /// Private Static Helper Methods \\\
 
-    static std::basic_ostream<T>& InitConsoleStream( );
+    static std::basic_ostream<T>& InitConsoleStream();
 
     static std::basic_string<T> BuildTestSetHeaderString(_In_ const TestSetData<T>&);
     static std::basic_string<T> BuildTestSetSummaryNoFailuresString(_In_ const TestSetData<T>&);
     static std::basic_string<T> BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData<T>&);
 
-    static const std::basic_string<T>& GetTestSetHeaderFormat( );
-    static const std::basic_string<T>& GetTestSetSummaryNoFailuresFormat( );
-    static const std::basic_string<T>& GetTestSetSummaryFailureDetailsFormat( );
+    static const std::basic_string<T>& GetTestSetHeaderFormat();
+    static const std::basic_string<T>& GetTestSetSummaryNoFailuresFormat();
+    static const std::basic_string<T>& GetTestSetSummaryFailureDetailsFormat();
 
     static std::basic_string<T> BuildLogString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildTimeString( );
+    static std::basic_string<T> BuildTimeString();
     static std::basic_string<T> BuildSuccessString(_In_ const UnitTestResult&);
     static std::basic_string<T> BuildFailureString(_In_ const UnitTestResult&);
     static std::basic_string<T> BuildExceptionString(_In_ const UnitTestResult&);
@@ -82,12 +82,12 @@ private:
     static std::basic_string<T> BuildUnhandledExceptionString(_In_ const UnitTestResult&);
 
     static const std::basic_string<T>& GetResultString(_In_ const ResultType&);
-    static const std::basic_string<T>& GetTimeFormat( );
-    static const std::basic_string<T>& GetSuccessFormat( );
-    static const std::basic_string<T>& GetFailureFormat( );
-    static const std::basic_string<T>& GetExceptionFormat( );
-    static const std::basic_string<T>& GetSkipFormat( );
-    static const std::basic_string<T>& GetUnhandledExceptionFormat( );
+    static const std::basic_string<T>& GetTimeFormat();
+    static const std::basic_string<T>& GetSuccessFormat();
+    static const std::basic_string<T>& GetFailureFormat();
+    static const std::basic_string<T>& GetExceptionFormat();
+    static const std::basic_string<T>& GetSkipFormat();
+    static const std::basic_string<T>& GetUnhandledExceptionFormat();
 
     static bool GetTime(_In_ T*, _In_ const time_t*);
 
@@ -99,11 +99,11 @@ private:
 public:
     /// Ctors \\\
 
-    UnitTestLogger(_In_ const std::filesystem::path & = std::filesystem::path( ), _In_ const bool& = true, _In_ const bool& = true);
+    UnitTestLogger(_In_ const std::filesystem::path & = std::filesystem::path(), _In_ const bool& = true, _In_ const bool& = true);
 
     /// Dtor \\\
 
-    ~UnitTestLogger( );
+    ~UnitTestLogger();
 
     /// Operator Overload \\\
 
@@ -111,9 +111,9 @@ public:
 
     /// Getters \\\
 
-    const std::filesystem::path& GetTargetFile( ) const noexcept;
-    bool GetPrintToConsole( ) const noexcept;
-    bool GetOnlyLogFailures( ) const noexcept;
+    const std::filesystem::path& GetTargetFile() const noexcept;
+    bool GetPrintToConsole() const noexcept;
+    bool GetOnlyLogFailures() const noexcept;
 
     /// Setters \\\
 

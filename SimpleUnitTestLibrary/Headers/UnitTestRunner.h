@@ -16,12 +16,12 @@ private:
 public:
     /// Ctors \\\
 
-    explicit UnitTestRunner(_In_ const std::basic_string<T>& = "No Test Set Name");
+    explicit UnitTestRunner(_In_ const std::basic_string<T> & = "No Test Set Name");
     explicit UnitTestRunner(_In_ std::basic_string<T>&&) noexcept;
 
     /// Dtor \\\
 
-    ~UnitTestRunner( ) = default;
+    ~UnitTestRunner() = default;
 
     /// Operator Overloads \\\
 
@@ -29,10 +29,10 @@ public:
 
     /// Getters \\\
 
-    const std::list<UnitTest>& GetUnitTests( ) const noexcept;
-    IUnitTestLogger<T>& GetLogger( ) const noexcept;
-    TestSetData<T>& GetTestSetData( ) noexcept;
-    const TestSetData<T>& GetTestSetData( ) const noexcept;
+    const std::list<UnitTest>& GetUnitTests() const noexcept;
+    IUnitTestLogger<T>& GetLogger() const noexcept;
+    TestSetData<T>& GetTestSetData() noexcept;
+    const TestSetData<T>& GetTestSetData() const noexcept;
 
     /// Public Methods \\\
 
@@ -42,7 +42,7 @@ public:
     bool AddUnitTests(_In_ std::list<UnitTest>&&);
     bool AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&&);
 
-    void ClearUnitTests( ) noexcept;
+    void ClearUnitTests() noexcept;
 
-    bool RunUnitTests( );
+    bool RunUnitTests();
 };

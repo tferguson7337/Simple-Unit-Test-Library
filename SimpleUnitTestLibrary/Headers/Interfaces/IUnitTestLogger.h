@@ -15,14 +15,14 @@ template <class T>
 class IUnitTestLogger
 {
 public:
-    IUnitTestLogger( ) = default;
-    virtual ~IUnitTestLogger( ) = default;
+    IUnitTestLogger() = default;
+    virtual ~IUnitTestLogger() = default;
 
     virtual UnitTestLogger<T>& operator=(UnitTestLogger<T>&&) noexcept = 0;
 
-    virtual const std::filesystem::path& GetTargetFile( ) const = 0;
-    virtual bool GetPrintToConsole( ) const noexcept = 0;
-    virtual bool GetOnlyLogFailures( ) const noexcept = 0;
+    virtual const std::filesystem::path& GetTargetFile() const = 0;
+    virtual bool GetPrintToConsole() const noexcept = 0;
+    virtual bool GetOnlyLogFailures() const noexcept = 0;
 
     virtual bool SetTargetFile(const std::filesystem::path&) = 0;
     virtual bool SetTargetFile(std::filesystem::path&&) = 0;

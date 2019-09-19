@@ -22,7 +22,7 @@ const std::vector<StrTuple> ResultTypeUtil::m_svResultTypeStrings
 
 void ResultTypeUtil::ValidateResultType(_In_ const ResultType& r, _In_ const std::string& f)
 {
-    if ( r < ResultType::IterationBegin || r >= ResultType::IterationEnd )
+    if (r < ResultType::IterationBegin || r >= ResultType::IterationEnd)
     {
         throw std::invalid_argument(
             f + ": Invalid ResultType argument provided[" +

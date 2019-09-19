@@ -27,12 +27,12 @@ UnitTest& UnitTest::operator=(_In_ UnitTest&& src) noexcept
 
 // Getters
 
-const std::function<UnitTestResult(void)>& UnitTest::GetUnitTestFunction( ) const noexcept
+const std::function<UnitTestResult(void)>& UnitTest::GetUnitTestFunction() const noexcept
 {
     return mTestFunc;
 }
 
-const UnitTestResult& UnitTest::GetUnitTestResult( ) const noexcept
+const UnitTestResult& UnitTest::GetUnitTestResult() const noexcept
 {
     return mTestResult;
 }
@@ -42,17 +42,17 @@ const UnitTestResult& UnitTest::GetUnitTestResult( ) const noexcept
 void UnitTest::SetUnitTestFunction(_In_ std::function<UnitTestResult(void)>&& func) noexcept
 {
     mTestFunc = std::move(func);
-    mTestResult = std::move(UnitTestResult( ));
+    mTestResult = std::move(UnitTestResult());
 }
 
 // Public Methods
 
-const UnitTestResult& UnitTest::RunTest( )
+const UnitTestResult& UnitTest::RunTest()
 {
-    if ( !mTestFunc )
+    if (!mTestFunc)
     {
         throw std::runtime_error(__FUNCTION__": No function is associated with this UnitTest.");
     }
 
-    return mTestResult = mTestFunc( );
+    return mTestResult = mTestFunc();
 }
