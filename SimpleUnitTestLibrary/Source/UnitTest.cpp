@@ -6,21 +6,29 @@
 
 /// Ctors \\\
     
-UnitTest::UnitTest(_In_ std::function<UnitTestResult(void)>&& func) noexcept :
-    mTestFunc(std::move(func))
-{ }
+UnitTest::UnitTest(_Inout_ std::function<UnitTestResult(void)>&& func) noexcept :
+    m_TestFunc(std::move(func))
+{
+    func = nullptr;
+}
 
-UnitTest::UnitTest(_In_ UnitTest&& src) noexcept :
-    mTestFunc(std::move(src.mTestFunc)),
-    mTestResult(std::move(src.mTestResult))
-{ }
+UnitTest::UnitTest(_Inout_ UnitTest&& src) noexcept :
+    UnitTest()
+{
+    *this = std::move(src);
+}
 
 // Operator Overloads
 
-UnitTest& UnitTest::operator=(_In_ UnitTest&& src) noexcept
+UnitTest& UnitTest::operator=(_Inout_ UnitTest&& src) noexcept
 {
-    mTestFunc = std::move(src.mTestFunc);
-    mTestResult = std::move(src.mTestResult);
+    if (this != &src)
+    {
+        m_TestFunc = std::move(src.m_TestFunc);
+        m_TestResult = std::move(src.m_TestResult);
+
+        src.Clear();
+    }
 
     return *this;
 }
@@ -29,30 +37,36 @@ UnitTest& UnitTest::operator=(_In_ UnitTest&& src) noexcept
 
 const std::function<UnitTestResult(void)>& UnitTest::GetUnitTestFunction() const noexcept
 {
-    return mTestFunc;
+    return m_TestFunc;
 }
 
 const UnitTestResult& UnitTest::GetUnitTestResult() const noexcept
 {
-    return mTestResult;
+    return m_TestResult;
 }
 
 // Setters
 
-void UnitTest::SetUnitTestFunction(_In_ std::function<UnitTestResult(void)>&& func) noexcept
+void UnitTest::SetUnitTestFunction(_Inout_ std::function<UnitTestResult(void)>&& func) noexcept
 {
-    mTestFunc = std::move(func);
-    mTestResult = std::move(UnitTestResult());
+    m_TestFunc = std::move(func);
+    m_TestResult = UnitTestResult();
 }
 
 // Public Methods
 
+void UnitTest::Clear() noexcept
+{
+    m_TestFunc = nullptr;
+    m_TestResult = UnitTestResult();
+}
+
 const UnitTestResult& UnitTest::RunTest()
 {
-    if (!mTestFunc)
+    if (!m_TestFunc)
     {
-        throw std::runtime_error(__FUNCTION__": No function is associated with this UnitTest.");
+        throw std::logic_error(__FUNCTION__": No function is associated with this UnitTest.");
     }
 
-    return mTestResult = mTestFunc();
+    return m_TestResult = m_TestFunc();
 }

@@ -2,6 +2,7 @@
 
 #include "ResultType.h"
 
+#include <chrono>
 #include <string>
 
 ///
@@ -16,13 +17,14 @@ class UnitTestResult final
 private:
     /// Private Data Members \\\
 
-    uint32_t mLTGTCounter = 0;
+    uint32_t m_LTGTCounter = 0;
 
-    ResultType mResult;
-    uint32_t mLineNum;
-    std::string mFuncName;
-    std::string mFileName;
-    std::string mResultInfo;
+    ResultType m_Result;
+    uint32_t m_LineNum;
+    std::string m_FuncName;
+    std::string m_FileName;
+    std::string m_ResultInfo;
+    mutable uint64_t m_TestDurationMicroseconds;
 
     using ExtractPredicate = bool(*)(const char&, uint32_t&);
     constexpr const char* ExtractNameCommon(_In_ const char*, _In_ const size_t&, _In_ ExtractPredicate) noexcept;
@@ -44,7 +46,7 @@ public:
     );
 
     // Move Ctor
-    UnitTestResult(_In_ UnitTestResult&&) noexcept;
+    UnitTestResult(_Inout_ UnitTestResult&&) noexcept;
 
     /// Dtor \\\
 
@@ -52,7 +54,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestResult& operator=(_In_ UnitTestResult&&) noexcept;
+    UnitTestResult& operator=(_Inout_ UnitTestResult&&) noexcept;
     explicit operator bool() const noexcept;
 
     /// Getters \\\
@@ -62,6 +64,7 @@ public:
     const std::string& GetFileName() const noexcept;
     const uint32_t& GetLineNumber() const noexcept;
     const std::string& GetResultInfo() const noexcept;
+    const uint64_t& GetTestDurationMicroseconds() const noexcept;
 
     /// Setters \\\
 
@@ -70,6 +73,13 @@ public:
     void SetFileName(_In_ const std::string&);
     void SetLineNumber(_In_ const uint32_t&) noexcept;
     void SetResultInfo(_In_ const std::string&);
+
+    // Treat as const, since test-duration is treated as mutable.
+    void SetTestDurationMicroseconds(_In_ const std::chrono::duration<int64_t, std::micro>&) const noexcept;
+
+    /// Public Methods \\\
+
+    void Clear() noexcept;
 
     /// Unit Test Return Macros \\\
 

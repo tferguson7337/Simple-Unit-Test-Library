@@ -10,25 +10,27 @@ template class UnitTestRunner<wchar_t>;
 
 template <class T>
 UnitTestRunner<T>::UnitTestRunner(_In_ const std::basic_string<T>& testName) :
-    mTestSetData(testName),
-    mLogger()
-{
-
-}
+    m_TestSetData(testName)
+{ }
 
 template <class T>
-UnitTestRunner<T>::UnitTestRunner(_In_ std::basic_string<T>&& testName) noexcept :
-    mTestSetData(std::move(testName))
+UnitTestRunner<T>::UnitTestRunner(_Inout_ std::basic_string<T>&& testName) noexcept :
+    m_TestSetData(std::move(testName))
 {
-
+    testName.clear();
 }
 
 /// Operator Overloads \\\
 
 template <class T>
-UnitTestRunner<T>& UnitTestRunner<T>::operator=(_In_ UnitTestRunner&& src) noexcept
+UnitTestRunner<T>& UnitTestRunner<T>::operator=(_Inout_ UnitTestRunner&& src) noexcept
 {
-    mUnitTests = std::move(src.mUnitTests);
+    if (this != &src)
+    {
+        m_UnitTests = std::move(src.m_UnitTests);
+
+        src.ClearUnitTests();
+    }
 
     return *this;
 }
@@ -38,35 +40,36 @@ UnitTestRunner<T>& UnitTestRunner<T>::operator=(_In_ UnitTestRunner&& src) noexc
 template <class T>
 const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests() const noexcept
 {
-    return mUnitTests;
+    return m_UnitTests;
 }
 
 template <class T>
 IUnitTestLogger<T>& UnitTestRunner<T>::GetLogger() const noexcept
 {
-    return mLogger;
+    return m_Logger;
 }
 
 template<class T>
 TestSetData<T>& UnitTestRunner<T>::GetTestSetData() noexcept
 {
-    return mTestSetData;
+    return m_TestSetData;
 }
 
 template<class T>
 const TestSetData<T>& UnitTestRunner<T>::GetTestSetData() const noexcept
 {
-    return mTestSetData;
+    return m_TestSetData;
 }
 
 // Public Methods
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTest(_In_ UnitTest&& test)
+bool UnitTestRunner<T>::AddUnitTest(_Inout_ UnitTest&& test)
 {
     try
     {
-        mUnitTests.push_back(std::move(test));
+        m_UnitTests.push_back(std::move(test));
+        test.Clear();
     }
     catch (...)
     {
@@ -77,11 +80,12 @@ bool UnitTestRunner<T>::AddUnitTest(_In_ UnitTest&& test)
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTest(_In_ std::function<UnitTestResult(void)>&& test)
+bool UnitTestRunner<T>::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&& test)
 {
     try
     {
-        mUnitTests.emplace_back(std::move(test));
+        m_UnitTests.emplace_back(std::move(test));
+        test = nullptr;
     }
     catch (...)
     {
@@ -92,11 +96,11 @@ bool UnitTestRunner<T>::AddUnitTest(_In_ std::function<UnitTestResult(void)>&& t
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<UnitTest>&& tests)
+bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
 {
     try
     {
-        mUnitTests.splice(mUnitTests.end(), tests);
+        m_UnitTests.splice(m_UnitTests.cend(), std::move(tests));
         tests.clear();
     }
     catch (...)
@@ -108,13 +112,13 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<UnitTest>&& tests)
 }
 
 template <class T>
-bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&& tests)
+bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& tests)
 {
     try
     {
-        for (auto& t : tests)
+        for (auto& f : tests)
         {
-            mUnitTests.emplace_back(std::move(t));
+            m_UnitTests.emplace_back(std::move(f));
         }
 
         tests.clear();
@@ -130,41 +134,60 @@ bool UnitTestRunner<T>::AddUnitTests(_In_ std::list<std::function<UnitTestResult
 template <class T>
 void UnitTestRunner<T>::ClearUnitTests() noexcept
 {
-    mUnitTests.clear();
+    m_UnitTests.clear();
 }
 
 template <class T>
 bool UnitTestRunner<T>::RunUnitTests()
 {
+    using Clock = std::chrono::high_resolution_clock;
+    using DurationMs = std::chrono::duration<int64_t, std::milli>;
+    using DurationMicroseconds = std::chrono::duration<int64_t, std::micro>;
+    using TimePoint = std::chrono::time_point<Clock>;
+
     bool ret = true;
 
-    mLogger.InitializeWorkerThread();
+    m_Logger.InitializeWorkerThread();
 
-    mTestSetData.ResetCounters();
-    mTestSetData.SetTotalTestCount(static_cast<uint32_t>(mUnitTests.size()));
+    m_TestSetData.ResetCounters();
+    m_TestSetData.SetTotalTestCount(static_cast<uint32_t>(m_UnitTests.size()));
 
-    mLogger.LogTestSetHeader(mTestSetData);
+    m_Logger.LogTestSetHeader(m_TestSetData);
 
-    for (UnitTest& test : mUnitTests)
+    for (UnitTest& test : m_UnitTests)
     {
+        TimePoint t0, t1;
+        DurationMs deltaMs;
+        DurationMicroseconds deltaMicroseconds;
         ResultType r = ResultType::NotRun;
         std::string eStr = "";
 
+        t0 = Clock::now();
         try
         {
             test.RunTest();
+            t1 = Clock::now();
             r = test.GetUnitTestResult().GetResult();
         }
         catch (const std::exception& e)
         {
+            t1 = Clock::now();
             r = ResultType::UnhandledException;
             eStr = e.what();
         }
         catch (...)
         {
+            t1 = Clock::now();
             r = ResultType::UnhandledException;
             eStr = "<Unknown Unhandled Exception>";
         }
+
+        m_TestSetData.IncrementResultCounter(r);
+
+        deltaMs = std::chrono::duration_cast<DurationMs, int64_t>(t1 - t0);
+        deltaMicroseconds = std::chrono::duration_cast<DurationMicroseconds, int64_t>(t1 - t0);
+        m_TestSetData.AddToRunDurationMs(deltaMs);
+        test.GetUnitTestResult().SetTestDurationMicroseconds(deltaMicroseconds);
 
         if (r != ResultType::Success && r != ResultType::NotRun)
         {
@@ -173,7 +196,7 @@ bool UnitTestRunner<T>::RunUnitTests()
 
         if (r != ResultType::UnhandledException)
         {
-            mLogger.LogUnitTestResult(test.GetUnitTestResult());
+            m_Logger.LogUnitTestResult(test.GetUnitTestResult());
         }
         else
         {
@@ -181,15 +204,15 @@ bool UnitTestRunner<T>::RunUnitTests()
             const std::string& fileName = test.GetUnitTestResult().GetFileName();
             const uint32_t& line = test.GetUnitTestResult().GetLineNumber();
 
-            mLogger.LogUnitTestResult(UnitTestResult(r, funcName.c_str(), funcName.size(), fileName.c_str(), fileName.size(), line, eStr));
+            UnitTestResult tmp(r, funcName.c_str(), funcName.size(), fileName.c_str(), fileName.size(), line, eStr);
+            tmp.SetTestDurationMicroseconds(deltaMicroseconds);
+            m_Logger.LogUnitTestResult(tmp);
         }
 
-        mTestSetData.IncrementResultCounter(r);
     }
 
-    mLogger.LogTestSetSummary(mTestSetData);
-
-    mLogger.TeardownWorkerThread();
+    m_Logger.LogTestSetSummary(m_TestSetData);
+    m_Logger.TeardownWorkerThread();
 
     return ret;
 }

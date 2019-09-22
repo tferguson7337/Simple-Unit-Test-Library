@@ -5,11 +5,12 @@
 /// Ctors \\\
 
 UnitTestResult::UnitTestResult() noexcept :
-    mResult(ResultType::NotRun),
-    mFuncName(std::string()),
-    mFileName(std::string()),
-    mLineNum(0),
-    mResultInfo(std::string())
+    m_Result(ResultType::NotRun),
+    m_FuncName(std::string()),
+    m_FileName(std::string()),
+    m_LineNum(0),
+    m_ResultInfo(std::string()),
+    m_TestDurationMicroseconds(0)
 { }
 
 UnitTestResult::UnitTestResult(
@@ -18,33 +19,35 @@ UnitTestResult::UnitTestResult(
     _In_ const char* file, _In_ const size_t& fileLen, _In_ const uint32_t& line,
     _In_ const std::string& info
 ) :
-    mResult(result),
-    mFuncName(ExtractFuncName(func, funcLen)),
-    mFileName(ExtractFileName(file, fileLen)),
-    mLineNum(line),
-    mResultInfo(info)
+    m_Result(result),
+    m_FuncName(ExtractFuncName(func, funcLen)),
+    m_FileName(ExtractFileName(file, fileLen)),
+    m_LineNum(line),
+    m_ResultInfo(info),
+    m_TestDurationMicroseconds(0)
 { }
 
 // Move Ctor
-UnitTestResult::UnitTestResult(_In_ UnitTestResult&& src) noexcept :
-    mResult(src.mResult),
-    mLineNum(src.mLineNum),
-    mFuncName(std::move(src.mFuncName)),
-    mFileName(std::move(src.mFileName)),
-    mResultInfo(std::move(src.mResultInfo))
-{ }
+UnitTestResult::UnitTestResult(_Inout_ UnitTestResult&& src) noexcept :
+    UnitTestResult()
+{ 
+    *this = std::move(src);
+}
 
 // Operator Overloads \\
 
-UnitTestResult& UnitTestResult::operator=(_In_ UnitTestResult&& src) noexcept
+UnitTestResult& UnitTestResult::operator=(_Inout_ UnitTestResult&& src) noexcept
 {
     if (this != &src)
     {
-        mResult = src.mResult;
-        mLineNum = src.mLineNum;
-        mFuncName.assign(std::move(src.mFuncName));
-        mFileName.assign(std::move(src.mFileName));
-        mResultInfo.assign(std::move(src.mResultInfo));
+        m_Result = src.m_Result;
+        m_LineNum = src.m_LineNum;
+        m_FuncName.assign(std::move(src.m_FuncName));
+        m_FileName.assign(std::move(src.m_FileName));
+        m_ResultInfo.assign(std::move(src.m_ResultInfo));
+        m_TestDurationMicroseconds = src.m_TestDurationMicroseconds;
+
+        src.Clear();
     }
 
     return *this;
@@ -52,7 +55,7 @@ UnitTestResult& UnitTestResult::operator=(_In_ UnitTestResult&& src) noexcept
 
 UnitTestResult::operator bool() const noexcept
 {
-    return mResult == ResultType::Success;
+    return m_Result == ResultType::Success;
 }
 
 // Private Helpers \\
@@ -67,7 +70,7 @@ constexpr const char* UnitTestResult::ExtractNameCommon(_In_ const char* str, _I
     const char* name = str + len;
     while (name >= str)
     {
-        if (pred(*(--name), mLTGTCounter) && mLTGTCounter == 0)
+        if (pred(*(--name), m_LTGTCounter) && m_LTGTCounter == 0)
         {
             break;
         }
@@ -112,29 +115,33 @@ constexpr bool UnitTestResult::IsWhitespace(_In_ const char& c, _Inout_ uint32_t
 
 const ResultType& UnitTestResult::GetResult() const noexcept
 {
-    return mResult;
+    return m_Result;
 }
 
 const std::string& UnitTestResult::GetFunctionName() const noexcept
 {
-    return mFuncName;
+    return m_FuncName;
 }
 
 const std::string& UnitTestResult::GetFileName() const noexcept
 {
-    return mFileName;
+    return m_FileName;
 }
 
 const uint32_t& UnitTestResult::GetLineNumber() const noexcept
 {
-    return mLineNum;
+    return m_LineNum;
 }
 
 const std::string& UnitTestResult::GetResultInfo() const noexcept
 {
     static const std::string unknownStr("<NULL>");
+    return (m_ResultInfo.empty()) ? unknownStr : m_ResultInfo;
+}
 
-    return (mResultInfo.empty()) ? unknownStr : mResultInfo;
+const uint64_t& UnitTestResult::GetTestDurationMicroseconds() const noexcept
+{
+    return m_TestDurationMicroseconds;
 }
 
 
@@ -142,25 +149,43 @@ const std::string& UnitTestResult::GetResultInfo() const noexcept
 
 void UnitTestResult::SetResult(_In_ const ResultType& res) noexcept
 {
-    mResult = res;
+    m_Result = res;
 }
 
 void UnitTestResult::SetFunctionName(_In_ const std::string& func)
 {
-    mFuncName = func;
+    m_FuncName = func;
 }
 
 void UnitTestResult::SetFileName(_In_ const std::string& file)
 {
-    mFileName = file;
+    m_FileName = file;
 }
 
 void UnitTestResult::SetLineNumber(_In_ const uint32_t& line) noexcept
 {
-    mLineNum = line;
+    m_LineNum = line;
 }
 
 void UnitTestResult::SetResultInfo(_In_ const std::string& info)
 {
-    mResultInfo = info;
+    m_ResultInfo = info;
+}
+
+void UnitTestResult::SetTestDurationMicroseconds(_In_ const std::chrono::duration<int64_t, std::micro>& dur) const noexcept
+{
+    m_TestDurationMicroseconds = (dur.count() > 0) ? static_cast<uint64_t>(dur.count()) : 0;
+}
+
+
+// Public Methods \\
+
+void UnitTestResult::Clear() noexcept
+{
+    m_Result = ResultType::NotRun;
+    m_LineNum = 0;
+    m_FuncName.clear();
+    m_FileName.clear();
+    m_ResultInfo.clear();
+    m_TestDurationMicroseconds = 0;
 }

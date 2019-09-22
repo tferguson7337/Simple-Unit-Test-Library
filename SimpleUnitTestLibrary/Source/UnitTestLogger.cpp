@@ -31,6 +31,7 @@ static const StrTuple s_SummaryNoFailuresFormats(
         "   Failed Tests:     %u\n\n"
         "   Skipped Tests:    %u\n\n"
         "  Test Pass Grade:  %2.2f%% (%u / %u)\n"
+        "  Total Duration:   %llu ms\n"
         "===================="
         "====================\n"
     )
@@ -54,6 +55,7 @@ static const StrTuple s_SummaryFailureDetailsFormats(
         "    Unhandled Exceptions: %u\n\n"
         "   Skipped Tests:    %u\n\n"
         "  Test Pass Grade:  %2.2f%% (%u / %u)\n"
+        "  Total Duration:   %llu ms\n"
         "===================="
         "====================\n"
     )
@@ -68,8 +70,9 @@ static const StrTuple s_SuccessFormats(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
-        "    Result: %s\n"
-        "    Line:   %u\n"
+        "    Result:   %s\n"
+        "    Line:     %u\n"
+        "    Duration: %llu microseconds\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -80,9 +83,10 @@ static const StrTuple s_FailureFormats(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
-        "    Result:  %s\n"
-        "    Line:    %u\n"
-        "    Failure: %s\n"
+        "    Result:   %s\n"
+        "    Line:     %u\n"
+        "    Failure:  %s\n"
+        "    Duration: %llu microseconds\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -96,6 +100,7 @@ static const StrTuple s_ExceptionFormats(
         "    Result:    %s\n"
         "    Line:      %u\n"
         "    Exception: %hs\n"
+        "    Duration:  %llu microseconds\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -106,9 +111,10 @@ static const StrTuple s_SkipFormats(
         "File: %hs\nTest: %hs\n"
         "--------------------------------"
         "--------------------------------\n"
-        "    Result: %s\n"
-        "    Line:   %u\n"
-        "    Reason: %hs\n"
+        "    Result:   %s\n"
+        "    Line:     %u\n"
+        "    Reason:   %hs\n"
+        "    Duration: %llu microseconds\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -120,6 +126,7 @@ static const StrTuple s_UnhandledExceptionFormats(
         "--------------------------------"
         "--------------------------------\n"
         "    Unhandled Exception: %s\n"
+        "    Duration:            %llu microseconds\n"
         "--------------------------------"
         "--------------------------------\n"
     )
@@ -129,11 +136,11 @@ static const StrTuple s_UnhandledExceptionFormats(
 
 template <class T>
 UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ const bool& consoleOutput, _In_ const bool& onlyLogFailures) :
-    mPrintToConsole(consoleOutput),
-    mOnlyLogFailures(onlyLogFailures),
-    mConsoleStream(InitConsoleStream()),
-    mFileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
-    mTargetFile(file)
+    m_PrintToConsole(consoleOutput),
+    m_OnlyLogFailures(onlyLogFailures),
+    m_ConsoleStream(InitConsoleStream()),
+    m_FileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
+    m_TargetFile(file)
 { }
 
 /// Dtor \\\
@@ -141,37 +148,35 @@ UnitTestLogger<T>::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ c
 template <class T>
 UnitTestLogger<T>::~UnitTestLogger()
 {
-    if (mWorkerThread.joinable())
+    TeardownWorkerThread();
+
+    if (m_PrintToConsole && m_ConsoleStream)
     {
-        mContinueWork = false;
-        mCVSignaler.notify_all();
-        mWorkerThread.join();
+        m_ConsoleStream.flush();
     }
 
-    if (mPrintToConsole && mConsoleStream)
+    if (m_FileStream)
     {
-        mConsoleStream.flush();
-    }
-
-    if (mFileStream)
-    {
-        mFileStream.flush();
+        m_FileStream.flush();
     }
 }
 
 /// Operator Overload \\\
 
 template <class T>
-UnitTestLogger<T>& UnitTestLogger<T>::operator=(_In_ UnitTestLogger&& src) noexcept
+UnitTestLogger<T>& UnitTestLogger<T>::operator=(_Inout_ UnitTestLogger&& src) noexcept
 {
-    mPrintToConsole = src.mPrintToConsole;
-    mFileStream = std::move(src.mFileStream);
-    mTargetFile = std::move(src.mTargetFile);
+    if (this != &src)
+    {
+        m_PrintToConsole = src.m_PrintToConsole;
+        m_FileStream = std::move(src.m_FileStream);
+        m_TargetFile = std::move(src.m_TargetFile);
 
-    src.mPrintToConsole = false;
-    src.mConsoleStream.flush();
-    src.mFileStream.close();
-    src.mTargetFile.clear();
+        src.m_PrintToConsole = false;
+        src.m_ConsoleStream.flush();
+        src.m_FileStream.close();
+        src.m_TargetFile.clear();
+    }
 
     return *this;
 }
@@ -221,7 +226,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryNoFailuresString(_In_
         data.GetTestSkipCount(),
         data.GetTestSetGrade(),
         data.GetTestPassCount(),
-        data.GetTotalTestCount() - data.GetTestSkipCount()
+        data.GetTotalTestCount() - data.GetTestSkipCount(),
+        data.GetRunDurationMs()
     );
 }
 
@@ -245,7 +251,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildTestSetSummaryFailureDetailsString(
         data.GetTestSkipCount(),
         data.GetTestSetGrade(),
         data.GetTestPassCount(),
-        data.GetTotalTestCount() - data.GetTestSkipCount()
+        data.GetTotalTestCount() - data.GetTestSkipCount(),
+        data.GetRunDurationMs()
     );
 }
 
@@ -308,10 +315,10 @@ std::basic_string<T> UnitTestLogger<T>::BuildLogString(_In_ const UnitTestResult
 template <class T>
 std::basic_string<T> UnitTestLogger<T>::BuildTimeString()
 {
-    std::vector<T> buffer(mTimeBufferLength, T('\0'));
+    std::vector<T> buffer(ms_TimeBufferLength, T('\0'));
     const time_t time = std::time(nullptr);
 
-    if (!GetTime(buffer.data(), &time))
+    if (!GetTime(buffer.data(), ms_TimeBufferLength, &time))
     {
         return std::basic_string<T>();
     }
@@ -343,7 +350,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildSuccessString(_In_ const UnitTestRe
         res.GetFileName().c_str(),
         res.GetFunctionName().c_str(),
         GetResultString(res.GetResult()).c_str(),
-        res.GetLineNumber()
+        res.GetLineNumber(),
+        res.GetTestDurationMicroseconds()
     );
 }
 
@@ -356,7 +364,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildFailureString(_In_ const UnitTestRe
         res.GetFunctionName().c_str(),
         GetResultString(res.GetResult()).c_str(),
         res.GetLineNumber(),
-        res.GetResultInfo().c_str()
+        res.GetResultInfo().c_str(),
+        res.GetTestDurationMicroseconds()
     );
 }
 
@@ -369,7 +378,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildExceptionString(_In_ const UnitTest
         res.GetFunctionName().c_str(),
         GetResultString(res.GetResult()).c_str(),
         res.GetLineNumber(),
-        res.GetResultInfo().c_str()
+        res.GetResultInfo().c_str(),
+        res.GetTestDurationMicroseconds()
     );
 }
 
@@ -382,7 +392,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildSkipString(_In_ const UnitTestResul
         res.GetFunctionName().c_str(),
         GetResultString(res.GetResult()).c_str(),
         res.GetLineNumber(),
-        res.GetResultInfo().c_str()
+        res.GetResultInfo().c_str(),
+        res.GetTestDurationMicroseconds()
     );
 }
 
@@ -392,7 +403,8 @@ std::basic_string<T> UnitTestLogger<T>::BuildUnhandledExceptionString(_In_ const
     return stprintf(
         &GetUnhandledExceptionFormat(),
         GetResultString(res.GetResult()).c_str(),
-        res.GetResultInfo().c_str()
+        res.GetResultInfo().c_str(),
+        res.GetTestDurationMicroseconds()
     );
 }
 
@@ -439,15 +451,15 @@ const std::basic_string<T>& UnitTestLogger<T>::GetUnhandledExceptionFormat()
 }
 
 template <class T>
-bool UnitTestLogger<T>::GetTime(_In_ T* buffer, _In_ const time_t* t)
+bool UnitTestLogger<T>::GetTime(_Out_writes_(len) T* buffer, _In_ const size_t len, _In_ const time_t* t)
 {
     if constexpr (std::is_same_v<T, char>)
     {
-        return ctime_s(buffer, mTimeBufferLength, t) == 0;
+        return ctime_s(buffer, len, t) == 0;
     }
     else if constexpr (std::is_same_v<T, wchar_t>)
     {
-        return _wctime_s(buffer, mTimeBufferLength, t) == 0;
+        return _wctime_s(buffer, len, t) == 0;
     }
     else
     {
@@ -530,15 +542,16 @@ int UnitTestLogger<T>::StringPrintWrapper(_Inout_ std::vector<T>& buffer, _In_ c
 }
 
 template <class T>
-void UnitTestLogger<T>::LogCommon(_In_ std::basic_string<T>&& str)
+void UnitTestLogger<T>::LogCommon(_Inout_ std::basic_string<T>&& str)
 {
     {
-        std::lock_guard<std::mutex> lg(mLogQueueMutex);
-        mLogQueue.push(std::move(str));
-        mLogQueueSize++;
+        std::lock_guard<std::mutex> lg(m_LogQueueMutex);
+        m_LogQueue.push(std::move(str));
+        str.clear();
+        m_LogQueueSize++;
     }
 
-    mCVSignaler.notify_one();
+    m_CVSignaler.notify_one();
 }
 
 /// Public Method Definitions \\\
@@ -548,19 +561,19 @@ void UnitTestLogger<T>::LogCommon(_In_ std::basic_string<T>&& str)
 template <class T>
 const std::filesystem::path& UnitTestLogger<T>::GetTargetFile() const noexcept
 {
-    return mTargetFile;
+    return m_TargetFile;
 }
 
 template <class T>
 bool UnitTestLogger<T>::GetPrintToConsole() const noexcept
 {
-    return mPrintToConsole;
+    return m_PrintToConsole;
 }
 
 template <class T>
 bool UnitTestLogger<T>::GetOnlyLogFailures() const noexcept
 {
-    return mOnlyLogFailures;
+    return m_OnlyLogFailures;
 }
 
 // Setters
@@ -575,15 +588,15 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ const std::filesystem::path& filePath
         return false;
     }
 
-    mFileStream.flush();
-    std::swap(newFileStream, mFileStream);
-    mTargetFile.assign(filePath);
+    m_FileStream.flush();
+    std::swap(newFileStream, m_FileStream);
+    m_TargetFile.assign(filePath);
 
     return true;
 }
 
 template <class T>
-bool UnitTestLogger<T>::SetTargetFile(_In_ std::filesystem::path&& filePath)
+bool UnitTestLogger<T>::SetTargetFile(_Inout_ std::filesystem::path&& filePath)
 {
     std::basic_ofstream<T> newFileStream(filePath);
 
@@ -592,9 +605,10 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ std::filesystem::path&& filePath)
         return false;
     }
 
-    mFileStream.flush();
-    std::swap(newFileStream, mFileStream);
-    mTargetFile.assign(std::move(filePath));
+    m_FileStream.flush();
+    std::swap(newFileStream, m_FileStream);
+    m_TargetFile.assign(std::move(filePath));
+    filePath.clear();
 
     return true;
 }
@@ -602,13 +616,13 @@ bool UnitTestLogger<T>::SetTargetFile(_In_ std::filesystem::path&& filePath)
 template <class T>
 void UnitTestLogger<T>::SetPrintToConsole(_In_ const bool& print) noexcept
 {
-    mPrintToConsole = print;
+    m_PrintToConsole = print;
 }
 
 template <class T>
 void UnitTestLogger<T>::SetOnlyLogFailures(_In_ const bool& log) noexcept
 {
-    mOnlyLogFailures = log;
+    m_OnlyLogFailures = log;
 }
 
 // Public Methods
@@ -624,7 +638,8 @@ void UnitTestLogger<T>::LogTestSetHeader(_In_ const TestSetData<T>& data)
 template <class T>
 void UnitTestLogger<T>::LogUnitTestResult(_In_ const UnitTestResult& res)
 {
-    if (mOnlyLogFailures)
+    if (m_OnlyLogFailures)
+
     {
         const ResultType& rt = res.GetResult();
         if ((rt == ResultType::Success) || (rt == ResultType::NotRun))
@@ -656,18 +671,18 @@ void UnitTestLogger<T>::InitializeWorkerThread()
 {
     TeardownWorkerThread();
 
-    mContinueWork = true;
-    mWorkerThread = std::thread(&UnitTestLogger<T>::WorkerLoop, this);
+    m_ContinueWork = true;
+    m_WorkerThread = std::thread(&UnitTestLogger<T>::WorkerLoop, this);
 }
 
 template <class T>
 void UnitTestLogger<T>::TeardownWorkerThread()
 {
-    if (mWorkerThread.joinable())
+    if (m_WorkerThread.joinable())
     {
-        mContinueWork = false;
-        mCVSignaler.notify_all();
-        mWorkerThread.join();
+        m_ContinueWork = false;
+        m_CVSignaler.notify_all();
+        m_WorkerThread.join();
     }
 }
 
@@ -684,8 +699,8 @@ void UnitTestLogger<T>::WorkerLoop()
 template <class T>
 void UnitTestLogger<T>::WaitForWork()
 {
-    std::unique_lock<std::mutex> ul(mLogQueueMutex);
-    mCVSignaler.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
+    std::unique_lock<std::mutex> ul(m_LogQueueMutex);
+    m_CVSignaler.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
 }
 
 template <class T>
@@ -693,9 +708,9 @@ void UnitTestLogger<T>::PrintLogs()
 {
     std::queue<std::basic_string<T>> logQueue;
     {
-        std::lock_guard<std::mutex> lg(mLogQueueMutex);
-        std::swap(logQueue, mLogQueue);
-        mLogQueueSize = 0;
+        std::lock_guard<std::mutex> lg(m_LogQueueMutex);
+        std::swap(logQueue, m_LogQueue);
+        m_LogQueueSize = 0;
     }
 
     while (!logQueue.empty())
@@ -710,25 +725,25 @@ void UnitTestLogger<T>::PrintLogs()
 template <class T>
 void UnitTestLogger<T>::PrintLog(_In_ const std::basic_string<T>& str)
 {
-    if (mPrintToConsole && mConsoleStream)
+    if (m_PrintToConsole && m_ConsoleStream)
     {
-        mConsoleStream << str;
+        m_ConsoleStream << str;
     }
 
-    if (mFileStream)
+    if (m_FileStream)
     {
-        mFileStream << str;
+        m_FileStream << str;
     }
 }
 
 template <class T>
 bool UnitTestLogger<T>::WorkerPredicate()
 {
-    return (mLogQueueSize != 0) || (!mContinueWork);
+    return (m_LogQueueSize != 0) || (!m_ContinueWork);
 }
 
 template <class T>
 bool UnitTestLogger<T>::TerminatePredicate()
 {
-    return (!mContinueWork) && (mLogQueueSize == 0);
+    return (!m_ContinueWork) && (m_LogQueueSize == 0);
 }

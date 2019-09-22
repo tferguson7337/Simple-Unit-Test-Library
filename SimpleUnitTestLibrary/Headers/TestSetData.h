@@ -2,33 +2,35 @@
 
 #include "ResultType.h"
 
+#include <chrono>
 #include <string>
 
 template <class T>
 class TestSetData
 {
 private:
-    uint32_t mTotalTests;
-    uint32_t mTestPassCount;
-    uint32_t mTotalFailureCount;
-    uint32_t mSetupFailureCount;
-    uint32_t mTestFailureCount;
-    uint32_t mCleanupFailureCount;
-    uint32_t mSetupExceptionCount;
-    uint32_t mTestExceptionCount;
-    uint32_t mCleanupExceptionCount;
-    uint32_t mUnhandledExceptionCount;
-    uint32_t mTestSkipCount;
-
-    std::basic_string<T> mTestSetName;
+    uint32_t m_TotalTests;
+    uint32_t m_TestPassCount;
+    uint32_t m_TotalFailureCount;
+    uint32_t m_SetupFailureCount;
+    uint32_t m_TestFailureCount;
+    uint32_t m_CleanupFailureCount;
+    uint32_t m_SetupExceptionCount;
+    uint32_t m_TestExceptionCount;
+    uint32_t m_CleanupExceptionCount;
+    uint32_t m_UnhandledExceptionCount;
+    uint32_t m_TestSkipCount;
+    uint64_t m_RunDurationMs;
+    std::basic_string<T> m_TestSetName;
+    TestSetData() noexcept;
 
 public:
     /// Ctors \\\
 
-    explicit TestSetData(_In_ const std::basic_string<T>& testSetName = std::basic_string<T>()) noexcept;
-    explicit TestSetData(_In_ std::basic_string<T>&& testSetName) noexcept;
-    TestSetData(_In_ const TestSetData& src) noexcept;
-    TestSetData(_In_ TestSetData&& src) noexcept;
+    explicit TestSetData(_In_ const std::basic_string<T>& testSetName);
+    explicit TestSetData(_Inout_ std::basic_string<T>&& testSetName) noexcept;
+    TestSetData(_In_ const TestSetData& src);
+    TestSetData(_Inout_ TestSetData&& src) noexcept;
 
     /// Dtor \\\
 
@@ -37,7 +39,7 @@ public:
     /// Assignment Overloads \\\
 
     TestSetData& operator=(_In_ const TestSetData& src) noexcept;
-    TestSetData& operator=(_In_ TestSetData&& src) noexcept;
+    TestSetData& operator=(_Inout_ TestSetData&& src) noexcept;
 
     /// Getters \\\
 
@@ -52,19 +54,22 @@ public:
     uint32_t GetCleanupExceptionCount() const noexcept;
     uint32_t GetUnhandledExceptionCount() const noexcept;
     uint32_t GetTestSkipCount() const noexcept;
+    uint64_t GetRunDurationMs() const noexcept;
 
     const std::basic_string<T>& GetTestSetName() const noexcept;
 
     /// Incrementers \\\
 
-    void IncrementResultCounter(_In_ const ResultType& r);
+    void IncrementResultCounter(_In_ const ResultType& r) noexcept;
+    void AddToRunDurationMs(_In_ const std::chrono::duration<int64_t, std::milli>& dur) noexcept;
 
     /// Setters \\\
 
     void SetTotalTestCount(_In_ const uint32_t& c) noexcept;
+    void SetRunDurationMs(_In_ const std::chrono::duration<int64_t, std::milli>& dur) noexcept;
 
     void SetTestSetName(_In_ const std::basic_string<T>& name);
-    void SetTestSetName(_In_ std::basic_string<T>&& name) noexcept;
+    void SetTestSetName(_Inout_ std::basic_string<T>&& name) noexcept;
 
     /// Public Methods \\\
 

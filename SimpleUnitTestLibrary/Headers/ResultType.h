@@ -60,7 +60,6 @@ private:
     /// Private Data Members \\\
 
     static const std::vector<StrTuple> m_svResultTypeStrings;
-
     /// Private Helper Methods \\\
 
     static void ValidateResultType(_In_ const ResultType&, _In_ const std::string&);

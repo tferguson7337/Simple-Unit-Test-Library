@@ -9,15 +9,15 @@ template <class T>
 class UnitTestRunner final : public virtual IUnitTestRunner<T>
 {
 private:
-    std::list<UnitTest> mUnitTests;
-    mutable UnitTestLogger<T> mLogger;
-    TestSetData<T> mTestSetData;
+    std::list<UnitTest> m_UnitTests;
+    mutable UnitTestLogger<T> m_Logger;
+    TestSetData<T> m_TestSetData;
 
 public:
     /// Ctors \\\
 
     explicit UnitTestRunner(_In_ const std::basic_string<T> & = "No Test Set Name");
-    explicit UnitTestRunner(_In_ std::basic_string<T>&&) noexcept;
+    explicit UnitTestRunner(_Inout_ std::basic_string<T>&&) noexcept;
 
     /// Dtor \\\
 
@@ -25,7 +25,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTestRunner& operator=(_In_ UnitTestRunner&&) noexcept;
+    UnitTestRunner& operator=(_Inout_ UnitTestRunner&&) noexcept;
 
     /// Getters \\\
 
@@ -36,11 +36,11 @@ public:
 
     /// Public Methods \\\
 
-    bool AddUnitTest(_In_ UnitTest&&);
-    bool AddUnitTest(_In_ std::function<UnitTestResult(void)>&&);
+    bool AddUnitTest(_Inout_ UnitTest&&);
+    bool AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&&);
 
-    bool AddUnitTests(_In_ std::list<UnitTest>&&);
-    bool AddUnitTests(_In_ std::list<std::function<UnitTestResult(void)>>&&);
+    bool AddUnitTests(_Inout_ std::list<UnitTest>&&);
+    bool AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&&);
 
     void ClearUnitTests() noexcept;
 

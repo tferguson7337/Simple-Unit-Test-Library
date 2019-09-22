@@ -30,24 +30,24 @@ private:
 
     /// Static Private Data Members \\\
 
-    static const size_t mTimeBufferLength = 32;
+    static const size_t ms_TimeBufferLength = 32;
 
     /// Private Data Members \\\
 
-    bool mPrintToConsole;
-    bool mOnlyLogFailures;
-    std::basic_ostream<T>& mConsoleStream;
-    std::filesystem::path mTargetFile;
-    std::basic_ofstream<T> mFileStream;
+    bool m_PrintToConsole;
+    bool m_OnlyLogFailures;
+    std::basic_ostream<T>& m_ConsoleStream;
+    std::filesystem::path m_TargetFile;
+    std::basic_ofstream<T> m_FileStream;
 
-    std::atomic<bool> mContinueWork;
-    std::atomic<size_t> mLogQueueSize;
+    std::atomic<bool> m_ContinueWork;
+    std::atomic<size_t> m_LogQueueSize;
 
-    std::mutex mLogQueueMutex;
-    std::condition_variable mCVSignaler;
-    std::queue<std::basic_string<T>> mLogQueue;
+    std::mutex m_LogQueueMutex;
+    std::condition_variable m_CVSignaler;
+    std::queue<std::basic_string<T>> m_LogQueue;
 
-    std::thread mWorkerThread;
+    std::thread m_WorkerThread;
 
     /// Private Logging Worker Thread Methods \\\
 
@@ -89,12 +89,12 @@ private:
     static const std::basic_string<T>& GetSkipFormat();
     static const std::basic_string<T>& GetUnhandledExceptionFormat();
 
-    static bool GetTime(_In_ T*, _In_ const time_t*);
+    static bool GetTime(_Out_writes_(len) T* buffer, _In_ const size_t len, _In_ const time_t* t);
 
     static std::basic_string<T> stprintf(_In_ const std::basic_string<T>*, ...);
     static int StringPrintWrapper(_Inout_ std::vector<T>&, _In_ const std::basic_string<T>*, _In_ va_list);
 
-    void LogCommon(_In_ std::basic_string<T>&&);
+    void LogCommon(_Inout_ std::basic_string<T>&&);
 
 public:
     /// Ctors \\\
@@ -107,7 +107,7 @@ public:
 
     /// Operator Overload \\\
 
-    UnitTestLogger& operator=(_In_ UnitTestLogger&&) noexcept;
+    UnitTestLogger& operator=(_Inout_ UnitTestLogger&&) noexcept;
 
     /// Getters \\\
 
@@ -118,7 +118,7 @@ public:
     /// Setters \\\
 
     bool SetTargetFile(_In_ const std::filesystem::path&);
-    bool SetTargetFile(_In_ std::filesystem::path&&);
+    bool SetTargetFile(_Inout_ std::filesystem::path&&);
     void SetPrintToConsole(_In_ const bool&) noexcept;
     void SetOnlyLogFailures(_In_ const bool&) noexcept;
 

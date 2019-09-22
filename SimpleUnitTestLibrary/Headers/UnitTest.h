@@ -17,15 +17,15 @@ class UnitTest
 private:
     /// Private Data Members \\\
 
-    std::function<UnitTestResult(void)> mTestFunc;
-    UnitTestResult mTestResult;
+    std::function<UnitTestResult(void)> m_TestFunc;
+    UnitTestResult m_TestResult;
 
 public:
     /// Ctors \\\
 
     UnitTest() = default;
-    explicit UnitTest(_In_ std::function<UnitTestResult(void)>&&) noexcept;
-    UnitTest(_In_ UnitTest&&) noexcept;
+    explicit UnitTest(_Inout_ std::function<UnitTestResult(void)>&&) noexcept;
+    UnitTest(_Inout_ UnitTest&&) noexcept;
 
     /// Dtor \\\
 
@@ -33,7 +33,7 @@ public:
 
     /// Operator Overloads \\\
 
-    UnitTest& operator=(_In_ UnitTest&&) noexcept;
+    UnitTest& operator=(_Inout_ UnitTest&&) noexcept;
 
     /// Getters \\\
 
@@ -42,9 +42,10 @@ public:
 
     /// Setters \\\
 
-    void SetUnitTestFunction(_In_ std::function<UnitTestResult(void)>&&) noexcept;
+    void SetUnitTestFunction(_Inout_ std::function<UnitTestResult(void)>&&) noexcept;
 
     /// Public Methods \\\
 
+    void Clear() noexcept;
     const UnitTestResult& RunTest();
 };
