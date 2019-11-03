@@ -83,18 +83,24 @@ public:
 
     /// Unit Test Return Macros \\\
 
+#if defined(_MSC_BUILD)
+
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+
+#endif
+
 // Success
-#define SUTL_TEST_SUCCESS( )        return UnitTestResult(ResultType::Success, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__)
+#define SUTL_TEST_SUCCESS()        return UnitTestResult(ResultType::Success, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__)
 
 // Failures - No Exception Thrown
-#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
-#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
-#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
+#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
+#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
 
 // Failures - Exception Caught
-#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(ResultType::SetupException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
-#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
-#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(ResultType::SetupException, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
+#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
+#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
 
 #define ___SUTL_STRINGIFY___(s)   #s
 #define __SUTL_STRINGIFY__(s)    ___SUTL_STRINGIFY___(s)
@@ -105,5 +111,5 @@ public:
 #define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(__SUTL_STRINGIFY__(cond))
 
 // Skip Test
-#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, __FUNCSIG__, _countof(__FUNCSIG__), __FILE__, _countof(__FILE__), __LINE__, str)
+#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, __PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__), __FILE__, sizeof(__FILE__), __LINE__, str)
 };
