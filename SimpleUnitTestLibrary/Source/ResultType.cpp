@@ -1,7 +1,7 @@
 #include <ResultType.h>
 
+// STL
 #include <stdexcept>
-#include <type_traits>
 
 /// Static Data Member Initialization \\\
 
@@ -27,7 +27,7 @@ void ResultTypeUtil::ValidateResultType(_In_z_ const char* f, _In_ const ResultT
         static const std::string msg1(": Invalid ResultType argument provided[");
         static const std::string msg2("]");
 
-        const std::string data1(std::to_string(static_cast<std::underlying_type_t<ResultType>>(r)));
+        const std::string data1(std::to_string(static_cast<size_t>(r)));
 
         throw std::invalid_argument(f + msg1 + data1 + msg2);
     }

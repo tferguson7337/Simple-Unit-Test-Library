@@ -1,9 +1,11 @@
 #pragma once
 
+// STL
+#include <functional>
+
+// SUTL
 #include "UnitTestResult.h"
 
-#include <functional>
-#include <memory>
 
 ///
 //

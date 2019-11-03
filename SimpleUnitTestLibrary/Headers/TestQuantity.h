@@ -1,8 +1,5 @@
 #pragma once
 
-// STL
-#include <type_traits>
-
 // SAL
 #include <sal.h>
 
@@ -27,35 +24,42 @@ enum class TestQuantity : size_t
     VeryHigh,
     All,
 
-    TQEnd,
-    TQBegin = 0
+    End,
+    Begin = 0
 };
 
+// Returns true if TQ is a valid TestQuantity enum value.
+template <TestQuantity TQ>
+static constexpr bool IsValidTestQuantity()
+{
+    return TQ >= TestQuantity::Begin && TQ <= TestQuantity::End;
+}
+
+
 // Prefix Incrementation
-// Will increment up until tq == TestQuantity::TQEnd
+// Will increment up until tq == TestQuantity::End
+_Ret_range_(TestQuantity::Begin, TestQuantity::End)
 inline TestQuantity& operator++(_Inout_ TestQuantity& tq)
 {
-    if (tq < TestQuantity::TQEnd)
+    if (tq < TestQuantity::Begin)
     {
-        tq = static_cast<TestQuantity>(static_cast<std::underlying_type_t<TestQuantity>>(tq) + 1);
+        tq = TestQuantity::Begin;
+    }
+    else if (tq < TestQuantity::End)
+    {
+        tq = static_cast<TestQuantity>(static_cast<size_t>(tq) + 1);
     }
 
     return tq;
 }
 
 // Postfix Incrementation
-// Will increment up until tq == TestQuantity::TQEnd
+// Will increment up until tq == TestQuantity::End
+_Ret_range_(TestQuantity::Begin, TestQuantity::End)
 inline TestQuantity operator++(_Inout_ TestQuantity& tq, _In_ int)
 {
-    TestQuantity old = tq;
+    TestQuantity old = (tq < TestQuantity::Begin) ? TestQuantity::Begin :
+        (tq > TestQuantity::End) ? TestQuantity::End : tq;
     ++tq;
     return old;
-}
-
-
-// Returns true if TQ is a valid TestQuantity enum value.
-template <TestQuantity TQ>
-static constexpr bool IsValidTestQuantity()
-{
-    return TQ >= TestQuantity::TQBegin && TQ <= TestQuantity::TQEnd;
 }
