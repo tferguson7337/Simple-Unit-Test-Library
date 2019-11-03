@@ -5,7 +5,7 @@
 #include <chrono>
 #include <string>
 
-template <class T>
+
 class TestSetData
 {
 private:
@@ -21,14 +21,14 @@ private:
     uint32_t m_UnhandledExceptionCount;
     uint32_t m_TestSkipCount;
     uint64_t m_RunDurationMs;
-    std::basic_string<T> m_TestSetName;
+    std::wstring m_TestSetName;
+
     TestSetData() noexcept;
 
 public:
     /// Ctors \\\
 
-    explicit TestSetData(_In_ const std::basic_string<T>& testSetName);
-    explicit TestSetData(_Inout_ std::basic_string<T>&& testSetName) noexcept;
+    explicit TestSetData(_Inout_ std::wstring&& testSetName) noexcept;
     TestSetData(_In_ const TestSetData& src);
     TestSetData(_Inout_ TestSetData&& src) noexcept;
 
@@ -56,7 +56,7 @@ public:
     uint32_t GetTestSkipCount() const noexcept;
     uint64_t GetRunDurationMs() const noexcept;
 
-    const std::basic_string<T>& GetTestSetName() const noexcept;
+    const std::wstring& GetTestSetName() const noexcept;
 
     /// Incrementers \\\
 
@@ -68,8 +68,8 @@ public:
     void SetTotalTestCount(_In_ const uint32_t& c) noexcept;
     void SetRunDurationMs(_In_ const std::chrono::duration<int64_t, std::milli>& dur) noexcept;
 
-    void SetTestSetName(_In_ const std::basic_string<T>& name);
-    void SetTestSetName(_Inout_ std::basic_string<T>&& name) noexcept;
+    void SetTestSetName(_In_ std::wstring name);
+    void SetTestSetName(_Inout_ std::wstring&& name) noexcept;
 
     /// Public Methods \\\
 

@@ -1,47 +1,43 @@
 #include <ResultType.h>
 
-#include <string>
 #include <stdexcept>
+#include <type_traits>
 
 /// Static Data Member Initialization \\\
 
-const std::vector<StrTuple> ResultTypeUtil::m_svResultTypeStrings
+const std::array<std::wstring, static_cast<size_t>(ResultType::End)> ResultTypeUtil::ms_ResultTypeStrings
 {
-    _SUTL_MAKE_STRING_TUPLE_("Not Run"),
-    _SUTL_MAKE_STRING_TUPLE_("Success"),
-    _SUTL_MAKE_STRING_TUPLE_("Setup Failure"),
-    _SUTL_MAKE_STRING_TUPLE_("Setup Exception"),
-    _SUTL_MAKE_STRING_TUPLE_("Run Failure"),
-    _SUTL_MAKE_STRING_TUPLE_("Run Exception"),
-    _SUTL_MAKE_STRING_TUPLE_("Cleanup Failure"),
-    _SUTL_MAKE_STRING_TUPLE_("Cleanup Exception"),
-    _SUTL_MAKE_STRING_TUPLE_("Unhandled Exception")
+    L"Not Run",
+    L"Success",
+    L"Setup Failure",
+    L"Setup Exception",
+    L"Run Failure",
+    L"Run Exception",
+    L"Cleanup Failure",
+    L"Cleanup Exception",
+    L"Unhandled Exception"
 };
 
 /// Static Private Methods \\\
 
-void ResultTypeUtil::ValidateResultType(_In_ const ResultType& r, _In_ const std::string& f)
+void ResultTypeUtil::ValidateResultType(_In_z_ const char* f, _In_ const ResultType& r)
 {
-    if (r < ResultType::IterationBegin || r >= ResultType::IterationEnd)
+    if (r < ResultType::Begin || r >= ResultType::End)
     {
-        throw std::invalid_argument(
-            f + ": Invalid ResultType argument provided[" +
-            std::to_string(static_cast<ResultTypeUnderlyingType>(r)) +
-            "]."
-        );
+        static const std::string msg1(": Invalid ResultType argument provided[");
+        static const std::string msg2("]");
+
+        const std::string data1(std::to_string(static_cast<std::underlying_type_t<ResultType>>(r)));
+
+        throw std::invalid_argument(f + msg1 + data1 + msg2);
     }
 }
 
 /// Static Public Methods \\\
 
-template <typename T>
-const std::basic_string<T>& ResultTypeUtil::ToString(_In_ const ResultType& r)
+
+const std::wstring& ResultTypeUtil::ToString(_In_ const ResultType& r)
 {
-    ValidateResultType(r, __FUNCTION__);
-    return std::get<std::basic_string<T>>(m_svResultTypeStrings[static_cast<size_t>(r)]);
+    ValidateResultType(__FUNCTION__, r);
+    return ms_ResultTypeStrings[static_cast<size_t>(r)];
 }
-
-/// Explicit Template Instantiation \\\
-
-template const std::basic_string<char>& ResultTypeUtil::ToString(_In_ const ResultType& r);
-template const std::basic_string<wchar_t>& ResultTypeUtil::ToString(_In_ const ResultType& r);

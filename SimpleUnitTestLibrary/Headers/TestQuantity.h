@@ -35,11 +35,9 @@ enum class TestQuantity : size_t
 // Will increment up until tq == TestQuantity::TQEnd
 inline TestQuantity& operator++(_Inout_ TestQuantity& tq)
 {
-    using T = TestQuantity;
-    using UT = std::underlying_type_t<T>;
-    if (tq < T::TQEnd)
+    if (tq < TestQuantity::TQEnd)
     {
-        tq = static_cast<T>(static_cast<UT>(tq) + 1);
+        tq = static_cast<TestQuantity>(static_cast<std::underlying_type_t<TestQuantity>>(tq) + 1);
     }
 
     return tq;
@@ -49,9 +47,7 @@ inline TestQuantity& operator++(_Inout_ TestQuantity& tq)
 // Will increment up until tq == TestQuantity::TQEnd
 inline TestQuantity operator++(_Inout_ TestQuantity& tq, _In_ int)
 {
-    using T = TestQuantity;
-    using UT = std::underlying_type_t<T>;
-    T old = tq;
+    TestQuantity old = tq;
     ++tq;
     return old;
 }

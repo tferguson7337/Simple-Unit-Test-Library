@@ -1,20 +1,9 @@
 #include <UnitTestRunner.h>
 
-// Explicit Template Instantiation
-template class UnitTestRunner<char>;
-template class UnitTestRunner<wchar_t>;
-
-/// Method Definitions \\\
 
 /// Ctors \\\
 
-template <class T>
-UnitTestRunner<T>::UnitTestRunner(_In_ const std::basic_string<T>& testName) :
-    m_TestSetData(testName)
-{ }
-
-template <class T>
-UnitTestRunner<T>::UnitTestRunner(_Inout_ std::basic_string<T>&& testName) noexcept :
+UnitTestRunner::UnitTestRunner(_Inout_ std::wstring&& testName) noexcept :
     m_TestSetData(std::move(testName))
 {
     testName.clear();
@@ -22,8 +11,7 @@ UnitTestRunner<T>::UnitTestRunner(_Inout_ std::basic_string<T>&& testName) noexc
 
 /// Operator Overloads \\\
 
-template <class T>
-UnitTestRunner<T>& UnitTestRunner<T>::operator=(_Inout_ UnitTestRunner&& src) noexcept
+UnitTestRunner& UnitTestRunner::operator=(_Inout_ UnitTestRunner&& src) noexcept
 {
     if (this != &src)
     {
@@ -37,34 +25,29 @@ UnitTestRunner<T>& UnitTestRunner<T>::operator=(_Inout_ UnitTestRunner&& src) no
 
 // Getters
 
-template <class T>
-const std::list<UnitTest>& UnitTestRunner<T>::GetUnitTests() const noexcept
+const std::list<UnitTest>& UnitTestRunner::GetUnitTests() const noexcept
 {
     return m_UnitTests;
 }
 
-template <class T>
-IUnitTestLogger<T>& UnitTestRunner<T>::GetLogger() const noexcept
+UnitTestLogger& UnitTestRunner::GetLogger() const noexcept
 {
     return m_Logger;
 }
 
-template<class T>
-TestSetData<T>& UnitTestRunner<T>::GetTestSetData() noexcept
+TestSetData& UnitTestRunner::GetTestSetData() noexcept
 {
     return m_TestSetData;
 }
 
-template<class T>
-const TestSetData<T>& UnitTestRunner<T>::GetTestSetData() const noexcept
+const TestSetData& UnitTestRunner::GetTestSetData() const noexcept
 {
     return m_TestSetData;
 }
 
 // Public Methods
 
-template <class T>
-bool UnitTestRunner<T>::AddUnitTest(_Inout_ UnitTest&& test)
+bool UnitTestRunner::AddUnitTest(_Inout_ UnitTest&& test)
 {
     try
     {
@@ -79,8 +62,7 @@ bool UnitTestRunner<T>::AddUnitTest(_Inout_ UnitTest&& test)
     return true;
 }
 
-template <class T>
-bool UnitTestRunner<T>::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&& test)
+bool UnitTestRunner::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&& test)
 {
     try
     {
@@ -95,8 +77,7 @@ bool UnitTestRunner<T>::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&
     return true;
 }
 
-template <class T>
-bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
+bool UnitTestRunner::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
 {
     try
     {
@@ -111,8 +92,7 @@ bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
     return true;
 }
 
-template <class T>
-bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& tests)
+bool UnitTestRunner::AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& tests)
 {
     try
     {
@@ -131,14 +111,12 @@ bool UnitTestRunner<T>::AddUnitTests(_Inout_ std::list<std::function<UnitTestRes
     return true;
 }
 
-template <class T>
-void UnitTestRunner<T>::ClearUnitTests() noexcept
+void UnitTestRunner::ClearUnitTests() noexcept
 {
     m_UnitTests.clear();
 }
 
-template <class T>
-bool UnitTestRunner<T>::RunUnitTests()
+bool UnitTestRunner::RunUnitTests()
 {
     using Clock = std::chrono::high_resolution_clock;
     using DurationMs = std::chrono::duration<int64_t, std::milli>;
@@ -146,8 +124,6 @@ bool UnitTestRunner<T>::RunUnitTests()
     using TimePoint = std::chrono::time_point<Clock>;
 
     bool ret = true;
-
-    m_Logger.InitializeWorkerThread();
 
     m_TestSetData.ResetCounters();
     m_TestSetData.SetTotalTestCount(static_cast<uint32_t>(m_UnitTests.size()));
@@ -212,7 +188,6 @@ bool UnitTestRunner<T>::RunUnitTests()
     }
 
     m_Logger.LogTestSetSummary(m_TestSetData);
-    m_Logger.TeardownWorkerThread();
 
     return ret;
 }

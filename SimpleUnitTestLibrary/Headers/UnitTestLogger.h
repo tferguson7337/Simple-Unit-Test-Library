@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Interfaces/IUnitTestLogger.h"
-
 #include <atomic>
 #include <condition_variable>
 #include <filesystem>
@@ -15,17 +13,9 @@
 #include "TestSetData.h"
 #include "UnitTestResult.h"
 
-template <class T>
-class UnitTestLogger : public IUnitTestLogger<T>
+
+class UnitTestLogger
 {
-    // Allow other UnitTestLogger specializations to access private static methods.
-    template <class U>
-    friend class UnitTestLogger;
-
-    // Allow UnitTestRunner to access private methods.
-    template <class U>
-    friend class UnitTestRunner;
-
 private:
 
     /// Static Private Data Members \\\
@@ -36,16 +26,16 @@ private:
 
     bool m_PrintToConsole;
     bool m_OnlyLogFailures;
-    std::basic_ostream<T>& m_ConsoleStream;
+    std::wostream& m_ConsoleStream;
     std::filesystem::path m_TargetFile;
-    std::basic_ofstream<T> m_FileStream;
+    std::wofstream m_FileStream;
 
     std::atomic<bool> m_ContinueWork;
     std::atomic<size_t> m_LogQueueSize;
 
     std::mutex m_LogQueueMutex;
     std::condition_variable m_CVSignaler;
-    std::queue<std::basic_string<T>> m_LogQueue;
+    std::queue<std::wstring> m_LogQueue;
 
     std::thread m_WorkerThread;
 
@@ -57,44 +47,30 @@ private:
     void WorkerLoop();
     void WaitForWork();
     void PrintLogs();
-    void PrintLog(_In_ const std::basic_string<T>&);
+    void PrintLog(_In_ const std::wstring&);
     bool WorkerPredicate();
     bool TerminatePredicate();
 
     /// Private Static Helper Methods \\\
 
-    static std::basic_ostream<T>& InitConsoleStream();
+    static std::wstring BuildTestSetHeaderString(_In_ const TestSetData&);
+    static std::wstring BuildTestSetSummaryNoFailuresString(_In_ const TestSetData&);
+    static std::wstring BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData&);
 
-    static std::basic_string<T> BuildTestSetHeaderString(_In_ const TestSetData<T>&);
-    static std::basic_string<T> BuildTestSetSummaryNoFailuresString(_In_ const TestSetData<T>&);
-    static std::basic_string<T> BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData<T>&);
+    static std::wstring BuildLogString(_In_ const UnitTestResult&);
+    static std::wstring BuildTimeString();
+    static std::wstring BuildSuccessString(_In_ const UnitTestResult&);
+    static std::wstring BuildFailureString(_In_ const UnitTestResult&);
+    static std::wstring BuildExceptionString(_In_ const UnitTestResult&);
+    static std::wstring BuildSkipString(_In_ const UnitTestResult&);
+    static std::wstring BuildUnhandledExceptionString(_In_ const UnitTestResult&);
 
-    static const std::basic_string<T>& GetTestSetHeaderFormat();
-    static const std::basic_string<T>& GetTestSetSummaryNoFailuresFormat();
-    static const std::basic_string<T>& GetTestSetSummaryFailureDetailsFormat();
+    static bool GetTime(_Out_writes_(len) wchar_t* buffer, _In_ const size_t len, _In_ const time_t* t);
 
-    static std::basic_string<T> BuildLogString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildTimeString();
-    static std::basic_string<T> BuildSuccessString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildFailureString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildExceptionString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildSkipString(_In_ const UnitTestResult&);
-    static std::basic_string<T> BuildUnhandledExceptionString(_In_ const UnitTestResult&);
+    static std::wstring stprintf(_In_ const std::wstring*, ...);
+    static int StringPrintWrapper(_Inout_ std::vector<wchar_t>&, _In_ const std::wstring*, _In_ va_list);
 
-    static const std::basic_string<T>& GetResultString(_In_ const ResultType&);
-    static const std::basic_string<T>& GetTimeFormat();
-    static const std::basic_string<T>& GetSuccessFormat();
-    static const std::basic_string<T>& GetFailureFormat();
-    static const std::basic_string<T>& GetExceptionFormat();
-    static const std::basic_string<T>& GetSkipFormat();
-    static const std::basic_string<T>& GetUnhandledExceptionFormat();
-
-    static bool GetTime(_Out_writes_(len) T* buffer, _In_ const size_t len, _In_ const time_t* t);
-
-    static std::basic_string<T> stprintf(_In_ const std::basic_string<T>*, ...);
-    static int StringPrintWrapper(_Inout_ std::vector<T>&, _In_ const std::basic_string<T>*, _In_ va_list);
-
-    void LogCommon(_Inout_ std::basic_string<T>&&);
+    void LogCommon(_Inout_ std::wstring&&);
 
 public:
     /// Ctors \\\
@@ -124,7 +100,7 @@ public:
 
     /// Public Methods \\\
 
-    void LogTestSetHeader(_In_ const TestSetData<T>&);
+    void LogTestSetHeader(_In_ const TestSetData&);
     void LogUnitTestResult(_In_ const UnitTestResult&);
-    void LogTestSetSummary(_In_ const TestSetData<T>&);
+    void LogTestSetSummary(_In_ const TestSetData&);
 };

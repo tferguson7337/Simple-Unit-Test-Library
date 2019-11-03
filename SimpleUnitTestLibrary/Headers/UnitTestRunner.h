@@ -1,23 +1,25 @@
 #pragma once
 
-#include "UnitTestLogger.h"
-#include "Interfaces/IUnitTestRunner.h"
+// STL
+#include <list>
 
+// SUTL
+#include "UnitTest.h"
+#include "UnitTestLogger.h"
 #include "TestSetData.h"
 
-template <class T>
-class UnitTestRunner final : public virtual IUnitTestRunner<T>
+
+class UnitTestRunner
 {
 private:
     std::list<UnitTest> m_UnitTests;
-    mutable UnitTestLogger<T> m_Logger;
-    TestSetData<T> m_TestSetData;
+    mutable UnitTestLogger m_Logger;
+    TestSetData m_TestSetData;
 
 public:
     /// Ctors \\\
 
-    explicit UnitTestRunner(_In_ const std::basic_string<T> & = "No Test Set Name");
-    explicit UnitTestRunner(_Inout_ std::basic_string<T>&&) noexcept;
+    explicit UnitTestRunner(_Inout_ std::wstring&&) noexcept;
 
     /// Dtor \\\
 
@@ -30,9 +32,9 @@ public:
     /// Getters \\\
 
     const std::list<UnitTest>& GetUnitTests() const noexcept;
-    IUnitTestLogger<T>& GetLogger() const noexcept;
-    TestSetData<T>& GetTestSetData() noexcept;
-    const TestSetData<T>& GetTestSetData() const noexcept;
+    UnitTestLogger& GetLogger() const noexcept;
+    TestSetData& GetTestSetData() noexcept;
+    const TestSetData& GetTestSetData() const noexcept;
 
     /// Public Methods \\\
 

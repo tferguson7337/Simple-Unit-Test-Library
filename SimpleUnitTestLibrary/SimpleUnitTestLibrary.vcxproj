@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Interfaces\IUnitTestLogger.h" />
-    <ClInclude Include="Headers\Interfaces\IUnitTestRunner.h" />
     <ClInclude Include="Headers\ResultType.h" />
     <ClInclude Include="Headers\TestQuantity.h" />
     <ClInclude Include="Headers\TestSetData.h" />
@@ -100,10 +98,8 @@
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets />
+    <CustomBuildBeforeTargets />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -115,10 +111,8 @@
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets />
+    <CustomBuildBeforeTargets />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -129,10 +123,8 @@
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets />
+    <CustomBuildBeforeTargets />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -143,10 +135,8 @@
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets />
+    <CustomBuildBeforeTargets />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,8 +145,6 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile />
-      <PrecompiledHeaderOutputFile />
       <TreatWarningAsError>true</TreatWarningAsError>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -167,8 +155,6 @@
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>
-      </EnableModules>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -176,29 +162,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
-    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message />
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -207,8 +176,6 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile />
-      <PrecompiledHeaderOutputFile />
       <TreatWarningAsError>true</TreatWarningAsError>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -219,8 +186,6 @@
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>
-      </EnableModules>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -229,29 +194,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>LinkVerboseLib</ShowProgress>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
-    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message />
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -262,8 +210,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile />
-      <PrecompiledHeaderOutputFile />
       <TreatWarningAsError>true</TreatWarningAsError>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -277,8 +223,6 @@
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>
-      </EnableModules>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -288,29 +232,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
-    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message />
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -321,8 +248,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile />
-      <PrecompiledHeaderOutputFile />
       <TreatWarningAsError>true</TreatWarningAsError>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -338,8 +263,6 @@
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>
-      </EnableModules>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -349,29 +272,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>type NUL &gt; "$(IntDir)$(TargetName)"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Create dummy "$(TargetName)" file to avoid rebuild even with no changes.</Message>
-    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message />
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

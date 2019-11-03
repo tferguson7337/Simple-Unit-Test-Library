@@ -1,20 +1,12 @@
 #pragma once
 
+#include <array>
 #include <string>
-#include <tuple>
-#include <vector>
 
-using StrTuple = std::tuple<std::basic_string<char>, std::basic_string<wchar_t>>;
-
-#ifndef _SUTL_MAKE_STRING_TUPLE_
-#define _SUTL_MAKE_STRING_TUPLE_(str) StrTuple(str, L##str)
-#endif
 
 /// Unit Test ResultType Enum Flags \\\
 
-using ResultTypeUnderlyingType = size_t;
-
-enum class ResultType : ResultTypeUnderlyingType
+enum class ResultType : size_t
 {
     // Test not run
     NotRun = 0,
@@ -38,8 +30,8 @@ enum class ResultType : ResultTypeUnderlyingType
     UnhandledException,
 
     // Enum Boundaries
-    IterationEnd,
-    IterationBegin = NotRun
+    End,
+    Begin = NotRun
 };
 
 
@@ -59,14 +51,15 @@ class ResultTypeUtil
 private:
     /// Private Data Members \\\
 
-    static const std::vector<StrTuple> m_svResultTypeStrings;
+    static const std::array<std::wstring, static_cast<size_t>(ResultType::End)> ms_ResultTypeStrings;
+
     /// Private Helper Methods \\\
 
-    static void ValidateResultType(_In_ const ResultType&, _In_ const std::string&);
+    static void ValidateResultType(_In_z_ const char* f, _In_ const ResultType& r);
 
 public:
     /// Public Methods \\\
     
-    template <typename T>
-    static const std::basic_string<T>& ToString(_In_ const ResultType& r);
+
+    static const std::wstring& ToString(_In_ const ResultType& r);
 };

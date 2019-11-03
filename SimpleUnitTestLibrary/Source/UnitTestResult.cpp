@@ -1,6 +1,5 @@
 #include <UnitTestResult.h>
 
-/// Method Definitions \\\
 
 /// Ctors \\\
 
