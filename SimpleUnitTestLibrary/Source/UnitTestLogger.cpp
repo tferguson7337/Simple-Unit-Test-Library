@@ -6,15 +6,15 @@
 
 /// Non-Member Static Variables \\\
 
-static const std::wstring s_HeaderFormat(
+static const wchar_t* s_pHeaderFormat(
     L"================================"
     L"================================\n"
     L"  Test-Set Name: %-25s -- Total Tests: %zu\n"
     L"================================"
-    L"================================\n"
+    L"================================\n\n\n"
 );
 
-static const std::wstring s_SummaryNoFailuresFormat(
+static const wchar_t* s_pSummaryNoFailuresFormat(
     L"===================="
     L"====================\n"
     L"    \"%s\" Complete\n\n"
@@ -26,10 +26,10 @@ static const std::wstring s_SummaryNoFailuresFormat(
     L"  Test Pass Grade:  %2.2f%% (%u / %u)\n"
     L"  Total Duration:   %llu ms\n"
     L"===================="
-    L"====================\n"
+    L"====================\n\n\n"
 );
 
-static const std::wstring s_SummaryFailureDetailsFormat(
+static const wchar_t* s_pSummaryFailureDetailsFormat(
     L"===================="
     L"====================\n"
     L"    \"%s\" Complete\n\n"
@@ -48,14 +48,10 @@ static const std::wstring s_SummaryFailureDetailsFormat(
     L"  Test Pass Grade:  %2.2f%% (%u / %u)\n"
     L"  Total Duration:   %llu ms\n"
     L"===================="
-    L"====================\n"
+    L"====================\n\n\n"
 );
 
-static const std::wstring s_TimeFormat(
-    L"%c"
-);
-
-static const std::wstring s_SuccessFormat(
+static const wchar_t* s_pSuccessFormat(
     L"File: %hs\nTest: %hs\n"
     L"--------------------------------"
     L"--------------------------------\n"
@@ -63,10 +59,10 @@ static const std::wstring s_SuccessFormat(
     L"    Line:     %u\n"
     L"    Duration: %llu microseconds\n"
     L"--------------------------------"
-    L"--------------------------------\n"
+    L"--------------------------------\n\n\n"
 );
 
-static const std::wstring s_FailureFormat(
+static const wchar_t* s_pFailureFormat(
     L"File: %hs\nTest: %hs\n"
     L"--------------------------------"
     L"--------------------------------\n"
@@ -75,10 +71,10 @@ static const std::wstring s_FailureFormat(
     L"    Failure:  %s\n"
     L"    Duration: %llu microseconds\n"
     L"--------------------------------"
-    L"--------------------------------\n"
+    L"--------------------------------\n\n\n"
 );
 
-static const std::wstring s_ExceptionFormat(
+static const wchar_t* s_pExceptionFormat(
     L"File: %hs\nTest: %hs\n"
     L"--------------------------------"
     L"--------------------------------\n"
@@ -87,10 +83,10 @@ static const std::wstring s_ExceptionFormat(
     L"    Exception: %hs\n"
     L"    Duration:  %llu microseconds\n"
     L"--------------------------------"
-    L"--------------------------------\n"
+    L"--------------------------------\n\n\n"
 );
 
-static const std::wstring s_SkipFormat(
+static const wchar_t* s_pSkipFormat(
     L"File: %hs\nTest: %hs\n"
     L"--------------------------------"
     L"--------------------------------\n"
@@ -99,24 +95,24 @@ static const std::wstring s_SkipFormat(
     L"    Reason:   %hs\n"
     L"    Duration: %llu microseconds\n"
     L"--------------------------------"
-    L"--------------------------------\n"
+    L"--------------------------------\n\n\n"
 );
 
-static const std::wstring s_UnhandledExceptionFormat(
+static const wchar_t* s_pUnhandledExceptionFormat(
     L"Result: %hs\n"
     L"--------------------------------"
     L"--------------------------------\n"
     L"    Unhandled Exception: %s\n"
     L"    Duration:            %llu microseconds\n"
     L"--------------------------------"
-    L"--------------------------------\n"
+    L"--------------------------------\n\n\n"
 );
 
 /// Ctors \\\
 
-UnitTestLogger::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ const bool& consoleOutput, _In_ const bool& onlyLogFailures) :
-    m_PrintToConsole(consoleOutput),
-    m_OnlyLogFailures(onlyLogFailures),
+UnitTestLogger::UnitTestLogger(_In_ const std::filesystem::path& file, _In_ const bool bWriteToStdout, _In_ const bool bOnlyLogFailures) :
+    m_bLogToStdout(bWriteToStdout),
+    m_bOnlyLogFailures(bOnlyLogFailures),
     m_ConsoleStream(std::wcout),
     m_FileStream(file, std::ios_base::binary | std::ios_base::app | std::ios_base::out),
     m_TargetFile(file)
@@ -130,7 +126,7 @@ UnitTestLogger::~UnitTestLogger()
 {
     TeardownWorkerThread();
 
-    if (m_PrintToConsole && m_ConsoleStream)
+    if (m_bLogToStdout && m_ConsoleStream)
     {
         m_ConsoleStream.flush();
     }
@@ -147,11 +143,11 @@ UnitTestLogger& UnitTestLogger::operator=(_Inout_ UnitTestLogger&& src) noexcept
 {
     if (this != &src)
     {
-        m_PrintToConsole = src.m_PrintToConsole;
+        m_bLogToStdout = src.m_bLogToStdout;
         m_FileStream = std::move(src.m_FileStream);
         m_TargetFile = std::move(src.m_TargetFile);
 
-        src.m_PrintToConsole = false;
+        src.m_bLogToStdout = false;
         src.m_ConsoleStream.flush();
         src.m_FileStream.close();
         src.m_TargetFile.clear();
@@ -164,19 +160,19 @@ UnitTestLogger& UnitTestLogger::operator=(_Inout_ UnitTestLogger&& src) noexcept
 
 // Private Helper Methods
 
-std::wstring UnitTestLogger::BuildTestSetHeaderString(_In_ const TestSetData& data)
+UnitTestLogger::Buffer UnitTestLogger::BuildTestSetHeaderString(_In_ const TestSetData& data)
 {
     return stprintf(
-        &s_HeaderFormat,
+        s_pHeaderFormat,
         data.GetTestSetName().c_str(),
         data.GetTotalTestCount()
     );
 }
 
-std::wstring UnitTestLogger::BuildTestSetSummaryNoFailuresString(_In_ const TestSetData& data)
+UnitTestLogger::Buffer UnitTestLogger::BuildTestSetSummaryNoFailuresString(_In_ const TestSetData& data)
 {
     return stprintf(
-        &s_SummaryNoFailuresFormat,
+        s_pSummaryNoFailuresFormat,
         data.GetTestSetName().c_str(),
         data.GetTotalTestCount(),
         data.GetTotalTestCount() - data.GetTestSkipCount(),
@@ -190,10 +186,10 @@ std::wstring UnitTestLogger::BuildTestSetSummaryNoFailuresString(_In_ const Test
     );
 }
 
-std::wstring UnitTestLogger::BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData& data)
+UnitTestLogger::Buffer UnitTestLogger::BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData& data)
 {
     return stprintf(
-        &s_SummaryFailureDetailsFormat,
+        s_pSummaryFailureDetailsFormat,
         data.GetTestSetName().c_str(),
         data.GetTotalTestCount(),
         data.GetTotalTestCount() - data.GetTestSkipCount(),
@@ -214,76 +210,44 @@ std::wstring UnitTestLogger::BuildTestSetSummaryFailureDetailsString(_In_ const 
     );
 }
 
-std::wstring UnitTestLogger::BuildLogString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildLogString(_In_ const UnitTestResult& res)
 {
-    std::wstring logStr;
+    Buffer logStr;
 
     switch (res.GetResult())
     {
     case ResultType::Success:
-        logStr.append(BuildSuccessString(res));
+        logStr = BuildSuccessString(res);
         break;
 
     case ResultType::SetupFailure:
     case ResultType::TestFailure:
     case ResultType::CleanupFailure:
-        logStr.append(BuildFailureString(res));
+        logStr = BuildFailureString(res);
         break;
 
     case ResultType::SetupException:
     case ResultType::TestException:
     case ResultType::CleanupException:
-        logStr.append(BuildExceptionString(res));
+        logStr = BuildExceptionString(res);
         break;
 
     case ResultType::NotRun:
-        logStr.append(BuildSkipString(res));
+        logStr = BuildSkipString(res);
         break;
 
     case ResultType::UnhandledException:
-        logStr.append(BuildUnhandledExceptionString(res));
+        logStr = BuildUnhandledExceptionString(res);
         break;
-
-    default:
-        logStr.clear();
     }
 
     return logStr;
 }
 
-std::wstring UnitTestLogger::BuildTimeString()
-{
-    std::vector buffer(ms_TimeBufferLength, L'\0');
-    const time_t time = std::time(nullptr);
-
-    if (!GetTime(buffer.data(), ms_TimeBufferLength, &time))
-    {
-        return std::wstring();
-    }
-
-    while (!buffer.empty() && buffer.back() != L'\n')
-    {
-        buffer.pop_back();
-    }
-
-    if (buffer.size() <= 1)
-    {
-        return std::wstring();
-    }
-    else
-    {
-        buffer.pop_back();
-    }
-
-    buffer.push_back(L'\0');
-
-    return std::wstring(buffer.data());
-}
-
-std::wstring UnitTestLogger::BuildSuccessString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildSuccessString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &s_SuccessFormat,
+        s_pSuccessFormat,
         res.GetFileName().c_str(),
         res.GetFunctionName().c_str(),
         ResultTypeUtil::ToString(res.GetResult()).c_str(),
@@ -292,10 +256,10 @@ std::wstring UnitTestLogger::BuildSuccessString(_In_ const UnitTestResult& res)
     );
 }
 
-std::wstring UnitTestLogger::BuildFailureString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildFailureString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &s_FailureFormat,
+        s_pFailureFormat,
         res.GetFileName().c_str(),
         res.GetFunctionName().c_str(),
         ResultTypeUtil::ToString(res.GetResult()).c_str(),
@@ -305,10 +269,10 @@ std::wstring UnitTestLogger::BuildFailureString(_In_ const UnitTestResult& res)
     );
 }
 
-std::wstring UnitTestLogger::BuildExceptionString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildExceptionString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &s_ExceptionFormat,
+        s_pExceptionFormat,
         res.GetFileName().c_str(),
         res.GetFunctionName().c_str(),
         ResultTypeUtil::ToString(res.GetResult()).c_str(),
@@ -318,10 +282,10 @@ std::wstring UnitTestLogger::BuildExceptionString(_In_ const UnitTestResult& res
     );
 }
 
-std::wstring UnitTestLogger::BuildSkipString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildSkipString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &s_SkipFormat,
+        s_pSkipFormat,
         res.GetFileName().c_str(),
         res.GetFunctionName().c_str(),
         ResultTypeUtil::ToString(res.GetResult()).c_str(),
@@ -331,10 +295,10 @@ std::wstring UnitTestLogger::BuildSkipString(_In_ const UnitTestResult& res)
     );
 }
 
-std::wstring UnitTestLogger::BuildUnhandledExceptionString(_In_ const UnitTestResult& res)
+UnitTestLogger::Buffer UnitTestLogger::BuildUnhandledExceptionString(_In_ const UnitTestResult& res)
 {
     return stprintf(
-        &s_UnhandledExceptionFormat,
+        s_pUnhandledExceptionFormat,
         ResultTypeUtil::ToString(res.GetResult()).c_str(),
         res.GetResultInfo().c_str(),
         res.GetTestDurationMicroseconds()
@@ -346,62 +310,52 @@ bool UnitTestLogger::GetTime(_Out_writes_(len) wchar_t* buffer, _In_ const size_
     return _wctime_s(buffer, len, t) == 0;
 }
 
-std::wstring UnitTestLogger::stprintf(_In_ const std::wstring* format, ...)
+UnitTestLogger::Buffer UnitTestLogger::stprintf(_In_z_ const wchar_t* format, ...)
 {
     va_list args;
-    std::vector<wchar_t> buffer;
+    Buffer buffer;
     int bufferSize = 0;
 
-    if (!format || format->empty())
+    if (!!format)
     {
-        return std::wstring();
-    }
+        va_start(args, format);
 
-    va_start(args, format);
-
-    bufferSize = StringPrintWrapper(buffer, format, args);
-
-    if (bufferSize > 0)
-    {
-        buffer = std::move(std::vector(static_cast<size_t>(bufferSize) + 2, L'\0'));
         bufferSize = StringPrintWrapper(buffer, format, args);
+
+        if (bufferSize > 0)
+        {
+            buffer = std::vector(static_cast<size_t>(bufferSize) + 2, L'\0');
+            bufferSize = StringPrintWrapper(buffer, format, args);
+        }
+
+        va_end(args);
     }
 
-    va_end(args);
-
-    return (bufferSize > 0) ? std::wstring(std::move(buffer.data())) : std::wstring();
+    return buffer;
 }
 
-int UnitTestLogger::StringPrintWrapper(_Inout_ std::vector<wchar_t>& buffer, _In_ const std::wstring* format, _In_ va_list args)
+int UnitTestLogger::StringPrintWrapper(_Inout_ Buffer& buffer, _In_z_ const wchar_t* format, _In_ va_list args)
 {
     if (buffer.empty())
     {
-        return _vscwprintf(
-            reinterpret_cast<const wchar_t*>(format->c_str()),
-            args
-        );
+        return _vscwprintf(format, args);
     }
     else
     {
-        return vswprintf(
-            reinterpret_cast<wchar_t*>(buffer.data()),
-            buffer.size() - 1,
-            reinterpret_cast<const wchar_t*>(format->c_str()),
-            args
-        );
+        return vswprintf_s(buffer.data(), buffer.size() - 1, format, args);
     }
 }
 
-void UnitTestLogger::LogCommon(_Inout_ std::wstring&& str)
+void UnitTestLogger::QueueLog(_Inout_ Buffer&& str)
 {
     {
         std::lock_guard<std::mutex> lg(m_LogQueueMutex);
-        m_LogQueue.push(std::move(str));
-        str.clear();
+        m_LogQueue.push_back(std::move(str));
         m_LogQueueSize++;
     }
 
-    m_CVSignaler.notify_one();
+    m_LogCV.notify_one();
+    str.clear();
 }
 
 /// Public Method Definitions \\\
@@ -415,12 +369,12 @@ const std::filesystem::path& UnitTestLogger::GetTargetFile() const noexcept
 
 bool UnitTestLogger::GetPrintToConsole() const noexcept
 {
-    return m_PrintToConsole;
+    return m_bLogToStdout;
 }
 
 bool UnitTestLogger::GetOnlyLogFailures() const noexcept
 {
-    return m_OnlyLogFailures;
+    return m_bOnlyLogFailures;
 }
 
 // Setters
@@ -441,67 +395,37 @@ bool UnitTestLogger::SetTargetFile(_In_ const std::filesystem::path& filePath)
     return true;
 }
 
-bool UnitTestLogger::SetTargetFile(_Inout_ std::filesystem::path&& filePath)
+void UnitTestLogger::SetLogToStdout(_In_ const bool bLogToStdout) noexcept
 {
-    std::wofstream newFileStream(filePath);
-
-    if (!newFileStream)
-    {
-        return false;
-    }
-
-    m_FileStream.flush();
-    std::swap(newFileStream, m_FileStream);
-    m_TargetFile.assign(std::move(filePath));
-    filePath.clear();
-
-    return true;
+    m_bLogToStdout = bLogToStdout;
 }
 
-void UnitTestLogger::SetPrintToConsole(_In_ const bool& print) noexcept
+void UnitTestLogger::SetOnlyLogFailures(_In_ const bool bOnlyLogFailures) noexcept
 {
-    m_PrintToConsole = print;
-}
-
-void UnitTestLogger::SetOnlyLogFailures(_In_ const bool& log) noexcept
-{
-    m_OnlyLogFailures = log;
+    m_bOnlyLogFailures = bOnlyLogFailures;
 }
 
 // Public Methods
 
 void UnitTestLogger::LogTestSetHeader(_In_ const TestSetData& data)
 {
-    std::wstring buf(BuildTestSetHeaderString(data));
-    buf.append(2, L'\n');
-    LogCommon(std::move(buf));
+    QueueLog(BuildTestSetHeaderString(data));
 }
 
-void UnitTestLogger::LogUnitTestResult(_In_ const UnitTestResult& res)
+void UnitTestLogger::LogUnitTestResult(_In_ const UnitTestResult& result)
 {
-    if (m_OnlyLogFailures)
-
+    if (!m_bOnlyLogFailures || ((result.GetResult() != ResultType::Success) && (result.GetResult() != ResultType::NotRun)))
     {
-        const ResultType& rt = res.GetResult();
-        if ((rt == ResultType::Success) || (rt == ResultType::NotRun))
-        {
-            return;
-        }
+        QueueLog(BuildLogString(result));
     }
-
-    std::wstring buf(BuildLogString(res));
-    buf.append(2, L'\n');
-    LogCommon(std::move(buf));
 }
 
 void UnitTestLogger::LogTestSetSummary(_In_ const TestSetData& data)
 {
-    std::wstring buf = (data.GetTestFailureCount() == 0)
+    Buffer buf((data.GetTestFailureCount() == 0)
         ? BuildTestSetSummaryNoFailuresString(data)
-        : BuildTestSetSummaryFailureDetailsString(data);
-
-    buf.append(2, L'\n');
-    LogCommon(std::move(buf));
+        : BuildTestSetSummaryFailureDetailsString(data));
+    QueueLog(std::move(buf));
 }
 
 /// Logging Worker Thread Methods \\\
@@ -510,7 +434,7 @@ void UnitTestLogger::InitializeWorkerThread()
 {
     TeardownWorkerThread();
 
-    m_ContinueWork = true;
+    m_bContinueWork = true;
     m_WorkerThread = std::thread(&UnitTestLogger::WorkerLoop, this);
 }
 
@@ -518,8 +442,8 @@ void UnitTestLogger::TeardownWorkerThread()
 {
     if (m_WorkerThread.joinable())
     {
-        m_ContinueWork = false;
-        m_CVSignaler.notify_all();
+        m_bContinueWork = false;
+        m_LogCV.notify_all();
         m_WorkerThread.join();
     }
 }
@@ -536,46 +460,45 @@ void UnitTestLogger::WorkerLoop()
 void UnitTestLogger::WaitForWork()
 {
     std::unique_lock<std::mutex> ul(m_LogQueueMutex);
-    m_CVSignaler.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
+    m_LogCV.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
+}
+
+UnitTestLogger::Queue UnitTestLogger::TransferLogQueueContents()
+{
+    Queue q;
+    std::lock_guard<std::mutex> lg(m_LogQueueMutex);
+    std::swap(q, m_LogQueue);
+    m_LogQueueSize = 0;
+    return q;
 }
 
 void UnitTestLogger::PrintLogs()
 {
-    std::queue<std::wstring> logQueue;
+    for (const auto& buf : TransferLogQueueContents())
     {
-        std::lock_guard<std::mutex> lg(m_LogQueueMutex);
-        std::swap(logQueue, m_LogQueue);
-        m_LogQueueSize = 0;
-    }
-
-    while (!logQueue.empty())
-    {
-        std::wstring logStr(logQueue.front());
-        logQueue.pop();
-
-        PrintLog(logStr);
+        PrintLog(buf);
     }
 }
 
-void UnitTestLogger::PrintLog(_In_ const std::wstring& str)
+void UnitTestLogger::PrintLog(_In_ const Buffer& buf)
 {
-    if (m_PrintToConsole && m_ConsoleStream)
+    if (m_bLogToStdout && m_ConsoleStream)
     {
-        m_ConsoleStream << str;
+        m_ConsoleStream.write(buf.data(), buf.size());
     }
 
     if (m_FileStream)
     {
-        m_FileStream << str;
+        m_FileStream.write(buf.data(), buf.size());
     }
 }
 
 bool UnitTestLogger::WorkerPredicate()
 {
-    return (m_LogQueueSize != 0) || (!m_ContinueWork);
+    return (m_LogQueueSize.load(std::memory_order_relaxed) != 0) || (!m_bContinueWork.load(std::memory_order_relaxed));
 }
 
 bool UnitTestLogger::TerminatePredicate()
 {
-    return (!m_ContinueWork) && (m_LogQueueSize == 0);
+    return (!m_bContinueWork) && (m_LogQueueSize == 0);
 }

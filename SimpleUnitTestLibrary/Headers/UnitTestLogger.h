@@ -6,10 +6,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <mutex>
-#include <vector>
-#include <queue>
 #include <thread>
+#include <vector>
 
 // SUTL
 #include "TestSetData.h"
@@ -18,6 +18,9 @@
 
 class UnitTestLogger
 {
+    using Buffer = std::vector<wchar_t>;
+    using Queue = std::list<Buffer>;
+
 private:
 
     /// Static Private Data Members \\\
@@ -26,18 +29,18 @@ private:
 
     /// Private Data Members \\\
 
-    bool m_PrintToConsole;
-    bool m_OnlyLogFailures;
+    bool m_bLogToStdout;
+    bool m_bOnlyLogFailures;
     std::wostream& m_ConsoleStream;
     std::filesystem::path m_TargetFile;
     std::wofstream m_FileStream;
 
-    std::atomic<bool> m_ContinueWork;
+    std::atomic<bool> m_bContinueWork;
     std::atomic<size_t> m_LogQueueSize;
 
     std::mutex m_LogQueueMutex;
-    std::condition_variable m_CVSignaler;
-    std::queue<std::wstring> m_LogQueue;
+    std::condition_variable m_LogCV;
+    Queue m_LogQueue;
 
     std::thread m_WorkerThread;
 
@@ -48,36 +51,36 @@ private:
 
     void WorkerLoop();
     void WaitForWork();
+    Queue TransferLogQueueContents();
     void PrintLogs();
-    void PrintLog(_In_ const std::wstring&);
+    void PrintLog(_In_ const Buffer& logMsg);
     bool WorkerPredicate();
     bool TerminatePredicate();
 
     /// Private Static Helper Methods \\\
 
-    static std::wstring BuildTestSetHeaderString(_In_ const TestSetData&);
-    static std::wstring BuildTestSetSummaryNoFailuresString(_In_ const TestSetData&);
-    static std::wstring BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData&);
+    static Buffer BuildTestSetHeaderString(_In_ const TestSetData&);
+    static Buffer BuildTestSetSummaryNoFailuresString(_In_ const TestSetData&);
+    static Buffer BuildTestSetSummaryFailureDetailsString(_In_ const TestSetData&);
 
-    static std::wstring BuildLogString(_In_ const UnitTestResult&);
-    static std::wstring BuildTimeString();
-    static std::wstring BuildSuccessString(_In_ const UnitTestResult&);
-    static std::wstring BuildFailureString(_In_ const UnitTestResult&);
-    static std::wstring BuildExceptionString(_In_ const UnitTestResult&);
-    static std::wstring BuildSkipString(_In_ const UnitTestResult&);
-    static std::wstring BuildUnhandledExceptionString(_In_ const UnitTestResult&);
+    static Buffer BuildLogString(_In_ const UnitTestResult&);
+    static Buffer BuildSuccessString(_In_ const UnitTestResult&);
+    static Buffer BuildFailureString(_In_ const UnitTestResult&);
+    static Buffer BuildExceptionString(_In_ const UnitTestResult&);
+    static Buffer BuildSkipString(_In_ const UnitTestResult&);
+    static Buffer BuildUnhandledExceptionString(_In_ const UnitTestResult&);
 
     static bool GetTime(_Out_writes_(len) wchar_t* buffer, _In_ const size_t len, _In_ const time_t* t);
 
-    static std::wstring stprintf(_In_ const std::wstring*, ...);
-    static int StringPrintWrapper(_Inout_ std::vector<wchar_t>&, _In_ const std::wstring*, _In_ va_list);
+    static Buffer stprintf(_In_z_ const wchar_t*, ...);
+    static int StringPrintWrapper(_Inout_ Buffer&, _In_z_ const wchar_t*, _In_ va_list);
 
-    void LogCommon(_Inout_ std::wstring&&);
+    void QueueLog(_Inout_ Buffer&&);
 
 public:
     /// Ctors \\\
 
-    UnitTestLogger(_In_ const std::filesystem::path & = std::filesystem::path(), _In_ const bool& = true, _In_ const bool& = true);
+    UnitTestLogger(_In_ const std::filesystem::path& file = std::filesystem::path(), _In_ const bool bWriteToStdout = true, _In_ const bool bOnlyLogFailures = true);
 
     /// Dtor \\\
 
@@ -95,14 +98,13 @@ public:
 
     /// Setters \\\
 
-    bool SetTargetFile(_In_ const std::filesystem::path&);
-    bool SetTargetFile(_Inout_ std::filesystem::path&&);
-    void SetPrintToConsole(_In_ const bool&) noexcept;
-    void SetOnlyLogFailures(_In_ const bool&) noexcept;
+    bool SetTargetFile(_In_ const std::filesystem::path& filePath);
+    void SetLogToStdout(_In_ const bool bLogToStdout) noexcept;
+    void SetOnlyLogFailures(_In_ const bool bOnlyLogFailures) noexcept;
 
     /// Public Methods \\\
 
-    void LogTestSetHeader(_In_ const TestSetData&);
-    void LogUnitTestResult(_In_ const UnitTestResult&);
-    void LogTestSetSummary(_In_ const TestSetData&);
+    void LogTestSetHeader(_In_ const TestSetData& data);
+    void LogUnitTestResult(_In_ const UnitTestResult& result);
+    void LogTestSetSummary(_In_ const TestSetData& data);
 };
