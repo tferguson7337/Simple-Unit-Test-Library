@@ -69,8 +69,6 @@ public:
 
     void SetTotalTestCount(_In_ const uint32_t& c) noexcept;
     void SetRunDurationMs(_In_ const std::chrono::duration<int64_t, std::milli>& dur) noexcept;
-
-    void SetTestSetName(_In_ std::wstring name);
     void SetTestSetName(_Inout_ std::wstring&& name) noexcept;
 
     /// Public Methods \\\

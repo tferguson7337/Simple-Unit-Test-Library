@@ -216,11 +216,6 @@ void TestSetData::SetRunDurationMs(_In_ const std::chrono::duration<int64_t, std
     m_RunDurationMs = (dur.count() > 0) ? static_cast<uint64_t>(dur.count()) : 0;
 }
 
-void TestSetData::SetTestSetName(_In_ std::wstring name)
-{
-    m_TestSetName = std::move(name);
-}
-
 void TestSetData::SetTestSetName(_Inout_ std::wstring&& name) noexcept
 {
     m_TestSetName = std::move(name);
