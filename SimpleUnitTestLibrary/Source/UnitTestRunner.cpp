@@ -1,57 +1,18 @@
 #include <UnitTestRunner.h>
 
+/// Static Data Member Initialization \\\
 
-/// Ctors \\\
+std::list<UnitTest> UnitTestRunner::ms_DummyList;
 
-UnitTestRunner::UnitTestRunner(_Inout_ std::wstring&& testName) noexcept :
-    m_TestSetData(std::move(testName))
-{
-    testName.clear();
-}
 
-/// Operator Overloads \\\
+/// Public Methods \\\
 
-UnitTestRunner& UnitTestRunner::operator=(_Inout_ UnitTestRunner&& src) noexcept
-{
-    if (this != &src)
-    {
-        m_UnitTests = std::move(src.m_UnitTests);
-
-        src.ClearUnitTests();
-    }
-
-    return *this;
-}
-
-// Getters
-
-const std::list<UnitTest>& UnitTestRunner::GetUnitTests() const noexcept
-{
-    return m_UnitTests;
-}
-
-UnitTestLogger& UnitTestRunner::GetLogger() const noexcept
-{
-    return m_Logger;
-}
-
-TestSetData& UnitTestRunner::GetTestSetData() noexcept
-{
-    return m_TestSetData;
-}
-
-const TestSetData& UnitTestRunner::GetTestSetData() const noexcept
-{
-    return m_TestSetData;
-}
-
-// Public Methods
-
-bool UnitTestRunner::AddUnitTest(_Inout_ UnitTest&& test)
+_Success_(return) bool UnitTestRunner::AddUnitTest(_Inout_ UnitTest&& test) noexcept
 {
     try
     {
-        m_UnitTests.push_back(std::move(test));
+        AllocateTestListIfNeeded();
+        m_pUnitTests->push_back(std::move(test));
         test.Clear();
     }
     catch (...)
@@ -62,12 +23,18 @@ bool UnitTestRunner::AddUnitTest(_Inout_ UnitTest&& test)
     return true;
 }
 
-bool UnitTestRunner::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&& test)
+
+_Success_(return) bool UnitTestRunner::AddUnitTest(_In_ const UnitTestFunction pfFunc) noexcept
 {
+    if (!pfFunc)
+    {
+        return false;
+    }
+
     try
     {
-        m_UnitTests.emplace_back(std::move(test));
-        test = nullptr;
+        AllocateTestListIfNeeded();
+        m_pUnitTests->emplace_back(pfFunc);
     }
     catch (...)
     {
@@ -77,12 +44,22 @@ bool UnitTestRunner::AddUnitTest(_Inout_ std::function<UnitTestResult(void)>&& t
     return true;
 }
 
-bool UnitTestRunner::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
+
+_Success_(return) bool UnitTestRunner::AddUnitTest(_In_ const std::function<UnitTestResult(void)>& func) noexcept
 {
+    if (!func)
+    {
+        return false;
+    }
+
     try
     {
-        m_UnitTests.splice(m_UnitTests.cend(), std::move(tests));
-        tests.clear();
+        auto pF = func.target<UnitTestFunction>();
+        if (!!pF)
+        {
+            AllocateTestListIfNeeded();
+            m_pUnitTests->emplace_back(*pF);
+        }
     }
     catch (...)
     {
@@ -92,31 +69,75 @@ bool UnitTestRunner::AddUnitTests(_Inout_ std::list<UnitTest>&& tests)
     return true;
 }
 
-bool UnitTestRunner::AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& tests)
+
+_Success_(return) bool UnitTestRunner::AddUnitTests(_Inout_ std::list<UnitTest>&& tests) noexcept
+{
+    try
+    {
+        AllocateTestListIfNeeded();
+        m_pUnitTests->splice(m_pUnitTests->cend(), std::move(tests));
+    }
+    catch (...)
+    {
+        return false;
+    }
+
+    tests.clear();
+
+    return true;
+}
+
+
+_Success_(return) bool UnitTestRunner::AddUnitTests(_Inout_ std::list<UnitTestFunction>&& tests) noexcept
 {
     try
     {
         for (auto& f : tests)
         {
-            m_UnitTests.emplace_back(std::move(f));
+            if (!!f)
+            {
+                AllocateTestListIfNeeded();
+                m_pUnitTests->emplace_back(std::move(f));
+            }
         }
-
-        tests.clear();
     }
     catch (...)
     {
         return false;
     }
 
+    tests.clear();
+
     return true;
 }
 
-void UnitTestRunner::ClearUnitTests() noexcept
+
+_Success_(return) bool UnitTestRunner::AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& tests) noexcept
 {
-    m_UnitTests.clear();
+    try
+    {
+        for (auto& f : tests)
+        {
+            auto pF = f.target<UnitTestFunction>();
+            if (!!pF)
+            {
+                AllocateTestListIfNeeded();
+                m_pUnitTests->emplace_back(*pF);
+            }
+        }
+    }
+    catch (...)
+    {
+        return false;
+    }
+
+    tests.clear();
+
+    return true;
 }
 
-bool UnitTestRunner::RunUnitTests()
+
+bool UnitTestRunner::RunUnitTests() noexcept
 {
     using Clock = std::chrono::high_resolution_clock;
     using DurationMs = std::chrono::duration<int64_t, std::milli>;
@@ -124,19 +145,20 @@ bool UnitTestRunner::RunUnitTests()
     using TimePoint = std::chrono::time_point<Clock>;
 
     bool ret = true;
+    std::list<UnitTest>* pTests = (!!m_pUnitTests) ? m_pUnitTests : &ms_DummyList;
 
     m_TestSetData.ResetCounters();
-    m_TestSetData.SetTotalTestCount(static_cast<uint32_t>(m_UnitTests.size()));
+    m_TestSetData.SetTotalTestCount(static_cast<uint32_t>(pTests->size()));
 
     m_Logger.LogTestSetHeader(m_TestSetData);
 
-    for (UnitTest& test : m_UnitTests)
+    for (auto& test : *pTests)
     {
         TimePoint t0, t1;
         DurationMs deltaMs;
         DurationMicroseconds deltaMicroseconds;
         ResultType r = ResultType::NotRun;
-        std::string eStr = "";
+        std::string eStr;
 
         t0 = Clock::now();
         try
@@ -151,12 +173,6 @@ bool UnitTestRunner::RunUnitTests()
             r = ResultType::UnhandledException;
             eStr = e.what();
         }
-        catch (...)
-        {
-            t1 = Clock::now();
-            r = ResultType::UnhandledException;
-            eStr = "<Unknown Unhandled Exception>";
-        }
 
         m_TestSetData.IncrementResultCounter(r);
 
@@ -169,22 +185,17 @@ bool UnitTestRunner::RunUnitTests()
         {
             ret = false;
         }
-
+        
         if (r != ResultType::UnhandledException)
         {
             m_Logger.LogUnitTestResult(test.GetUnitTestResult());
         }
         else
         {
-            const std::string& funcName = test.GetUnitTestResult().GetFunctionName();
-            const std::string& fileName = test.GetUnitTestResult().GetFileName();
-            const uint32_t& line = test.GetUnitTestResult().GetLineNumber();
-
-            UnitTestResult tmp(r, funcName.c_str(), funcName.size(), fileName.c_str(), fileName.size(), line, eStr);
-            tmp.SetTestDurationMicroseconds(deltaMicroseconds);
-            m_Logger.LogUnitTestResult(tmp);
+            const auto& res = test.GetUnitTestResult();
+            res.SetTestDurationMicroseconds(deltaMicroseconds);
+            m_Logger.LogUnitTestResult(res);
         }
-
     }
 
     m_Logger.LogTestSetSummary(m_TestSetData);

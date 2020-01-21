@@ -3,6 +3,19 @@
 // SAL
 #include <sal.h>
 
+// STL
+#include <memory>
+
+
+/// UnitTestFunction \\\
+
+// Forward Decl
+class UnitTestResult;
+
+using UnitTestFunction = UnitTestResult(*)(void);
+
+
+/// TestQuantity \\\
 
 // Support test methods that want to trigger different behavior
 // or test data creation depending on none-some-all approach to test cases.
@@ -28,6 +41,7 @@ enum class TestQuantity : size_t
     Begin = 0
 };
 
+
 // Returns true if TQ is a valid TestQuantity enum value.
 template <TestQuantity TQ>
 static constexpr bool IsValidTestQuantity()
@@ -52,6 +66,7 @@ inline TestQuantity& operator++(_Inout_ TestQuantity& tq)
 
     return tq;
 }
+
 
 // Postfix Incrementation
 // Will increment up until tq == TestQuantity::End

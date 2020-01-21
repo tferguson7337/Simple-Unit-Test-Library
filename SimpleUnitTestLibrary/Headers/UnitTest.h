@@ -1,9 +1,7 @@
 #pragma once
 
-// STL
-#include <functional>
-
 // SUTL
+#include "TestTypes.h"
 #include "UnitTestResult.h"
 
 
@@ -19,35 +17,77 @@ class UnitTest
 private:
     /// Private Data Members \\\
 
-    std::function<UnitTestResult(void)> m_TestFunc;
+    UnitTestFunction m_pfTestFunc;
     UnitTestResult m_TestResult;
 
 public:
     /// Ctors \\\
 
-    UnitTest() = default;
-    explicit UnitTest(_Inout_ std::function<UnitTestResult(void)>&&) noexcept;
-    UnitTest(_Inout_ UnitTest&&) noexcept;
+    constexpr UnitTest() noexcept :
+        m_pfTestFunc(nullptr)
+    { }
+
+    constexpr explicit UnitTest(_In_opt_ const UnitTestFunction pfFunc) noexcept :
+        m_pfTestFunc(pfFunc)
+    { }
+
+    constexpr UnitTest(_Inout_ UnitTest&& src) noexcept :
+        UnitTest()
+    {
+        *this = std::move(src);
+    }
 
     /// Dtor \\\
 
-    ~UnitTest() = default;
+    ~UnitTest() noexcept = default;
 
     /// Operator Overloads \\\
 
-    UnitTest& operator=(_Inout_ UnitTest&&) noexcept;
+    constexpr UnitTest& operator=(_Inout_ UnitTest&& src) noexcept
+    {
+        if (this != &src)
+        {
+            m_pfTestFunc = src.m_pfTestFunc;
+            m_TestResult = std::move(src.m_TestResult);
+        }
+
+        return *this;
+    }
 
     /// Getters \\\
 
-    const std::function<UnitTestResult(void)>& GetUnitTestFunction() const noexcept;
-    const UnitTestResult& GetUnitTestResult() const noexcept;
+    constexpr UnitTestFunction GetUnitTestFunction() const noexcept
+    {
+        return m_pfTestFunc;
+    }
+
+    constexpr const UnitTestResult& GetUnitTestResult() const noexcept
+    {
+        return m_TestResult;
+    }
 
     /// Setters \\\
 
-    void SetUnitTestFunction(_Inout_ std::function<UnitTestResult(void)>&&) noexcept;
+    constexpr void SetUnitTestFunction(_In_opt_ const UnitTestFunction pfFunc) noexcept
+    {
+        m_pfTestFunc = pfFunc;
+    }
 
     /// Public Methods \\\
 
-    void Clear() noexcept;
-    const UnitTestResult& RunTest();
+    constexpr void Clear() noexcept
+    {
+        m_pfTestFunc = nullptr;
+        m_TestResult.Clear();
+    }
+
+    const UnitTestResult& RunTest()
+    {
+        if (!m_pfTestFunc)
+        {
+            throw std::logic_error(__FUNCTION__ ": No function is associated with this UnitTest.");
+        }
+
+        return m_TestResult = m_pfTestFunc();
+    }
 };

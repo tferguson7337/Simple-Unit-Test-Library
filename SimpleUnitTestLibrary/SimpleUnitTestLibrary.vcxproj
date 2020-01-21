@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\ResultType.h" />
-    <ClInclude Include="Headers\TestQuantity.h" />
+    <ClInclude Include="Headers\TestTypes.h" />
     <ClInclude Include="Headers\TestSetData.h" />
     <ClInclude Include="Headers\UnitTest.h" />
     <ClInclude Include="Headers\UnitTestLogger.h" />
@@ -28,11 +28,7 @@
     <ClInclude Include="Headers\UnitTestRunner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ResultType.cpp" />
-    <ClCompile Include="Source\TestSetData.cpp" />
-    <ClCompile Include="Source\UnitTest.cpp" />
     <ClCompile Include="Source\UnitTestLogger.cpp" />
-    <ClCompile Include="Source\UnitTestResult.cpp" />
     <ClCompile Include="Source\UnitTestRunner.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -157,6 +153,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,6 +191,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,6 +235,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -283,6 +282,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
