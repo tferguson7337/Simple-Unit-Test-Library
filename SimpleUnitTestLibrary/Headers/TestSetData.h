@@ -5,6 +5,7 @@
 
 // STL
 #include <chrono>
+#include <cstring>
 
 // SUTL
 #include "ResultType.h"
@@ -16,7 +17,7 @@ private:
 
     static constexpr std::pair<const char*, size_t> ms_DefaultName{"Default Name", sizeof("Default Name") - 1};
 
-    /// Private Data Members \\\
+    // Private Data Members //
 
     uint32_t m_TotalTests;
     uint32_t m_TestPassCount;
@@ -34,10 +35,10 @@ private:
     const char* m_pTestSetName;
     size_t m_TestSetNameLen;
 
-    /// Private Helper Functions \\\
+    // Private Helper Functions //
 
 public:
-    /// Ctors \\\
+    // Ctors //
     
     constexpr TestSetData() noexcept :
         m_TotalTests(0),
@@ -79,12 +80,12 @@ public:
     }
 
 
-    /// Dtor \\\
+    // Dtor //
 
     ~TestSetData() noexcept = default;
 
 
-    /// Assignment Overloads \\\
+    // Assignment Overloads //
 
     constexpr TestSetData& operator=(_Inout_ TestSetData&& src) noexcept
     {
@@ -113,7 +114,7 @@ public:
     }
 
 
-    /// Getters \\\
+    // Getters //
 
     constexpr uint32_t GetTotalTestCount() const noexcept
     {
@@ -186,7 +187,7 @@ public:
     }
 
 
-    /// Incrementers \\\
+    // Incrementers //
 
     constexpr void IncrementResultCounter(_In_range_(ResultType::Begin, ResultType::End - 1) const ResultType r) noexcept
     {
@@ -249,7 +250,7 @@ public:
     }
 
 
-    /// Setters \\\
+    // Setters //
 
     constexpr void SetTotalTestCount(_In_ const uint32_t& c) noexcept
     {
@@ -270,11 +271,8 @@ public:
         }
         else
         {
-            // Suppress string-must-be-literal safeguard warning.  The string is valid for the lifetime of the program.
-        #pragma warning(suppress : 28137) 
             SetTestSetName(ms_DefaultName.first, ms_DefaultName.second);
         }
-        
     }
 
     // NOTE: Provided string must be valid for the lifespan of this object.
@@ -285,7 +283,7 @@ public:
     }
 
 
-    /// Public Methods \\\
+    // Public Methods //
 
     constexpr void ResetCounters() noexcept
     {

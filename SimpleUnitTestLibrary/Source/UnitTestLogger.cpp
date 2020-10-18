@@ -7,7 +7,7 @@
 #include <cstring>
 #include <ctime>
 
-/// Static Data Member Initialization \\\
+/// Static Data Member Initialization ///
 
 const char* const UnitTestLogger::ms_pHeaderFormat(
     "================================"
@@ -20,7 +20,7 @@ const char* const UnitTestLogger::ms_pHeaderFormat(
 const char* const UnitTestLogger::ms_pSummaryNoFailuresFormat(
     "===================="
     "====================\n"
-    "    \"%.*hs\" Complete\n\n"
+    "    \"%.*s\" Complete\n\n"
     "  Total Test Count: %u\n"
     "  Total Tests Run:  %u\n\n"
     "   Successful Tests: %u\n\n"
@@ -35,7 +35,7 @@ const char* const UnitTestLogger::ms_pSummaryNoFailuresFormat(
 const char* const UnitTestLogger::ms_pSummaryFailureDetailsFormat(
     "===================="
     "====================\n"
-    "    \"%.*hs\" Complete\n\n"
+    "    \"%.*s\" Complete\n\n"
     "  Total Test Count: %u\n"
     "  Total Tests Run:  %u\n\n"
     "   Successful Tests: %u\n\n"
@@ -55,10 +55,10 @@ const char* const UnitTestLogger::ms_pSummaryFailureDetailsFormat(
 );
 
 const char* const UnitTestLogger::ms_pSuccessFormat(
-    "File: %.*hs\nTest: %.*hs\n"
+    "File: %.*s\nTest: %.*s\n"
     "--------------------------------"
     "--------------------------------\n"
-    "    Result:   %.*hs\n"
+    "    Result:   %.*s\n"
     "    Line:     %u\n"
     "    Duration: %llu microseconds\n"
     "--------------------------------"
@@ -66,52 +66,52 @@ const char* const UnitTestLogger::ms_pSuccessFormat(
 );
 
 const char* const UnitTestLogger::ms_pFailureFormat(
-    "File: %.*hs\nTest: %.*hs\n"
+    "File: %.*s\nTest: %.*s\n"
     "--------------------------------"
     "--------------------------------\n"
-    "    Result:   %.*hs\n"
+    "    Result:   %.*s\n"
     "    Line:     %u\n"
-    "    Failure:  %.*hs\n"
+    "    Failure:  %.*s\n"
     "    Duration: %llu microseconds\n"
     "--------------------------------"
     "--------------------------------\n\n\n"
 );
 
 const char* const UnitTestLogger::ms_pExceptionFormat(
-    "File: %hs\nTest: %hs\n"
+    "File: %s\nTest: %s\n"
     "--------------------------------"
     "--------------------------------\n"
-    "    Result:    %.*hs\n"
+    "    Result:    %.*s\n"
     "    Line:      %u\n"
-    "    Exception: %.*hs\n"
+    "    Exception: %.*s\n"
     "    Duration:  %llu microseconds\n"
     "--------------------------------"
     "--------------------------------\n\n\n"
 );
 
 const char* const UnitTestLogger::ms_pSkipFormat(
-    "File: %hs\nTest: %hs\n"
+    "File: %s\nTest: %s\n"
     "--------------------------------"
     "--------------------------------\n"
-    "    Result:   %.*hs\n"
+    "    Result:   %.*s\n"
     "    Line:     %u\n"
-    "    Reason:   %.*hs\n"
+    "    Reason:   %.*s\n"
     "    Duration: %llu microseconds\n"
     "--------------------------------"
     "--------------------------------\n\n\n"
 );
 
 const char* const UnitTestLogger::ms_pUnhandledExceptionFormat(
-    "Result: %.*hs\n"
+    "Result: %.*s\n"
     "--------------------------------"
     "--------------------------------\n"
-    "    Unhandled Exception: %.*hs\n"
+    "    Unhandled Exception: %.*s\n"
     "    Duration:            %llu microseconds\n"
     "--------------------------------"
     "--------------------------------\n\n\n"
 );
 
-/// Dtor \\\
+/// Dtor ///
 
 UnitTestLogger::~UnitTestLogger() noexcept
 {
@@ -131,7 +131,7 @@ UnitTestLogger::~UnitTestLogger() noexcept
     delete[] m_pLogFilePath;
 }
 
-/// Method Definitions \\\
+/// Method Definitions ///
 
 // Private Helper Methods
 
@@ -217,6 +217,10 @@ UnitTestLogger::Buffer UnitTestLogger::BuildLogString(_In_ const UnitTestResult&
     case ResultType::UnhandledException:
         logStr = BuildUnhandledExceptionString(res);
         break;
+
+    case ResultType::End:
+    default:
+        logStr.push_back('\0');
     }
 
     return logStr;
@@ -319,11 +323,11 @@ UnitTestLogger::Buffer UnitTestLogger::stprintf(_In_z_ const char* format, ...) 
     {
         try
         {
-            buffer = std::vector(static_cast<size_t>(bufferSize) + 1, '\0');
+            buffer = std::vector<char>(static_cast<size_t>(bufferSize) + 1, '\0');
         }
         catch (const std::exception& e)
         {
-            fprintf(stderr, "    %hs: Failed to allocate buffer for log - exception[%hs]",
+            fprintf(stderr, "    %s: Failed to allocate buffer for log - exception[%s]",
                 __FUNCTION__, e.what());
             va_end(args);
             return buffer;
@@ -367,7 +371,7 @@ void UnitTestLogger::QueueLog(_Inout_ Buffer&& str) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    %hs: Exception caught when queueing log for worker thread - exception[%hs]",
+        fprintf(stderr, "    %s: Exception caught when queueing log for worker thread - exception[%s]",
             __FUNCTION__, e.what());
         return;
     }
@@ -380,7 +384,7 @@ void UnitTestLogger::QueueLog(_Inout_ Buffer&& str) noexcept
     str.clear();
 }
 
-/// Public Method Definitions \\\
+/// Public Method Definitions ///
 
 // Setters
 
@@ -407,7 +411,7 @@ bool UnitTestLogger::SetLogFilePath(_In_ const std::string& logFilePath) noexcep
     pNewFile = fopen(logFilePath.c_str(), "ab");
     if (!pNewFile)
     {
-        printf("%hs: Failed to open specified log file - errno[%hs]\n\n",
+        printf("%s: Failed to open specified log file - errno[%s]\n\n",
             __FUNCTION__, strerror(errno));
         return false;
     }
@@ -423,7 +427,7 @@ bool UnitTestLogger::SetLogFilePath(_In_ const std::string& logFilePath) noexcep
     catch (const std::exception& e)
     {
         // Close handle to new file, we'll be keeping the old one for now.
-        fprintf(stderr, "    %hs: Failed to set new log file path - exception[%hs]\n\n",
+        fprintf(stderr, "    %s: Failed to set new log file path - exception[%s]\n\n",
             __FUNCTION__, e.what());
         fclose(pNewFile);
         return false;
@@ -448,7 +452,7 @@ void UnitTestLogger::LogTestSetHeader(_In_ const TestSetData& data) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+        fprintf(stderr, "    %s: Exception caught when building log message for worker thread - exception[%s]\n\n",
             __FUNCTION__, e.what());
     }
 
@@ -469,7 +473,7 @@ void UnitTestLogger::LogUnitTestResult(_In_ const UnitTestResult& result) noexce
         }
         catch (const std::exception& e)
         {
-            fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+            fprintf(stderr, "    %s: Exception caught when building log message for worker thread - exception[%s]\n\n",
                 __FUNCTION__, e.what());
         }
 
@@ -492,7 +496,7 @@ void UnitTestLogger::LogTestSetSummary(_In_ const TestSetData& data) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+        fprintf(stderr, "    %s: Exception caught when building log message for worker thread - exception[%s]\n\n",
             __FUNCTION__, e.what());
     }
 
@@ -502,7 +506,7 @@ void UnitTestLogger::LogTestSetSummary(_In_ const TestSetData& data) noexcept
     }
 }
 
-/// Logging Worker Thread Methods \\\
+/// Logging Worker Thread Methods ///
 
 void UnitTestLogger::InitializeWorkerThread()
 {
@@ -608,7 +612,7 @@ void UnitTestLogger::PrintLog(_In_ const Buffer& buf) noexcept
 
     if (m_bLogToStdout)
     {
-        printf("%.*hs", static_cast<unsigned int>(buf.size() - 1), buf.data());
+        printf("%.*s", static_cast<unsigned int>(buf.size() - 1), buf.data());
     }
 
     if (!!m_pFile)

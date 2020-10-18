@@ -11,23 +11,23 @@
 #include <stdexcept>
 
 
-///
+//
 //
 //  Class:      UnitTest
 //  
 //  Purpose:    Encapsulate unit test information.
 //
-///
+//
 class UnitTest
 {
 private:
-    /// Private Data Members \\\
+    // Private Data Members //
 
     UnitTestFunction m_pfTestFunc;
     UnitTestResult m_TestResult;
 
 public:
-    /// Ctors \\\
+    // Ctors //
 
     constexpr UnitTest() noexcept :
         m_pfTestFunc(nullptr)
@@ -43,11 +43,11 @@ public:
         *this = std::move(src);
     }
 
-    /// Dtor \\\
+    // Dtor //
 
     ~UnitTest() noexcept = default;
 
-    /// Operator Overloads \\\
+    // Operator Overloads //
 
     constexpr UnitTest& operator=(_Inout_ UnitTest&& src) noexcept
     {
@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    /// Getters \\\
+    // Getters //
 
     constexpr UnitTestFunction GetUnitTestFunction() const noexcept
     {
@@ -72,14 +72,14 @@ public:
         return m_TestResult;
     }
 
-    /// Setters \\\
+    // Setters //
 
     constexpr void SetUnitTestFunction(_In_opt_ const UnitTestFunction pfFunc) noexcept
     {
         m_pfTestFunc = pfFunc;
     }
 
-    /// Public Methods \\\
+    // Public Methods //
 
     constexpr void Clear() noexcept
     {

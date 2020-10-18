@@ -10,18 +10,18 @@
 #include "ResultType.h"
 
 
-///
+//
 //
 //  Class:      UnitTestResult
 //
 //  Purpose:    Encapsulates the result of a unit test.
 //
-///
+//
 class UnitTestResult
 {
 private:
 
-    /// Private Data Members \\\
+    // Private Data Members //
 
     ResultType m_Result;
 
@@ -40,7 +40,7 @@ private:
     mutable uint64_t m_TestDurationMicroseconds;
 
 
-    /// Function/Filename Extraction Helper Methods \\\
+    // Function/Filename Extraction Helper Methods //
 
     static inline bool IsPathSeparator(_In_ const char c) noexcept
     {
@@ -106,7 +106,7 @@ private:
         return p;
     }
 
-    /// Misc Helper Methods \\\
+    // Misc Helper Methods //
 
     // Note: This does not cleanup m_pInfo.
     constexpr void Reset() noexcept
@@ -124,7 +124,7 @@ private:
     }
 
 public:
-    /// Ctors \\\
+    // Ctors //
 
     // Default constexpr constructor (zero init)
     constexpr UnitTestResult() noexcept :
@@ -186,11 +186,11 @@ public:
         *this = std::move(src);
     }
 
-    /// Dtor \\\
+    // Dtor //
 
     ~UnitTestResult() noexcept = default;
 
-    /// Assignment Overloads \\\
+    // Assignment Overloads //
 
     // Move assignment
     constexpr UnitTestResult& operator=(_Inout_ UnitTestResult&& src) noexcept
@@ -215,7 +215,7 @@ public:
     }
 
 
-    /// Operator Overloads \\\
+    // Operator Overloads //
 
     constexpr explicit operator bool() const noexcept
     {
@@ -223,7 +223,7 @@ public:
     }
 
 
-    /// Getters \\\
+    // Getters //
 
     constexpr ResultType GetResult() const noexcept
     {
@@ -271,7 +271,7 @@ public:
     }
 
 
-    /// Setters \\\
+    // Setters //
 
     // Treat as const, since test-duration is treated as mutable.
     constexpr void SetTestDurationMicroseconds(_In_ const std::chrono::duration<int64_t, std::micro>& dur) const noexcept
@@ -280,7 +280,7 @@ public:
     }
 
 
-    /// Public Methods \\\
+    // Public Methods //
 
     constexpr void Clear() noexcept
     {
@@ -288,7 +288,7 @@ public:
     }
 };
 
-/// Unit Test Return Macros \\\
+// Unit Test Return Macros //
 
 #if defined(_MSC_VER)
 #define __PRETTY_FUNCTION__ __FUNCSIG__

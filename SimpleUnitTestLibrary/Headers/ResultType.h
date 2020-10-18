@@ -8,7 +8,7 @@
 #include <utility>
 
 
-/// Unit Test ResultType Enum Flags \\\
+/// Unit Test ResultType Enum Flags ///
 
 enum class ResultType : size_t
 {
@@ -53,7 +53,7 @@ class ResultTypeUtil
     ResultTypeUtil& operator=(ResultTypeUtil&&) = delete;
 
 private:
-    /// Private Data Members \\\
+    /// Private Data Members ///
 
 
 #define STR_LEN_PAIR(str) std::pair<const char*, const size_t>(str, sizeof(str) - 1)
@@ -75,7 +75,7 @@ private:
 
 #undef STR_LEN_PAIR
 
-    /// Private Helper Methods \\\
+    /// Private Helper Methods ///
 
     constexpr static bool ValidateResultType(_In_ const ResultType r)
     {
@@ -83,7 +83,7 @@ private:
     }
 
 public:
-    /// Public Methods \\\
+    /// Public Methods ///
 
     constexpr static const std::pair<const char*, size_t>& ToString(_In_range_(ResultType::Begin, ResultType::End - 1) const ResultType r)
     {

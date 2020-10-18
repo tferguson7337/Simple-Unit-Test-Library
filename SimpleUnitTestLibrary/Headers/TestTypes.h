@@ -7,7 +7,7 @@
 #include <memory>
 
 
-/// UnitTestFunction \\\
+// UnitTestFunction //
 
 // Forward Decl
 class UnitTestResult;
@@ -15,7 +15,7 @@ class UnitTestResult;
 using UnitTestFunction = UnitTestResult(*)(void);
 
 
-/// TestQuantity \\\
+// TestQuantity //
 
 // Support test methods that want to trigger different behavior
 // or test data creation depending on none-some-all approach to test cases.

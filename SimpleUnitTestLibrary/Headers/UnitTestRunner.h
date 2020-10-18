@@ -33,7 +33,7 @@ private:
     }
 
 public:
-    /// Ctors \\\
+    // Ctors //
 
     constexpr UnitTestRunner() noexcept :
         m_pUnitTests(nullptr)
@@ -49,14 +49,14 @@ public:
         m_TestSetData(testSetName, testSetNameLen)
     { }
 
-    /// Dtor \\\
+    // Dtor //
 
     ~UnitTestRunner() noexcept
     {
         delete m_pUnitTests;
     }
 
-    /// Getters \\\
+    // Getters //
 
     constexpr const std::list<UnitTest>& GetUnitTests() const noexcept
     {
@@ -78,7 +78,7 @@ public:
         return m_TestSetData;
     }
 
-    /// Public Methods \\\
+    // Public Methods //
 
     _Success_(return) bool AddUnitTest(_Inout_ UnitTest&& unitTest) noexcept;
     _Success_(return) bool AddUnitTest(_In_ const UnitTestFunction pfFunc) noexcept;

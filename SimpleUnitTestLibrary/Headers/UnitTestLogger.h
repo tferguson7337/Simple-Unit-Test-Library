@@ -24,7 +24,7 @@ class UnitTestLogger
 
 private:
 
-    /// Static Private Data Members \\\
+    /// Static Private Data Members ///
 
     // Format Strings
     static const char* const ms_pHeaderFormat;
@@ -36,7 +36,7 @@ private:
     static const char* const ms_pSkipFormat;
     static const char* const ms_pUnhandledExceptionFormat;
 
-    /// Private Data Members \\\
+    /// Private Data Members ///
 
     // Logging configuration
     bool m_bLogToStdout;
@@ -54,7 +54,7 @@ private:
     std::condition_variable* m_pLogCV;
     std::thread* m_pWorkerThread;
 
-    /// Private Logging Worker Thread Methods \\\
+    /// Private Logging Worker Thread Methods ///
 
     void InitializeWorkerThread();
     void TeardownWorkerThread();
@@ -76,7 +76,7 @@ private:
     void PrintLogs() noexcept;
     void PrintLog(_In_ const Buffer& logMsg) noexcept;
 
-    /// Private Static Helper Methods \\\
+    /// Private Static Helper Methods ///
 
     static Buffer BuildTestSetHeaderString(_In_ const TestSetData&) noexcept;
     static Buffer BuildTestSetSummaryNoFailuresString(_In_ const TestSetData&) noexcept;
@@ -95,7 +95,7 @@ private:
     void QueueLog(_Inout_ Buffer&&) noexcept;
 
 public:
-    /// Ctors \\\
+    /// Ctors ///
 
     constexpr UnitTestLogger() noexcept :
         m_bLogToStdout(true),
@@ -110,11 +110,11 @@ public:
         m_pWorkerThread(nullptr)
     { }
 
-    /// Dtor \\\
+    /// Dtor ///
 
     ~UnitTestLogger() noexcept;
 
-    /// Getters \\\
+    /// Getters ///
 
     _Ret_maybenull_z_ constexpr const char* GetLogFilePath() const noexcept
     {
@@ -131,7 +131,7 @@ public:
         return m_bOnlyLogFailures;
     }
 
-    /// Setters \\\
+    /// Setters ///
 
     _Success_(return)
     bool SetLogFilePath(_In_ const std::string& logFilePath) noexcept;
@@ -146,7 +146,7 @@ public:
         m_bOnlyLogFailures = bOnlyLogFailures;
     }
 
-    /// Public Methods \\\
+    /// Public Methods ///
 
     void LogTestSetHeader(_In_ const TestSetData& data) noexcept;
     void LogUnitTestResult(_In_ const UnitTestResult& result) noexcept;

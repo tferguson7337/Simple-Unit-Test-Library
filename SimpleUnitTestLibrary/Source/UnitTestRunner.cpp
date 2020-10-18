@@ -1,11 +1,11 @@
 #include <UnitTestRunner.h>
 
-/// Static Data Member Initialization \\\
+// Static Data Member Initialization //
 
 std::list<UnitTest> UnitTestRunner::ms_DummyList;
 
 
-/// Public Methods \\\
+// Public Methods //
 
 _Success_(return) bool UnitTestRunner::AddUnitTest(_Inout_ UnitTest&& test) noexcept
 {
