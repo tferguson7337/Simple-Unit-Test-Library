@@ -3,6 +3,8 @@
 // STL
 #include <chrono>
 #include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include <ctime>
 
 /// Static Data Member Initialization \\\
@@ -606,7 +608,7 @@ void UnitTestLogger::PrintLog(_In_ const Buffer& buf) noexcept
 
     if (m_bLogToStdout)
     {
-        printf_s("%.*hs", static_cast<unsigned int>(buf.size() - 1), buf.data());
+        printf("%.*hs", static_cast<unsigned int>(buf.size() - 1), buf.data());
     }
 
     if (!!m_pFile)
