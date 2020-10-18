@@ -321,7 +321,8 @@ UnitTestLogger::Buffer UnitTestLogger::stprintf(_In_z_ const char* format, ...) 
         }
         catch (const std::exception& e)
         {
-            fprintf(stderr, "    " __FUNCTION__ ": Failed to allocate buffer for log - exception[%hs]", e.what());
+            fprintf(stderr, "    %hs: Failed to allocate buffer for log - exception[%hs]",
+                __FUNCTION__, e.what());
             va_end(args);
             return buffer;
         }
@@ -338,11 +339,11 @@ int UnitTestLogger::StringPrintWrapper(_Inout_ Buffer& buffer, _In_z_ const char
 {
     if (buffer.empty())
     {
-        return _vscprintf(format, args);
+        return vsnprintf(nullptr, 0, format, args);
     }
     else
     {
-        return vsprintf_s(buffer.data(), buffer.size(), format, args);
+        return vsnprintf(buffer.data(), buffer.size(), format, args);
     }
 }
 
@@ -364,7 +365,8 @@ void UnitTestLogger::QueueLog(_Inout_ Buffer&& str) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    " __FUNCTION__ ": Exception caught when queueing log for worker thread - exception[%hs]", e.what());
+        fprintf(stderr, "    %hs: Exception caught when queueing log for worker thread - exception[%hs]",
+            __FUNCTION__, e.what());
         return;
     }
 
@@ -400,11 +402,11 @@ bool UnitTestLogger::SetLogFilePath(_In_ const std::string& logFilePath) noexcep
         return true;
     }
 
-    const errno_t err = fopen_s(&pNewFile, logFilePath.c_str(), "ab");
-    if ((err != 0) || !pNewFile)
+    pNewFile = fopen(logFilePath.c_str(), "ab");
+    if (!pNewFile)
     {
-        printf_s(__FUNCTION__ ": Failed to open specified log file - errno[%d]\n\n", err);
-        _set_errno(0);
+        printf("%hs: Failed to open specified log file - errno[%hs]\n\n",
+            __FUNCTION__, strerror(errno));
         return false;
     }
 
@@ -412,14 +414,15 @@ bool UnitTestLogger::SetLogFilePath(_In_ const std::string& logFilePath) noexcep
     {
         const size_t len = logFilePath.length();
         char* pNewPath = new char[len + 1];
-        memcpy_s(pNewPath, len + 1, logFilePath.c_str(), len + 1);
+        memcpy(pNewPath, logFilePath.c_str(), len + 1);
         delete[] m_pLogFilePath;
         m_pLogFilePath = pNewPath;
     }
     catch (const std::exception& e)
     {
         // Close handle to new file, we'll be keeping the old one for now.
-        fprintf(stderr, "    " __FUNCTION__ ": Failed to set new log file path - exception[%hs]\n\n", e.what());
+        fprintf(stderr, "    %hs: Failed to set new log file path - exception[%hs]\n\n",
+            __FUNCTION__, e.what());
         fclose(pNewFile);
         return false;
     }
@@ -443,7 +446,8 @@ void UnitTestLogger::LogTestSetHeader(_In_ const TestSetData& data) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    " __FUNCTION__ ": Exception caught when building log message for worker thread - exception[%hs]\n\n", e.what());
+        fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+            __FUNCTION__, e.what());
     }
 
     if (!buf.empty())
@@ -463,7 +467,8 @@ void UnitTestLogger::LogUnitTestResult(_In_ const UnitTestResult& result) noexce
         }
         catch (const std::exception& e)
         {
-            fprintf(stderr, "    " __FUNCTION__ ": Exception caught when building log message for worker thread - exception[%hs]\n\n", e.what());
+            fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+                __FUNCTION__, e.what());
         }
 
         if (!buf.empty())
@@ -485,7 +490,8 @@ void UnitTestLogger::LogTestSetSummary(_In_ const TestSetData& data) noexcept
     }
     catch (const std::exception & e)
     {
-        fprintf(stderr, "    " __FUNCTION__ ": Exception caught when building log message for worker thread - exception[%hs]\n\n", e.what());
+        fprintf(stderr, "    %hs: Exception caught when building log message for worker thread - exception[%hs]\n\n",
+            __FUNCTION__, e.what());
     }
 
     if (!buf.empty())

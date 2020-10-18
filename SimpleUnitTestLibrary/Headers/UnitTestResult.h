@@ -290,7 +290,7 @@ public:
 
 /// Unit Test Return Macros \\\
 
-#if defined(_MSC_BUILD)
+#if defined(_MSC_VER)
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
 

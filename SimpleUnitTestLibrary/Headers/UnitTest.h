@@ -7,6 +7,9 @@
 #include "TestTypes.h"
 #include "UnitTestResult.h"
 
+// STL
+#include <stdexcept>
+
 
 ///
 //
@@ -88,9 +91,10 @@ public:
     {
         if (!m_pfTestFunc)
         {
-            throw std::logic_error(__FUNCTION__ ": No function is associated with this UnitTest.");
+            throw std::logic_error("No function is associated with this UnitTest.");
         }
 
-        return m_TestResult = m_pfTestFunc();
+        m_TestResult = m_pfTestFunc();
+        return m_TestResult;
     }
 };
