@@ -1,10 +1,14 @@
 #pragma once
 
+// SAL
+#include "APIAnnotations.h"
+
 // STL
 #include <chrono>
 
 // SUTL
 #include "ResultType.h"
+
 
 ///
 //

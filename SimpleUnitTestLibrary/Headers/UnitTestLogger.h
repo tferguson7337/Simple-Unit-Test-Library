@@ -1,5 +1,8 @@
 #pragma once
 
+// SAL
+#include "APIAnnotations.h"
+
 // STL
 #include <atomic>
 #include <condition_variable>

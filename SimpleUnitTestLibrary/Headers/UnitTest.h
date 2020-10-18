@@ -1,5 +1,8 @@
 #pragma once
 
+// SAL
+#include "APIAnnotations.h"
+
 // SUTL
 #include "TestTypes.h"
 #include "UnitTestResult.h"

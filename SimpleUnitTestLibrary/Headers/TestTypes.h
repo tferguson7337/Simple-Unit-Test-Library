@@ -1,7 +1,7 @@
 #pragma once
 
 // SAL
-#include <sal.h>
+#include "APIAnnotations.h"
 
 // STL
 #include <memory>

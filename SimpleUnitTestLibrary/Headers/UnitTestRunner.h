@@ -1,5 +1,8 @@
 #pragma once
 
+// SAL
+#include "APIAnnotations.h"
+
 // STL
 #include <functional>
 #include <list>

@@ -109,6 +109,7 @@
     <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
     <CustomBuildAfterTargets />
     <CustomBuildBeforeTargets />
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
