@@ -90,7 +90,6 @@ private:
     static Buffer BuildUnhandledExceptionString(_In_ const UnitTestResult&) noexcept;
 
     static Buffer stprintf(_In_z_ const char*, ...) noexcept;
-    static int StringPrintWrapper(_Inout_ Buffer&, _In_z_ const char*, _In_ va_list) noexcept;
 
     void QueueLog(_Inout_ Buffer&&) noexcept;
 

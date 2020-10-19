@@ -308,9 +308,9 @@ public:
         m_TestSetNameLen = 0;
     }
 
-    constexpr long double GetTestSetGrade() const noexcept
+    constexpr double GetTestSetGrade() const noexcept
     {
         const uint32_t testRunCount = m_TotalTests - m_TestSkipCount;
-        return (testRunCount > 0) ? 100.0L * static_cast<long double>(m_TestPassCount) / static_cast<long double>(testRunCount) : 0.0L;
+        return (testRunCount > 0) ? 100.0 * static_cast<double>(m_TestPassCount) / static_cast<double>(testRunCount) : 0.0;
     }
 };

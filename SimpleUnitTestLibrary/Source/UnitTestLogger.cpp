@@ -7,12 +7,12 @@
 #include <cstring>
 #include <ctime>
 
-/// Static Data Member Initialization ///
+// Static Data Member Initialization //
 
 const char* const UnitTestLogger::ms_pHeaderFormat(
     "================================"
     "================================\n"
-    "  Test-Set Name: %-25.*hs -- Total Tests: %u\n"
+    "  Test-Set Name: %-25.*s -- Total Tests: %u\n"
     "================================"
     "================================\n\n\n"
 );
@@ -111,7 +111,7 @@ const char* const UnitTestLogger::ms_pUnhandledExceptionFormat(
     "--------------------------------\n\n\n"
 );
 
-/// Dtor ///
+// Dtor //
 
 UnitTestLogger::~UnitTestLogger() noexcept
 {
@@ -131,7 +131,7 @@ UnitTestLogger::~UnitTestLogger() noexcept
     delete[] m_pLogFilePath;
 }
 
-/// Method Definitions ///
+// Method Definitions //
 
 // Private Helper Methods
 
@@ -317,10 +317,13 @@ UnitTestLogger::Buffer UnitTestLogger::stprintf(_In_z_ const char* format, ...) 
 
     va_start(args, format);
 
-    bufferSize = StringPrintWrapper(buffer, format, args);
+    bufferSize = vsnprintf(nullptr, 0, format, args);
+
+    va_end(args);
 
     if (bufferSize > 0)
     {
+        va_start(args, format);
         try
         {
             buffer = std::vector<char>(static_cast<size_t>(bufferSize) + 1, '\0');
@@ -333,24 +336,15 @@ UnitTestLogger::Buffer UnitTestLogger::stprintf(_In_z_ const char* format, ...) 
             return buffer;
         }
 
-        StringPrintWrapper(buffer, format, args);
-    }
+        if (vsnprintf(buffer.data(), buffer.size(), format, args) < 0)
+        {
+            fprintf(stderr, "    %s: Failed to write log content to allocated buffer.", __FUNCTION__);
+        }
 
-    va_end(args);
+        va_end(args);
+    }
 
     return buffer;
-}
-
-int UnitTestLogger::StringPrintWrapper(_Inout_ Buffer& buffer, _In_z_ const char* format, _In_ va_list args) noexcept
-{
-    if (buffer.empty())
-    {
-        return vsnprintf(nullptr, 0, format, args);
-    }
-    else
-    {
-        return vsnprintf(buffer.data(), buffer.size(), format, args);
-    }
 }
 
 void UnitTestLogger::QueueLog(_Inout_ Buffer&& str) noexcept
@@ -384,7 +378,7 @@ void UnitTestLogger::QueueLog(_Inout_ Buffer&& str) noexcept
     str.clear();
 }
 
-/// Public Method Definitions ///
+// Public Method Definitions //
 
 // Setters
 
@@ -506,7 +500,7 @@ void UnitTestLogger::LogTestSetSummary(_In_ const TestSetData& data) noexcept
     }
 }
 
-/// Logging Worker Thread Methods ///
+// Logging Worker Thread Methods //
 
 void UnitTestLogger::InitializeWorkerThread()
 {

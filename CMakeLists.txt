@@ -13,11 +13,11 @@ include_directories(${PROJ_CODE_ROOT}/Headers)
 file(GLOB SOURCES "${PROJ_CODE_ROOT}/Source/*.cpp")
 
 # Add library target to be built from source.
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_library(SUTL STATIC ${SOURCES})
 
 # Build using C++17, Release configuration.
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
-set_target_properties(${PROJECT_NAME} PROPERTIES BUILD_TYPE Release)
+set_target_properties(SUTL PROPERTIES CXX_STANDARD 17)
+set_target_properties(SUTL PROPERTIES BUILD_TYPE Release)
 
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -29,4 +29,6 @@ endif()
 
 
 # Remove any default prefix from output (e.g., "lib").
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(SUTL PROPERTIES PREFIX "")
+
+install(TARGETS SUTL DESTINATION ${SUTL_SOURCE_DIR}/build)
