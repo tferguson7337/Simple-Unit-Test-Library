@@ -78,7 +78,7 @@ const char* const UnitTestLogger::ms_pFailureFormat(
 );
 
 const char* const UnitTestLogger::ms_pExceptionFormat(
-    "File: %s\nTest: %s\n"
+    "File: %.*s\nTest: %.*s\n"
     "--------------------------------"
     "--------------------------------\n"
     "    Result:    %.*s\n"
@@ -90,7 +90,7 @@ const char* const UnitTestLogger::ms_pExceptionFormat(
 );
 
 const char* const UnitTestLogger::ms_pSkipFormat(
-    "File: %s\nTest: %s\n"
+    "File: %.*s\nTest: %.*s\n"
     "--------------------------------"
     "--------------------------------\n"
     "    Result:   %.*s\n"

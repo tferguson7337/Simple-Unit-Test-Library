@@ -62,27 +62,11 @@ private:
         return c == ' ';
     }
 
-    _Ret_z_ inline const char* ExtractFileName(_In_z_count_(len) const char* const str, _In_ size_t len) noexcept
-    {
-        const char* p = str + len - sizeof(char);
-        while (p != str)
-        {
-            if (IsPathSeparator(*p))
-            {
-                ++p;
-                break;
-            }
-
-            --p;
-        }
-
-        return p;
-    }
-
     _Ret_z_ inline const char* ExtractFuncName(_In_z_count_(len) const char* const str, _In_ size_t len) noexcept
     {
         const char* p = str + len - sizeof(char);
         size_t n = 0;
+        m_FuncNameLen = 0;
         while (p != str)
         {
             const char c = *p;
@@ -96,10 +80,32 @@ private:
             }
             else if (IsWhitespace(c) && (n == 0))
             {
-                return ++p;
+                --m_FuncNameLen;
+                ++p;
                 break;
             }
 
+            ++m_FuncNameLen;
+            --p;
+        }
+
+        return p;
+    }
+
+    _Ret_z_ inline const char* ExtractFileName(_In_z_count_(len) const char* const str, _In_ size_t len) noexcept
+    {
+        const char* p = str + len - sizeof(char);
+        m_FileNameLen = 0;
+        while (p != str)
+        {
+            if (IsPathSeparator(*p))
+            {
+                --m_FileNameLen;
+                ++p;
+                break;
+            }
+
+            ++m_FileNameLen;
             --p;
         }
 
@@ -147,16 +153,7 @@ public:
         _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
         _In_ const uint32_t line
     ) noexcept :
-        m_Result(result),
-        m_pFuncName(ExtractFuncName(pFunc, funcLen)),
-        m_FuncNameLen(funcLen),
-        m_pFileName(ExtractFileName(pFile, fileLen)),
-        m_FileNameLen(fileLen),
-        m_pInfo(nullptr),
-        m_InfoLen(0),
-        m_bCleanupInfo(false),
-        m_LineNum(line),
-        m_TestDurationMicroseconds(0)
+        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, nullptr, 0, line)
     { }
 
     // Used for SUTL_SKIP_TEST test result construction.
@@ -164,20 +161,23 @@ public:
         _In_ const ResultType result,
         _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
         _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen,
+        _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen,
         _In_ const uint32_t line
     ) noexcept :
         m_Result(result),
-        m_pFuncName(ExtractFuncName(pFunc, funcLen)),
-        m_FuncNameLen(funcLen),
-        m_pFileName(ExtractFileName(pFile, fileLen)),
-        m_FileNameLen(fileLen),
+        m_pFuncName(nullptr),
+        m_FuncNameLen(0),
+        m_pFileName(nullptr),
+        m_FileNameLen(0),
         m_pInfo(pInfo),
         m_InfoLen(infoLen),
         m_bCleanupInfo(false),
         m_LineNum(line),
         m_TestDurationMicroseconds(0)
-    { }
+    {
+        m_pFuncName = ExtractFuncName(pFunc, funcLen);
+        m_pFileName = ExtractFileName(pFile, fileLen);
+    }
 
     // Move constructor.
     constexpr UnitTestResult(_Inout_ UnitTestResult&& src) noexcept :
@@ -291,10 +291,11 @@ public:
 // Unit Test Return Macros //
 
 #if defined(_MSC_VER)
-#define __PRETTY_FUNCTION__ __FUNCSIG__
+#define _SUTL_FUNC_ __FUNCSIG__
+#else
+#define _SUTL_FUNC_ __PRETTY_FUNCTION__
 #endif
 
-#define _SUTL_FUNC_ __PRETTY_FUNCTION__
 
 // Success
 #define SUTL_TEST_SUCCESS()         return UnitTestResult(ResultType::Success, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__)
