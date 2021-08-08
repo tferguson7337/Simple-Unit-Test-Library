@@ -5,6 +5,8 @@
 
 // STL
 #include <chrono>
+#include <cstring>
+#include <stdexcept>
 
 // SUTL
 #include "ResultType.h"
@@ -19,6 +21,10 @@
 //
 class UnitTestResult
 {
+    // No copy.
+    UnitTestResult(const UnitTestResult&) = delete;
+    UnitTestResult& operator=(const UnitTestResult&) = delete;
+
 private:
 
     // Private Data Members //
@@ -129,6 +135,13 @@ private:
         m_TestDurationMicroseconds = 0;
     }
 
+    constexpr bool IsExceptionFailure() const noexcept
+    {
+        return (m_Result == ResultType::SetupException)
+            || (m_Result == ResultType::TestException)
+            || (m_Result == ResultType::CleanupException);
+    }
+
 public:
     // Ctors //
 
@@ -151,19 +164,34 @@ public:
         _In_ const ResultType result,
         _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
         _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_ const uint32_t line
-    ) noexcept :
-        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, nullptr, 0, line)
+        _In_ const uint32_t line) noexcept :
+        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, line, nullptr, 0)
     { }
 
-    // Used for SUTL_SKIP_TEST test result construction.
+    // Used for exception test result construction.
     UnitTestResult(
         _In_ const ResultType result,
         _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
         _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen,
-        _In_ const uint32_t line
-    ) noexcept :
+        _In_ const uint32_t line,
+        _In_ const std::exception& e) :
+        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, line, e.what(), strlen(e.what()))
+    { }
+
+    //
+    // Note:
+    // 
+    // If ResultType indicates an exception (SUTL_*_EXCEPTION), then the pInfo field
+    // is assumed to be the exception string, which will be copied.
+    //
+    // In the non-exception case, pInfo is assumed to be a string-literal if not null.
+    //
+    UnitTestResult(
+        _In_ const ResultType result,
+        _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
+        _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
+        _In_ const uint32_t line,
+        _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen) noexcept :
         m_Result(result),
         m_pFuncName(nullptr),
         m_FuncNameLen(0),
@@ -175,6 +203,17 @@ public:
         m_LineNum(line),
         m_TestDurationMicroseconds(0)
     {
+        if (IsExceptionFailure())
+        {
+            // Allocate buffer, copy string, null-terminate it.
+            auto pExceptionStringCopyBuffer = new char[m_InfoLen + 1];
+            memcpy(pExceptionStringCopyBuffer, m_pInfo, m_InfoLen);
+            pExceptionStringCopyBuffer[m_InfoLen] = '\0';
+
+            // Transfer ownership to data member.
+            m_pInfo = pExceptionStringCopyBuffer;
+        }
+
         m_pFuncName = ExtractFuncName(pFunc, funcLen);
         m_pFileName = ExtractFileName(pFile, fileLen);
     }
@@ -188,7 +227,13 @@ public:
 
     // Dtor //
 
-    ~UnitTestResult() noexcept = default;
+    ~UnitTestResult() noexcept
+    {
+        if (IsExceptionFailure())
+        {
+            delete[] m_pInfo;
+        }
+    }
 
     // Assignment Overloads //
 
@@ -230,7 +275,7 @@ public:
         return m_Result;
     }
 
-    constexpr const char* GetFunctionName() const noexcept
+    _Ret_z_ constexpr const char* GetFunctionName() const noexcept
     {
         return m_pFuncName;
     }
@@ -240,7 +285,7 @@ public:
         return m_FuncNameLen;
     }
 
-    constexpr const char* GetFileName() const noexcept
+    _Ret_z_ constexpr const char* GetFileName() const noexcept
     {
         return m_pFileName;
     }
@@ -250,7 +295,7 @@ public:
         return m_FileNameLen;
     }
 
-    constexpr const char* GetInfo() const noexcept
+    _Ret_z_ constexpr const char* GetInfo() const noexcept
     {
         return m_pInfo;
     }
@@ -302,19 +347,19 @@ public:
 
 // Skip Test
 // Note: Macro str argument is expected to be a string literal.
-#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
+#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
 
 // Failures - No Exception Thrown
 // Note: Macro str argument is expected to be a string literal.
-#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
-#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
-#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
+#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
+#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
+#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
 
 // Failures - Exception Caught
 // Note: Macro str argument is expected to be the "what" string from the exception.
-#define SUTL_SETUP_EXCEPTION(str)   return UnitTestResult(ResultType::SetupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
-#define SUTL_TEST_EXCEPTION(str)    return UnitTestResult(ResultType::TestException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
-#define SUTL_CLEANUP_EXCEPTION(str) return UnitTestResult(ResultType::CleanupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), str, sizeof(str), __LINE__)
+#define SUTL_SETUP_EXCEPTION(exp)   return UnitTestResult(ResultType::SetupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
+#define SUTL_TEST_EXCEPTION(exp)    return UnitTestResult(ResultType::TestException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
+#define SUTL_CLEANUP_EXCEPTION(exp) return UnitTestResult(ResultType::CleanupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
 
 #define ___SUTL_STRINGIFY___(s)     #s
 #define __SUTL_STRINGIFY__(s)       ___SUTL_STRINGIFY___(s)
