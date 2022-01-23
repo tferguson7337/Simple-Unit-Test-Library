@@ -75,7 +75,7 @@ namespace SUTL
         constexpr std::string_view ExtractFuncName(_In_ std::string_view funcName) noexcept
         {
             size_t n = 0;
-            size_t len = 0;
+            size_t len = funcName.size();
             for (auto rItr = funcName.crbegin(), rEnd = funcName.crend(); rItr != rEnd; ++rItr)
             {
                 const char c = *rItr;
@@ -89,31 +89,30 @@ namespace SUTL
                 }
                 else if (IsWhitespace(c) && (n == 0))
                 {
-                    --len;
+                    ++len;
                     break;
                 }
 
-                ++len;
+                --len;
             }
 
-            return funcName.substr(len + 1);
+            return funcName.substr(len);
         }
 
         constexpr std::string_view ExtractFileName(_In_ std::string_view fileName) noexcept
         {
-            size_t len = 0;
+            size_t len = fileName.size();
             for (auto rItr = fileName.crbegin(), rEnd = fileName.crend(); rItr != rEnd; ++rItr)
             {
                 if (IsPathSeparator(*rItr))
                 {
-                    --len;
                     break;
                 }
 
-                ++len;
+                --len;
             }
 
-            return fileName.substr(len + 1);
+            return fileName.substr(len);
         }
 
         // Misc Helper Methods //
@@ -135,14 +134,14 @@ namespace SUTL
         // Used for non-exception test result construction.
         constexpr UnitTestResult(
             _In_ const ResultType result,
-            _In_ const std::source_location& srcLoc) noexcept :
+            _In_ const std::source_location srcLoc) noexcept :
             UnitTestResult(result, srcLoc, nullptr, 0)
         { }
 
         // Used for exception test result construction.
         UnitTestResult(
             _In_ const ResultType result,
-            _In_ const std::source_location& srcLoc,
+            _In_ const std::source_location srcLoc,
             _In_ const std::exception& e) :
             UnitTestResult(result, srcLoc, e.what(), strlen(e.what()))
         { }
@@ -157,7 +156,7 @@ namespace SUTL
         //
         constexpr UnitTestResult(
             _In_ const ResultType result,
-            _In_ const std::source_location& srcLoc,
+            _In_ const std::source_location srcLoc,
             _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen) noexcept :
             m_ResultType(result),
             m_LineNum(srcLoc.line()),

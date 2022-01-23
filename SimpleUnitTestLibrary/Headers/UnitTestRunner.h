@@ -30,7 +30,7 @@ namespace SUTL
         // Ctors //
 
         // NOTE: Provided string must be valid for the lifespan of this object.
-        UnitTestRunner(_In_ std::string_view testSetName) noexcept :
+        UnitTestRunner(_In_ std::string_view testSetName = std::string_view{}) noexcept :
             m_TestSetData(testSetName)
         { }
 
@@ -88,6 +88,11 @@ namespace SUTL
             functionList.clear();
         }
 
+        void ClearUnitTests() noexcept
+        {
+            m_UnitTestList.clear();
+        }
+
         bool RunUnitTests() noexcept
         {
             m_TestSetData.ResetCounters();
@@ -106,7 +111,10 @@ namespace SUTL
                 return !!testResult;
             };
 
-            return std::ranges::all_of(m_UnitTestList, RunUnitTest);
+            const bool bAllTestsPassed = std::ranges::all_of(m_UnitTestList, RunUnitTest);
+            m_Logger.LogTestSetSummary(m_TestSetData);
+
+            return bAllTestsPassed;
         }
     };
 }

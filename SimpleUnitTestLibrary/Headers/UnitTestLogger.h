@@ -159,6 +159,7 @@ namespace SUTL
         // Logging queue
         Queue m_LogQueue;
         std::atomic<size_t> m_LogQueueSize = 0;
+        static constexpr size_t s_LogQueueSizeWakeupThreshold = 64;
 
         // Logging thread.
         std::atomic<bool> m_bContinueWork = false;
@@ -205,7 +206,7 @@ namespace SUTL
                 return true;
             }
 
-            if (m_LogQueueSize.load(std::memory_order_relaxed) >= 64)
+            if (m_LogQueueSize.load(std::memory_order_relaxed) >= s_LogQueueSizeWakeupThreshold)
             {
                 // Stop sleeping if we have a sufficient amount of logs we need to deal with.
                 return true;
@@ -230,9 +231,14 @@ namespace SUTL
 
         bool WaitForWork() noexcept
         {
+            if (m_bContinueWork == false)
+            {
+                return false;
+            }
+
             std::unique_lock<std::mutex> ul(m_LogQueueMutex);
             m_LogCV.wait(ul, [this]() -> bool { return this->WorkerPredicate(); });
-            return m_bContinueWork && (m_LogQueueSize == 0);
+            return true;
         }
 
         Queue TransferLogQueueContents() noexcept
@@ -514,17 +520,18 @@ namespace SUTL
             {
                 // Lazy initialize the worker thread.
                 InitializeWorkerThread();
-                bWorkerThreadInitialized = true;
+                bWorkerThreadInitialized = m_WorkerThread.joinable();
             }
 
+            bool bNotifyWorkerThread = false;
             // Even if worker thread initialization failed, still queue in case a later attempt succeeds.
             {
                 std::lock_guard<std::mutex> lg(m_LogQueueMutex);
                 m_LogQueue.push_back(std::move(str));
-                ++m_LogQueueSize;
+                bNotifyWorkerThread = (++m_LogQueueSize > s_LogQueueSizeWakeupThreshold) && bWorkerThreadInitialized;
             }
 
-            if (bWorkerThreadInitialized)
+            if (bNotifyWorkerThread)
             {
                 m_LogCV.notify_one();
             }

@@ -197,6 +197,11 @@ namespace SUTL
             m_TotalTests = c;
         }
 
+        constexpr void SetTestSetName(_In_ std::string_view name) noexcept
+        {
+            m_TestSetName = name;
+        }
+
 
         // Public Methods //
 
