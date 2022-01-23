@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Source\UnitTestLogger.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UnitTestRunner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Headers\TestSetData.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -33,13 +25,13 @@
     <ClInclude Include="Headers\APIAnnotations.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\TestQuantity.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">
       <UniqueIdentifier>{7dd0634e-5687-4d4b-b418-f747e43d600b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{5878500d-2877-4748-aecb-d5a7a35da411}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

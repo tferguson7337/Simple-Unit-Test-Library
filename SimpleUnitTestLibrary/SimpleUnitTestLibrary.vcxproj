@@ -21,16 +21,13 @@
   <ItemGroup>
     <ClInclude Include="Headers\APIAnnotations.h" />
     <ClInclude Include="Headers\ResultType.h" />
+    <ClInclude Include="Headers\TestQuantity.h" />
     <ClInclude Include="Headers\TestTypes.h" />
     <ClInclude Include="Headers\TestSetData.h" />
     <ClInclude Include="Headers\UnitTest.h" />
     <ClInclude Include="Headers\UnitTestLogger.h" />
     <ClInclude Include="Headers\UnitTestResult.h" />
     <ClInclude Include="Headers\UnitTestRunner.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\UnitTestLogger.cpp" />
-    <ClCompile Include="Source\UnitTestRunner.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -42,26 +39,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -87,52 +84,50 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.lib</TargetExt>
-    <TargetName>SUTLD$(PlatformArchitecture)</TargetName>
-    <OutDir>$(ProjectDir)lib\</OutDir>
+    <OutDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
-    <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)obj\</IntDir>
     <CustomBuildAfterTargets />
     <CustomBuildBeforeTargets />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.lib</TargetExt>
-    <OutDir>$(ProjectDir)lib\</OutDir>
-    <TargetName>SUTLD$(PlatformArchitecture)</TargetName>
+    <OutDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
-    <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)obj\</IntDir>
     <CustomBuildAfterTargets />
     <CustomBuildBeforeTargets />
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>SUTL$(PlatformArchitecture)</TargetName>
-    <OutDir>$(ProjectDir)lib\</OutDir>
+    <TargetName>
+    </TargetName>
+    <OutDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
-    <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)obj\</IntDir>
     <CustomBuildAfterTargets />
     <CustomBuildBeforeTargets />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)lib\</OutDir>
-    <TargetName>SUTL$(PlatformArchitecture)</TargetName>
+    <OutDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>
+    </TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
-    <IntDir>$(ProjectDir)BuildArtifacts\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)obj\</IntDir>
     <CustomBuildAfterTargets />
     <CustomBuildBeforeTargets />
   </PropertyGroup>
@@ -152,7 +147,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
       <EnablePREfast>true</EnablePREfast>
@@ -167,12 +162,6 @@
     <CustomBuildStep>
       <Message />
     </CustomBuildStep>
-    <PostBuildEvent>
-      <Command>type NUL &gt; $(IntDir)$(TargetName)</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Prevent always-build issue.</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -190,7 +179,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
       <EnablePREfast>true</EnablePREfast>
@@ -206,12 +195,6 @@
     <CustomBuildStep>
       <Message />
     </CustomBuildStep>
-    <PostBuildEvent>
-      <Command>type NUL &gt; $(IntDir)$(TargetName)</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Prevent always-build issue.</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -234,7 +217,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
       <EnablePREfast>true</EnablePREfast>
@@ -251,12 +234,6 @@
     <CustomBuildStep>
       <Message />
     </CustomBuildStep>
-    <PostBuildEvent>
-      <Command>type NUL &gt; $(IntDir)$(TargetName)</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Prevent always-build issue.</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -281,7 +258,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Headers\;$(ProjectDir)Headers\Interfaces\;$(ProjectDir)Common\Headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName)</ProgramDataBaseFileName>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <StringPooling>true</StringPooling>
       <ConformanceMode>true</ConformanceMode>
       <EnablePREfast>true</EnablePREfast>
@@ -298,12 +275,6 @@
     <CustomBuildStep>
       <Message />
     </CustomBuildStep>
-    <PostBuildEvent>
-      <Command>type NUL &gt; $(IntDir)$(TargetName)</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Prevent always-build issue.</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

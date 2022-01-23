@@ -8,93 +8,113 @@
 #include "UnitTestResult.h"
 
 // STL
+#include <iomanip>
+#include <sstream>
 #include <stdexcept>
+#include <type_traits>
 
 
-//
-//
-//  Class:      UnitTest
-//  
-//  Purpose:    Encapsulate unit test information.
-//
-//
-class UnitTest
+namespace SUTL
 {
-private:
-    // Private Data Members //
-
-    UnitTestFunction m_pfTestFunc;
-    UnitTestResult m_TestResult;
-
-public:
-    // Ctors //
-
-    constexpr UnitTest() noexcept :
-        m_pfTestFunc(nullptr)
-    { }
-
-    constexpr explicit UnitTest(_In_opt_ const UnitTestFunction pfFunc) noexcept :
-        m_pfTestFunc(pfFunc)
-    { }
-
-    constexpr UnitTest(_Inout_ UnitTest&& src) noexcept :
-        UnitTest()
+    //
+    //
+    //  Class:      UnitTest
+    //  
+    //  Purpose:    Encapsulate unit test information.
+    //
+    //
+    class UnitTest
     {
-        *this = std::move(src);
-    }
+    private:
+        // Private Data Members //
 
-    // Dtor //
+        UnitTestFunction m_TestFunc;
+        UnitTestResult m_TestResult;
 
-    ~UnitTest() noexcept = default;
+        UnitTest() noexcept = default;
 
-    // Operator Overloads //
-
-    constexpr UnitTest& operator=(_Inout_ UnitTest&& src) noexcept
-    {
-        if (this != &src)
+        struct ScopedTestDurationRecorder
         {
-            m_pfTestFunc = src.m_pfTestFunc;
-            m_TestResult = std::move(src.m_TestResult);
+            using Clock = std::chrono::system_clock;
+            using TimePoint = Clock::time_point;
+
+            TimePoint m_BeginTimePoint = Clock::now();
+            UnitTestResult& m_TestResultRef;
+
+            ScopedTestDurationRecorder(_Inout_ UnitTestResult& result) noexcept :
+                m_TestResultRef(result)
+            { }
+
+            ~ScopedTestDurationRecorder()
+            {
+                const auto delta = Clock::now() - m_BeginTimePoint;
+                const auto durationMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(delta);
+                m_TestResultRef.SetTestDurationMicroseconds(durationMicroseconds);
+            }
+        };
+
+    public:
+        // Ctors //
+
+        explicit UnitTest(_In_ UnitTestFunction func) :
+            m_TestFunc(std::move(func))
+        {
+            if (!m_TestFunc)
+            {
+                throw std::invalid_argument("Attempted to create UnitTest object w/ empty function object.");
+            }
         }
 
-        return *this;
-    }
+        UnitTest(_Inout_ UnitTest&& src) noexcept :
+            m_TestFunc(std::move(src.m_TestFunc)),
+            m_TestResult(std::move(src.m_TestResult))
+        { }
 
-    // Getters //
+        // Dtor //
 
-    constexpr UnitTestFunction GetUnitTestFunction() const noexcept
-    {
-        return m_pfTestFunc;
-    }
+        ~UnitTest() noexcept = default;
 
-    constexpr const UnitTestResult& GetUnitTestResult() const noexcept
-    {
-        return m_TestResult;
-    }
+        // Operator Overloads //
 
-    // Setters //
-
-    constexpr void SetUnitTestFunction(_In_opt_ const UnitTestFunction pfFunc) noexcept
-    {
-        m_pfTestFunc = pfFunc;
-    }
-
-    // Public Methods //
-
-    constexpr void Clear() noexcept
-    {
-        m_pfTestFunc = nullptr;
-        m_TestResult.Clear();
-    }
-
-    const UnitTestResult& RunTest()
-    {
-        if (!m_pfTestFunc)
+        UnitTest& operator=(_Inout_ UnitTest&& src) noexcept
         {
-            throw std::logic_error("No function is associated with this UnitTest.");
+            if (this != &src)
+            {
+                m_TestFunc = std::move(src.m_TestFunc);
+                m_TestResult = std::move(src.m_TestResult);
+            }
+
+            return *this;
         }
 
-        m_TestResult = m_pfTestFunc();
-        return m_TestResult;
-    }
-};
+        // Getters //
+
+        UnitTestFunction GetUnitTestFunction() const noexcept
+        {
+            return m_TestFunc;
+        }
+
+        const UnitTestResult& GetUnitTestResult() const noexcept
+        {
+            return m_TestResult;
+        }
+
+        // Public Methods //
+
+        void RunTest() noexcept
+        {
+            try
+            {
+                ScopedTestDurationRecorder scopedTestDurationRecorder(m_TestResult);
+                m_TestResult = m_TestFunc();
+            }
+            catch (const std::exception& e)
+            {
+                std::stringstream ss;
+                ss << "Unhandled exception - Test[0x" << std::hex << std::setfill('0') << std::setw(8)
+                    << m_TestFunc.target<UnitTestResult(*)()>() << "] Exception[" << e.what() << "]";
+                m_TestResult.SetUnhandledException(ss.str());
+            }
+        }
+    };
+}

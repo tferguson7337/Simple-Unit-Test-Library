@@ -4,8 +4,10 @@
 #include "APIAnnotations.h"
 
 // STL
-#include <functional>
+#include <algorithm>
+#include <cstdint>
 #include <list>
+#include <string_view>
 
 // SUTL
 #include "TestTypes.h"
@@ -14,87 +16,97 @@
 #include "UnitTestLogger.h"
 
 
-class UnitTestRunner
+namespace SUTL
 {
-private:
-    // Empty list used to ensure GetUnitTests remains no-throw.
-    static std::list<UnitTest> ms_DummyList;
-
-    std::list<UnitTest>* m_pUnitTests;
-    mutable UnitTestLogger m_Logger;
-    TestSetData m_TestSetData;
-
-    void AllocateTestListIfNeeded()
+    class UnitTestRunner
     {
-        if (!m_pUnitTests)
+    private:
+
+        std::list<UnitTest> m_UnitTestList;
+        mutable UnitTestLogger m_Logger;
+        TestSetData m_TestSetData;
+
+    public:
+        // Ctors //
+
+        // NOTE: Provided string must be valid for the lifespan of this object.
+        UnitTestRunner(_In_ std::string_view testSetName) noexcept :
+            m_TestSetData(testSetName)
+        { }
+
+        // Dtor //
+
+        ~UnitTestRunner() noexcept = default;
+
+        // Getters //
+
+
+        const std::list<UnitTest>& GetUnitTests() const noexcept
         {
-            m_pUnitTests = new std::list<UnitTest>;
+            return m_UnitTestList;
         }
-    }
 
-public:
-    // Ctors //
-
-    constexpr UnitTestRunner() noexcept :
-        m_pUnitTests(nullptr)
-    { }
-
-    UnitTestRunner(_In_z_ const char* testSetName) noexcept :
-        m_pUnitTests(nullptr),
-        m_TestSetData(testSetName)
-    { }
-
-    constexpr UnitTestRunner(_In_z_count_(testSetNameLen) const char* testSetName, _In_ const size_t testSetNameLen) noexcept :
-        m_pUnitTests(nullptr),
-        m_TestSetData(testSetName, testSetNameLen)
-    { }
-
-    // Dtor //
-
-    ~UnitTestRunner() noexcept
-    {
-        delete m_pUnitTests;
-    }
-
-    // Getters //
-
-    constexpr const std::list<UnitTest>& GetUnitTests() const noexcept
-    {
-        return (!!m_pUnitTests) ? *m_pUnitTests : ms_DummyList;
-    }
-
-    constexpr UnitTestLogger& GetLogger() const noexcept
-    {
-        return m_Logger;
-    }
-
-    constexpr TestSetData& GetTestSetData() noexcept
-    {
-        return m_TestSetData;
-    }
-    
-    constexpr const TestSetData& GetTestSetData() const noexcept
-    {
-        return m_TestSetData;
-    }
-
-    // Public Methods //
-
-    _Success_(return) bool AddUnitTest(_Inout_ UnitTest&& unitTest) noexcept;
-    _Success_(return) bool AddUnitTest(_In_ const UnitTestFunction pfFunc) noexcept;
-    _Success_(return) bool AddUnitTest(_In_ const std::function<UnitTestResult(void)>& func) noexcept;
-
-    _Success_(return) bool AddUnitTests(_Inout_ std::list<UnitTest>&& unitTestList) noexcept;
-    _Success_(return) bool AddUnitTests(_Inout_ std::list<UnitTestFunction>&& functionList) noexcept;
-    _Success_(return) bool AddUnitTests(_Inout_ std::list<std::function<UnitTestResult(void)>>&& functionList) noexcept;
-
-    constexpr void ClearUnitTests() noexcept
-    {
-        if (!!m_pUnitTests)
+        UnitTestLogger& GetLogger() const noexcept
         {
-            m_pUnitTests->clear();
+            return m_Logger;
         }
-    }
 
-    bool RunUnitTests() noexcept;
-};
+        TestSetData& GetTestSetData() noexcept
+        {
+            return m_TestSetData;
+        }
+
+        const TestSetData& GetTestSetData() const noexcept
+        {
+            return m_TestSetData;
+        }
+
+        // Public Methods //
+
+        void AddUnitTest(_Inout_ UnitTest&& unitTest) noexcept
+        {
+            m_UnitTestList.push_back(std::move(unitTest));
+        }
+
+        void AddUnitTest(_In_ UnitTestFunction func) noexcept
+        {
+            m_UnitTestList.emplace_back(std::move(func));
+        }
+
+        void AddUnitTests(_Inout_ std::list<UnitTest>&& unitTestList) noexcept
+        {
+            m_UnitTestList.splice(m_UnitTestList.cend(), std::move(unitTestList));
+        }
+
+        void AddUnitTests(_Inout_ std::list<UnitTestFunction>&& functionList) noexcept
+        {
+            for (auto& func : functionList)
+            {
+                m_UnitTestList.emplace_back(std::move(func));
+            }
+
+            functionList.clear();
+        }
+
+        bool RunUnitTests() noexcept
+        {
+            m_TestSetData.ResetCounters();
+            m_TestSetData.SetTotalTestCount(static_cast<uint32_t>(m_UnitTestList.size()));
+
+            m_Logger.LogTestSetHeader(m_TestSetData);
+
+            auto RunUnitTest = [this](UnitTest& test)
+            {
+                test.RunTest();
+                const auto& testResult = test.GetUnitTestResult();
+                m_TestSetData.IncrementResultCounter(testResult.GetResultType());
+                m_TestSetData.AddToRunDurationMs(testResult.GetTestDurationMilliseconds());
+
+                m_Logger.LogUnitTestResult(testResult);
+                return !!testResult;
+            };
+
+            return std::ranges::all_of(m_UnitTestList, RunUnitTest);
+        }
+    };
+}

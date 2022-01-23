@@ -6,365 +6,317 @@
 // STL
 #include <chrono>
 #include <cstring>
+#include <memory>
 #include <stdexcept>
+#include <source_location>
 
 // SUTL
 #include "ResultType.h"
 
 
-//
-//
-//  Class:      UnitTestResult
-//
-//  Purpose:    Encapsulates the result of a unit test.
-//
-//
-class UnitTestResult
+namespace SUTL
 {
-    // No copy.
-    UnitTestResult(const UnitTestResult&) = delete;
-    UnitTestResult& operator=(const UnitTestResult&) = delete;
-
-private:
-
-    // Private Data Members //
-
-    ResultType m_Result;
-
-    const char* m_pFuncName;
-    size_t m_FuncNameLen;
-
-    const char* m_pFileName;
-    size_t m_FileNameLen;
-
-    const char* m_pInfo;
-    size_t m_InfoLen;
-    bool m_bCleanupInfo;
-
-    uint32_t m_LineNum;
-
-    mutable uint64_t m_TestDurationMicroseconds;
-
-
-    // Function/Filename Extraction Helper Methods //
-
-    static inline bool IsPathSeparator(_In_ const char c) noexcept
-    {
-        return (c == '/') || (c == '\\');
-    }
-
-    static inline bool IsClosingCharacter(_In_ const char c) noexcept
-    {
-        return (c == ']') || (c == '>') || (c == ')');
-    }
-
-    static inline bool IsOpeningCharacter(_In_ const char c) noexcept
-    {
-        return (c == '[') || (c == '<') || (c == '(');
-    }
-
-    static inline bool IsWhitespace(_In_ const char c) noexcept
-    {
-        return c == ' ';
-    }
-
-    _Ret_z_ inline const char* ExtractFuncName(_In_z_count_(len) const char* const str, _In_ size_t len) noexcept
-    {
-        const char* p = str + len - sizeof(char);
-        size_t n = 0;
-        m_FuncNameLen = 0;
-        while (p != str)
-        {
-            const char c = *p;
-            if (IsClosingCharacter(c))
-            {
-                ++n;
-            }
-            else if (IsOpeningCharacter(c))
-            {
-                --n;
-            }
-            else if (IsWhitespace(c) && (n == 0))
-            {
-                --m_FuncNameLen;
-                ++p;
-                break;
-            }
-
-            ++m_FuncNameLen;
-            --p;
-        }
-
-        return p;
-    }
-
-    _Ret_z_ inline const char* ExtractFileName(_In_z_count_(len) const char* const str, _In_ size_t len) noexcept
-    {
-        const char* p = str + len - sizeof(char);
-        m_FileNameLen = 0;
-        while (p != str)
-        {
-            if (IsPathSeparator(*p))
-            {
-                --m_FileNameLen;
-                ++p;
-                break;
-            }
-
-            ++m_FileNameLen;
-            --p;
-        }
-
-        return p;
-    }
-
-    // Misc Helper Methods //
-
-    // Note: This does not cleanup m_pInfo.
-    constexpr void Reset() noexcept
-    {
-        m_Result = ResultType::NotRun;
-        m_pFuncName = nullptr;
-        m_FuncNameLen = 0;
-        m_pFileName = nullptr;
-        m_FileNameLen = 0;
-        m_pInfo = nullptr;
-        m_InfoLen = 0;
-        m_bCleanupInfo = false;
-        m_LineNum = 0;
-        m_TestDurationMicroseconds = 0;
-    }
-
-    constexpr bool IsExceptionFailure() const noexcept
-    {
-        return (m_Result == ResultType::SetupException)
-            || (m_Result == ResultType::TestException)
-            || (m_Result == ResultType::CleanupException);
-    }
-
-public:
-    // Ctors //
-
-    // Default constexpr constructor (zero init)
-    constexpr UnitTestResult() noexcept :
-        m_Result(ResultType::NotRun),
-        m_pFuncName(nullptr),
-        m_FuncNameLen(0),
-        m_pFileName(nullptr),
-        m_FileNameLen(0),
-        m_pInfo(nullptr),
-        m_InfoLen(0),
-        m_bCleanupInfo(false),
-        m_LineNum(0),
-        m_TestDurationMicroseconds(0)
-    { }
-
-    // Used for non-exception test result construction.
-    UnitTestResult(
-        _In_ const ResultType result,
-        _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
-        _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_ const uint32_t line) noexcept :
-        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, line, nullptr, 0)
-    { }
-
-    // Used for exception test result construction.
-    UnitTestResult(
-        _In_ const ResultType result,
-        _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
-        _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_ const uint32_t line,
-        _In_ const std::exception& e) :
-        UnitTestResult(result, pFunc, funcLen, pFile, fileLen, line, e.what(), strlen(e.what()))
-    { }
-
     //
-    // Note:
-    // 
-    // If ResultType indicates an exception (SUTL_*_EXCEPTION), then the pInfo field
-    // is assumed to be the exception string, which will be copied.
     //
-    // In the non-exception case, pInfo is assumed to be a string-literal if not null.
+    //  Class:      UnitTestResult
     //
-    UnitTestResult(
-        _In_ const ResultType result,
-        _In_z_count_(funcLen) const char* const pFunc, _In_ const size_t funcLen,
-        _In_z_count_(fileLen) const char* const pFile, _In_ const size_t fileLen,
-        _In_ const uint32_t line,
-        _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen) noexcept :
-        m_Result(result),
-        m_pFuncName(nullptr),
-        m_FuncNameLen(0),
-        m_pFileName(nullptr),
-        m_FileNameLen(0),
-        m_pInfo(pInfo),
-        m_InfoLen(infoLen),
-        m_bCleanupInfo(false),
-        m_LineNum(line),
-        m_TestDurationMicroseconds(0)
+    //  Purpose:    Encapsulates the result of a unit test.
+    //
+    //
+    class UnitTestResult
     {
-        if (IsExceptionFailure())
-        {
-            // Allocate buffer, copy string, null-terminate it.
-            auto pExceptionStringCopyBuffer = new char[m_InfoLen + 1];
-            memcpy(pExceptionStringCopyBuffer, m_pInfo, m_InfoLen);
-            pExceptionStringCopyBuffer[m_InfoLen] = '\0';
+        // No copy.
+        UnitTestResult(const UnitTestResult&) = delete;
+        UnitTestResult& operator=(const UnitTestResult&) = delete;
 
-            // Transfer ownership to data member.
-            m_pInfo = pExceptionStringCopyBuffer;
+    private:
+
+        struct InfoString
+        {
+            const char* m_pStr = nullptr;
+            size_t m_Len = 0;
+        };
+
+        // Private Data Members //
+
+        ResultType m_ResultType = ResultType::NotRun;
+
+        std::string_view m_FuncName;
+        std::string_view m_FileName;
+        InfoString m_InfoString;
+
+        uint32_t m_LineNum = 0;
+
+        mutable uint64_t m_TestDurationMicroseconds = 0;
+
+
+        // Function/Filename Extraction Helper Methods //
+
+        static constexpr bool IsPathSeparator(_In_ const char c) noexcept
+        {
+            return (c == '/') || (c == '\\');
         }
 
-        m_pFuncName = ExtractFuncName(pFunc, funcLen);
-        m_pFileName = ExtractFileName(pFile, fileLen);
-    }
-
-    // Move constructor.
-    constexpr UnitTestResult(_Inout_ UnitTestResult&& src) noexcept :
-        UnitTestResult()
-    {
-        *this = std::move(src);
-    }
-
-    // Dtor //
-
-    ~UnitTestResult() noexcept
-    {
-        if (IsExceptionFailure())
+        static constexpr bool IsClosingCharacter(_In_ const char c) noexcept
         {
-            delete[] m_pInfo;
-        }
-    }
-
-    // Assignment Overloads //
-
-    // Move assignment
-    constexpr UnitTestResult& operator=(_Inout_ UnitTestResult&& src) noexcept
-    {
-        if (this != &src)
-        {
-            m_Result = src.m_Result;
-            m_pFuncName = src.m_pFuncName;
-            m_FuncNameLen = src.m_FuncNameLen;
-            m_pFileName = src.m_pFileName;
-            m_FileNameLen = src.m_FileNameLen;
-            m_pInfo = src.m_pInfo;
-            m_InfoLen = src.m_InfoLen;
-            m_bCleanupInfo = src.m_bCleanupInfo;
-            m_LineNum = src.m_LineNum;
-            m_TestDurationMicroseconds = src.m_TestDurationMicroseconds;
-
-            src.Reset();
+            return (c == ']') || (c == '>') || (c == ')');
         }
 
-        return *this;
-    }
+        static constexpr bool IsOpeningCharacter(_In_ const char c) noexcept
+        {
+            return (c == '[') || (c == '<') || (c == '(');
+        }
+
+        static constexpr bool IsWhitespace(_In_ const char c) noexcept
+        {
+            return c == ' ';
+        }
+
+        constexpr std::string_view ExtractFuncName(_In_ std::string_view funcName) noexcept
+        {
+            size_t n = 0;
+            size_t len = 0;
+            for (auto rItr = funcName.crbegin(), rEnd = funcName.crend(); rItr != rEnd; ++rItr)
+            {
+                const char c = *rItr;
+                if (IsClosingCharacter(c))
+                {
+                    ++n;
+                }
+                else if (IsOpeningCharacter(c))
+                {
+                    --n;
+                }
+                else if (IsWhitespace(c) && (n == 0))
+                {
+                    --len;
+                    break;
+                }
+
+                ++len;
+            }
+
+            return funcName.substr(len + 1);
+        }
+
+        constexpr std::string_view ExtractFileName(_In_ std::string_view fileName) noexcept
+        {
+            size_t len = 0;
+            for (auto rItr = fileName.crbegin(), rEnd = fileName.crend(); rItr != rEnd; ++rItr)
+            {
+                if (IsPathSeparator(*rItr))
+                {
+                    --len;
+                    break;
+                }
+
+                ++len;
+            }
+
+            return fileName.substr(len + 1);
+        }
+
+        // Misc Helper Methods //
+
+        constexpr bool IsExceptionFailure() const noexcept
+        {
+            return (m_ResultType == ResultType::SetupException)
+                || (m_ResultType == ResultType::TestException)
+                || (m_ResultType == ResultType::CleanupException)
+                || (m_ResultType == ResultType::UnhandledException);
+        }
+
+    public:
+        // Ctors //
+
+        // Default constexpr constructor (zero init)
+        constexpr UnitTestResult() noexcept = default;
+
+        // Used for non-exception test result construction.
+        constexpr UnitTestResult(
+            _In_ const ResultType result,
+            _In_ const std::source_location& srcLoc) noexcept :
+            UnitTestResult(result, srcLoc, nullptr, 0)
+        { }
+
+        // Used for exception test result construction.
+        UnitTestResult(
+            _In_ const ResultType result,
+            _In_ const std::source_location& srcLoc,
+            _In_ const std::exception& e) :
+            UnitTestResult(result, srcLoc, e.what(), strlen(e.what()))
+        { }
+
+        //
+        // Note:
+        // 
+        // If ResultType indicates an exception (SUTL_*_EXCEPTION), then the pInfo field
+        // is assumed to be the exception string, which will be copied.
+        //
+        // In the non-exception case, pInfo is still copied (not going to assume string-literal case).
+        //
+        constexpr UnitTestResult(
+            _In_ const ResultType result,
+            _In_ const std::source_location& srcLoc,
+            _In_opt_z_count_(infoLen) const char* const pInfo, _In_ const size_t infoLen) noexcept :
+            m_ResultType(result),
+            m_LineNum(srcLoc.line()),
+            m_TestDurationMicroseconds(0)
+        {
+            if (!!pInfo)
+            {
+                if (IsExceptionFailure())
+                {
+                    char* pStrCopy = new char[infoLen + 1];
+                    memcpy(pStrCopy, pInfo, infoLen);
+                    pStrCopy[infoLen] = '\0';
+                    m_InfoString = InfoString{pStrCopy, infoLen};
+                }
+                else
+                {
+                    m_InfoString = InfoString{pInfo, infoLen};
+                }
+            }
+
+            m_FuncName = ExtractFuncName(srcLoc.function_name());
+            m_FileName = ExtractFileName(srcLoc.file_name());
+        }
+
+        // Move constructor.
+        constexpr UnitTestResult(_Inout_ UnitTestResult&& src) noexcept :
+            UnitTestResult()
+        {
+            *this = std::move(src);
+        }
+
+        // Dtor //
+
+        ~UnitTestResult() noexcept { if (IsExceptionFailure()) { delete[] m_InfoString.m_pStr; } }
+
+        // Assignment Overloads //
+
+        // Move assignment
+        constexpr UnitTestResult& operator=(_Inout_ UnitTestResult&& src) noexcept
+        {
+            if (this != &src)
+            {
+                m_ResultType = src.m_ResultType;
+                m_FuncName = src.m_FuncName;
+                m_FileName = src.m_FileName;
+                m_InfoString = std::move(src.m_InfoString);
+                m_LineNum = src.m_LineNum;
+                m_TestDurationMicroseconds = src.m_TestDurationMicroseconds;
+
+                src.m_ResultType = ResultType::_Invalid;
+            }
+
+            return *this;
+        }
 
 
-    // Operator Overloads //
+        // Operator Overloads //
 
-    constexpr explicit operator bool() const noexcept
-    {
-        return (m_Result == ResultType::Success) || (m_Result == ResultType::NotRun);
-    }
+        constexpr explicit operator bool() const noexcept
+        {
+            return (m_ResultType == ResultType::Success)
+                || (m_ResultType == ResultType::NotRun);
+        }
 
+        // Getters //
 
-    // Getters //
+        constexpr ResultType GetResultType() const noexcept
+        {
+            return m_ResultType;
+        }
 
-    constexpr ResultType GetResult() const noexcept
-    {
-        return m_Result;
-    }
+        constexpr std::string_view GetFunctionName() const noexcept
+        {
+            return m_FuncName;
+        }
 
-    _Ret_z_ constexpr const char* GetFunctionName() const noexcept
-    {
-        return m_pFuncName;
-    }
+        constexpr std::string_view GetFileName() const noexcept
+        {
+            return m_FileName;
+        }
 
-    constexpr size_t GetFunctionNameLength() const noexcept
-    {
-        return m_FuncNameLen;
-    }
+        constexpr std::string_view GetInfoString() const noexcept
+        {
+            return std::string_view(m_InfoString.m_pStr, m_InfoString.m_Len);
+        }
 
-    _Ret_z_ constexpr const char* GetFileName() const noexcept
-    {
-        return m_pFileName;
-    }
+        constexpr uint32_t GetLineNumber() const noexcept
+        {
+            return m_LineNum;
+        }
 
-    constexpr size_t GetFileNameLength() const noexcept
-    {
-        return m_FileNameLen;
-    }
+        constexpr uint64_t GetTestDurationMicroseconds() const noexcept
+        {
+            return m_TestDurationMicroseconds;
+        }
 
-    _Ret_z_ constexpr const char* GetInfo() const noexcept
-    {
-        return m_pInfo;
-    }
-
-    constexpr size_t GetInfoLength() const noexcept
-    {
-        return m_InfoLen;
-    }
-
-    constexpr uint32_t GetLineNumber() const noexcept
-    {
-        return m_LineNum;
-    }
-
-    constexpr uint64_t GetTestDurationMicroseconds() const noexcept
-    {
-        return m_TestDurationMicroseconds;
-    }
+        constexpr uint64_t GetTestDurationMilliseconds() const noexcept
+        {
+            return GetTestDurationMicroseconds() / 1000;
+        }
 
 
-    // Setters //
+        // Setters //
 
-    // Treat as const, since test-duration is treated as mutable.
-    constexpr void SetTestDurationMicroseconds(_In_ const std::chrono::duration<int64_t, std::micro>& dur) const noexcept
-    {
-        m_TestDurationMicroseconds = (dur.count() > 0) ? static_cast<uint64_t>(dur.count()) : 0;
-    }
+        // Treat as const, since test-duration is treated as mutable.
+        constexpr void SetTestDurationMicroseconds(_In_ const std::chrono::duration<int64_t, std::micro>& dur) const noexcept
+        {
+            m_TestDurationMicroseconds = (dur.count() > 0) ? static_cast<uint64_t>(dur.count()) : 0;
+        }
 
+        void SetUnhandledException(_In_ const std::string& exceptionInfo)
+        {
+            m_ResultType = ResultType::UnhandledException;
+            const size_t len = exceptionInfo.length();
+            char* const pStr = new char[len + 1];
+            memcpy(pStr, exceptionInfo.c_str(), len + 1);
+            if (m_InfoString.m_pStr)
+            {
+                // Shouldn't happen, but avoid the leak.
+                delete[] m_InfoString.m_pStr;
+            }
 
-    // Public Methods //
-
-    constexpr void Clear() noexcept
-    {
-        Reset();
-    }
-};
+            m_InfoString = InfoString{pStr, len};
+        }
+    };
+}
 
 // Unit Test Return Macros //
 
 #if defined(_MSC_VER)
-#define _SUTL_FUNC_ __FUNCSIG__
+#define SUTL_FUNC __FUNCSIG__
 #else
-#define _SUTL_FUNC_ __PRETTY_FUNCTION__
+#define SUTL_FUNC __PRETTY_FUNCTION__
 #endif
 
 
 // Success
-#define SUTL_TEST_SUCCESS()         return UnitTestResult(ResultType::Success, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__)
+#define SUTL_TEST_SUCCESS()         do { return SUTL::UnitTestResult(SUTL::ResultType::Success, std::source_location::current()); } while (0)
 
 // Skip Test
 // Note: Macro str argument is expected to be a string literal.
-#define SUTL_SKIP_TEST(str)         return UnitTestResult(ResultType::NotRun, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
+#define SUTL_SKIP_TEST(str)         do { return SUTL::UnitTestResult(SUTL::ResultType::NotRun, std::source_location::current(), str, sizeof(str) - 1); } while(0)
 
 // Failures - No Exception Thrown
 // Note: Macro str argument is expected to be a string literal.
-#define SUTL_SETUP_FAILURE(str)     return UnitTestResult(ResultType::SetupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
-#define SUTL_TEST_FAILURE(str)      return UnitTestResult(ResultType::TestFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
-#define SUTL_CLEANUP_FAILURE(str)   return UnitTestResult(ResultType::CleanupFailure, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, str, sizeof(str))
+#define SUTL_SETUP_FAILURE(str)     do { return SUTL::UnitTestResult(SUTL::ResultType::SetupFailure, std::source_location::current(), str, sizeof(str) - 1); } while(0)
+#define SUTL_TEST_FAILURE(str)      do { return SUTL::UnitTestResult(SUTL::ResultType::TestFailure, std::source_location::current(), str, sizeof(str) - 1); } while(0)
+#define SUTL_CLEANUP_FAILURE(str)   do { return SUTL::UnitTestResult(SUTL::ResultType::CleanupFailure, std::source_location::current(), str, sizeof(str) - 1); } while(0)
 
 // Failures - Exception Caught
 // Note: Macro str argument is expected to be the "what" string from the exception.
-#define SUTL_SETUP_EXCEPTION(exp)   return UnitTestResult(ResultType::SetupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
-#define SUTL_TEST_EXCEPTION(exp)    return UnitTestResult(ResultType::TestException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
-#define SUTL_CLEANUP_EXCEPTION(exp) return UnitTestResult(ResultType::CleanupException, _SUTL_FUNC_, sizeof(_SUTL_FUNC_), __FILE__, sizeof(__FILE__), __LINE__, exp)
+#define SUTL_SETUP_EXCEPTION(exp)   do { return SUTL::UnitTestResult(SUTL::ResultType::SetupException, std::source_location::current(), exp); } while(0)
+#define SUTL_TEST_EXCEPTION(exp)    do { return SUTL::UnitTestResult(SUTL::ResultType::TestException, std::source_location::current(), exp); } while(0)
+#define SUTL_CLEANUP_EXCEPTION(exp) do { return SUTL::UnitTestResult(SUTL::ResultType::CleanupException, std::source_location::current(), exp); } while(0)
 
-#define ___SUTL_STRINGIFY___(s)     #s
-#define __SUTL_STRINGIFY__(s)       ___SUTL_STRINGIFY___(s)
+#define SUTL_STRINGIFY_(s)          #s
+#define SUTL_STRINGIFY(s)           SUTL_STRINGIFY_(s)
 
 // Test Asserts
-#define SUTL_SETUP_ASSERT(cond)     if (!!(cond) == false) SUTL_SETUP_FAILURE(__SUTL_STRINGIFY__(cond))
-#define SUTL_TEST_ASSERT(cond)      if (!!(cond) == false) SUTL_TEST_FAILURE(__SUTL_STRINGIFY__(cond))
-#define SUTL_CLEANUP_ASSERT(cond)   if (!!(cond) == false) SUTL_CLEANUP_FAILURE(__SUTL_STRINGIFY__(cond))
+#define SUTL_SETUP_ASSERT(cond)     do { if (!!(cond) == false) SUTL_SETUP_FAILURE(SUTL_STRINGIFY(cond)); } while(0)
+#define SUTL_TEST_ASSERT(cond)      do { if (!!(cond) == false) SUTL_TEST_FAILURE(SUTL_STRINGIFY(cond)); } while(0)
+#define SUTL_CLEANUP_ASSERT(cond)   do { if (!!(cond) == false) SUTL_CLEANUP_FAILURE(SUTL_STRINGIFY(cond)); } while(0)
