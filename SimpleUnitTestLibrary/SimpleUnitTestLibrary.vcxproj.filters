@@ -1,37 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="Headers\TestSetData.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\UnitTest.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\UnitTestLogger.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\UnitTestResult.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\UnitTestRunner.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\ResultType.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\TestTypes.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Module Files">
+      <UniqueIdentifier>{719a6f3a-1007-492c-a7d4-7198f4540d8a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Headers\APIAnnotations.h">
-      <Filter>Headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\TestQuantity.h">
-      <Filter>Headers</Filter>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Suite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Runner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleUnitTestLibrary.Evaluators.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{7dd0634e-5687-4d4b-b418-f747e43d600b}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Result.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Runner.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Test.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Suite.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Logger.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SimpleUnitTestLibrary.Utils.cppm">
+      <Filter>Module Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
