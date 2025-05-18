@@ -13,7 +13,7 @@ import SimpleUnitTestLibrary.Logger;
 #define SUTL_STRINGIFY_(thing_to_string_) # thing_to_string_
 #define SUTL_STRINGIFY(thing_to_string_) SUTL_STRINGIFY_(thing_to_string_)
 
-#define SUTL_TEST_PASS() return SUTL::Result{SUTL::ResultType::Success, std::source_location::current()}
+#define SUTL_TEST_SUCCESS() return SUTL::Result{SUTL::ResultType::Success, std::source_location::current()}
 #define SUTL_TEST_SKIP(reason_str_) return SUTL::Result{SUTL::ResultType::Success, std::source_location::current(), reason_str_}
 
 #define SUTL_LOG(fmt_, ...) SUTL::Logger{}(fmt_ __VA_OPT__(, ) __VA_ARGS__)
