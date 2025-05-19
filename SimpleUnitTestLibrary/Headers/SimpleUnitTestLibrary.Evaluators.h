@@ -136,7 +136,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const ObjT& obj) const //noexcept(noexcept(!obj))
             {
                 SUTL_TEST_ASSERT(obj == false);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsFalse, bool>);
@@ -148,7 +148,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const ObjT& obj) const noexcept(noexcept(!!obj))
             {
                 SUTL_TEST_ASSERT(obj == true);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsTrue, bool>);
@@ -160,7 +160,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const ObjT& obj) const noexcept(noexcept(obj == nullptr))
             {
                 SUTL_TEST_ASSERT(obj == nullptr);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsNull, void*>);
@@ -172,7 +172,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const ObjT& obj) const noexcept(noexcept(obj != nullptr))
             {
                 SUTL_TEST_ASSERT(obj != nullptr);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsNotNull, void*>);
@@ -185,7 +185,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs == rhs)) requires Concepts::EqComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs == rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsEqual, void*, void*>);
@@ -200,7 +200,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs != rhs)) requires Concepts::NeqComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs != rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsNotEqual, void*, void*>);
@@ -215,7 +215,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs < rhs)) requires Concepts::LTComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs < rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsLessThan, void*, void*>);
@@ -230,7 +230,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs <= rhs)) requires Concepts::LTEComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs <= rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsLessThanOrEqualTo, void*, void*>);
@@ -245,7 +245,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs > rhs)) requires Concepts::GTComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs > rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsGreaterThan, void*, void*>);
@@ -260,7 +260,7 @@ namespace SimpleUnitTestLibrary
                 _In_ const RhsT& rhs) const noexcept(noexcept(lhs >= rhs)) requires Concepts::GTEComparable<LhsT, RhsT>
             {
                 SUTL_TEST_ASSERT(lhs >= rhs);
-                SUTL_TEST_PASS();
+                SUTL_TEST_SUCCESS();
             }
         };
         static_assert(Concepts::ValidEvaluator<IsGreaterThanOrEqualTo, void*, void*>);
@@ -270,9 +270,9 @@ namespace SimpleUnitTestLibrary
         // Should work with other invocable types (e.g., lambdas) that return void/SUTL result
         static_assert(!Concepts::ValidEvaluator<decltype([]() { return true; })> );
         static_assert(Concepts::ValidEvaluator<decltype([]() { return; })> );
-        static_assert(Concepts::ValidEvaluator<decltype([]() { SUTL_TEST_PASS(); })> );
-        static_assert(Concepts::ValidEvaluator<decltype([x = 0]() mutable { SUTL_TEST_ASSERT(x == 0); SUTL_TEST_PASS(); })> );
-        static_assert(Concepts::ValidEvaluator<decltype([](bool bFlag) { SUTL_TEST_ASSERT(bFlag); SUTL_TEST_PASS(); }), bool>);
+        static_assert(Concepts::ValidEvaluator<decltype([]() { SUTL_TEST_SUCCESS(); })> );
+        static_assert(Concepts::ValidEvaluator<decltype([x = 0]() mutable { SUTL_TEST_ASSERT(x == 0); SUTL_TEST_SUCCESS(); })> );
+        static_assert(Concepts::ValidEvaluator<decltype([](bool bFlag) { SUTL_TEST_ASSERT(bFlag); SUTL_TEST_SUCCESS(); }), bool>);
     }
 }
 
