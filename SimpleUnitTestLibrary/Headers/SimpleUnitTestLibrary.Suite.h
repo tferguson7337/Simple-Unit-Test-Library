@@ -85,6 +85,11 @@ namespace SimpleUnitTestLibrary
         TestFunction m_SuiteSetupFn;
         TestFunction m_SuiteCleanupFn;
 
+        constexpr auto FindInRuntimeSuiteRegistry() const
+        {
+            return std::ranges::find(Internal_::g_RuntimeSuiteRegistry | std::views::reverse, this);
+        }
+
     public:
 
         static_assert(std::is_pointer_v<TestFunction>, "SAL needs updating");
@@ -115,11 +120,53 @@ namespace SimpleUnitTestLibrary
             }
         }
 
+        // No copy
+        Suite(const Suite&) = delete;
+        Suite& operator=(const Suite&) = delete;
+
+        constexpr Suite(_Inout_ Suite&& other) noexcept :
+            m_SuiteName{std::move(other.m_SuiteName)},
+            m_UnitTests{std::move(other.m_UnitTests)},
+            m_SuiteSetupFn{std::move(other.m_SuiteSetupFn)},
+            m_SuiteCleanupFn{std::move(other.m_SuiteCleanupFn)}
+        {
+            if not consteval
+            {
+                const auto itr{other.FindInRuntimeSuiteRegistry()};
+                if (itr != Internal_::g_RuntimeSuiteRegistry.rend())
+                {
+                    *itr = this;
+                }
+            }
+        }
+
+        constexpr Suite& operator=(_Inout_ Suite&& other) noexcept
+        {
+            if (this != &other)
+            {
+                m_SuiteName = std::move(other.m_SuiteName);
+                m_UnitTests = std::move(other.m_UnitTests);
+                m_SuiteSetupFn = std::move(other.m_SuiteSetupFn);
+                m_SuiteCleanupFn = std::move(other.m_SuiteCleanupFn);
+
+                if not consteval
+                {
+                    const auto itr{other.FindInRuntimeSuiteRegistry()};
+                    if (itr != Internal_::g_RuntimeSuiteRegistry.rend())
+                    {
+                        *itr = this;
+                    }
+                }
+            }
+
+            return *this;
+        }
+
         constexpr ~Suite() noexcept
         {
             if not consteval
             {
-                const auto itr{std::ranges::find(Internal_::g_RuntimeSuiteRegistry | std::views::reverse, this)};
+                const auto itr{FindInRuntimeSuiteRegistry()};
                 if (itr != Internal_::g_RuntimeSuiteRegistry.rend())
                 {
                     Internal_::g_RuntimeSuiteRegistry.erase(std::next(itr).base());
