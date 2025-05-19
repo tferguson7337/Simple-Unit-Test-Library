@@ -1,6 +1,7 @@
 #pragma once
 
 #if !defined(SUTL_USE_MODULES)
+#include <algorithm>
 #include <ranges>
 #include <string_view>
 #include <vector>
@@ -20,9 +21,30 @@ namespace SimpleUnitTestLibrary
         {
             std::vector<Suite::RunResults> runResults;
 
+            auto SuiteNameFilter = [this](const Suite* pSuite)
+            {
+                auto Predicate = [](const char lhs, const char rhs)
+                {
+                    auto ToLower = [](const char c)
+                    {
+                        if ('A' <= c && c <= 'Z')
+                        {
+                            return static_cast<char>(c | static_cast<char>(0x20));
+                        }
+
+                        return c;
+                    };
+                    return ToLower(lhs) == ToLower(rhs);
+                };
+                return std::ranges::contains_subrange(
+                    pSuite->GetSuiteName(),
+                    m_SuiteNameFilterSV,
+                    Predicate);
+            };
+
             auto filteredSuiteRefView{
                 Internal_::g_RuntimeSuiteRegistry
-                | std::views::filter([this](const Suite* pSuite) constexpr { return pSuite->GetSuiteName().contains(m_SuiteNameFilterSV); })
+                | std::views::filter(SuiteNameFilter)
                 | std::views::transform([](const Suite* pSuite) static constexpr -> const Suite& { return *pSuite; })};
 
             for (const auto& suite : filteredSuiteRefView)
