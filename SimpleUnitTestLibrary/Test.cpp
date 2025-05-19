@@ -23,7 +23,7 @@ static constexpr auto MyFreeFunctionTest()
     bool bFlag{!bFail};
     SUTL_TEST_ASSERT(bFlag, "Oops, we failed");
 
-    SUTL_TEST_PASS();
+    SUTL_TEST_SUCCESS();
 }
 
 template <bool bFail>
@@ -33,7 +33,7 @@ static constexpr auto MyVeryLonglyNamedAndAwesomeFreeFunctionTestImplementation(
     bool bFlag{!bFail};
     SUTL_TEST_ASSERT(bFlag, "Oops, we failed");
 
-    SUTL_TEST_PASS();
+    SUTL_TEST_SUCCESS();
 }
 
 template <std::uint32_t Id = 0>
@@ -45,7 +45,7 @@ static constexpr auto GenerateSuccessfulTestSuite()
         bool bFlag{true};
         SUTL_TEST_ASSERT(bFlag, "Oops, we failed");
 
-        SUTL_TEST_PASS();
+        SUTL_TEST_SUCCESS();
     };
 
     auto TestSuiteLambdaSetup = []() static constexpr
@@ -54,7 +54,7 @@ static constexpr auto GenerateSuccessfulTestSuite()
         bool bFlag{true};
         SUTL_SETUP_ASSERT(bFlag, "Oops, setup is borked");
 
-        SUTL_TEST_PASS();
+        SUTL_TEST_SUCCESS();
     };
 
     auto TestSuiteLambdaCleanup = []() static constexpr
@@ -63,7 +63,7 @@ static constexpr auto GenerateSuccessfulTestSuite()
         bool bFlag{true};
         SUTL_CLEANUP_ASSERT(bFlag, "Oops, cleanup is borked");
 
-        SUTL_TEST_PASS();
+        SUTL_TEST_SUCCESS();
     };
 
     constexpr std::string_view cNamePrefix{"SuccessfulTestSuite_"};
@@ -92,7 +92,7 @@ static constexpr auto GenerateSuccessfulTestSuite()
                 {
                     bool bFlag{true};
                     SUTL_TEST_ASSERT(bFlag && "Oops, we failed");
-                    SUTL_TEST_PASS();
+                    SUTL_TEST_SUCCESS();
                 }}
         },
         TestSuiteLambdaSetup,
@@ -133,7 +133,7 @@ constexpr SUTL::Result FailedTestSuiteSetup()
     bool bFlag{true};
     SUTL_SETUP_ASSERT(bFlag, "Oops, setup is borked");
 
-    SUTL_TEST_PASS();
+    SUTL_TEST_SUCCESS();
 }
 
 template <std::uint32_t Id = 0>
@@ -144,7 +144,7 @@ constexpr SUTL::Result FailedTestSuiteCleanup()
     bool bFlag{false};
     SUTL_CLEANUP_ASSERT(bFlag, "Oops, cleanup is borked");
 
-    SUTL_TEST_PASS();
+    SUTL_TEST_SUCCESS();
 }
 
 template <std::uint32_t Id = 0>
@@ -156,7 +156,7 @@ static constexpr auto GenerateFailedTestSuite()
         bool bFlag{false};
         SUTL_TEST_ASSERT(bFlag, "Oops, we failed");
 
-        SUTL_TEST_PASS();
+        SUTL_TEST_SUCCESS();
     };
 
     constexpr std::string_view cNamePrefix{"FailureTestSuite_"};
@@ -185,7 +185,7 @@ static constexpr auto GenerateFailedTestSuite()
                 {
                     bool bFlag{false};
                     SUTL_TEST_ASSERT(bFlag && "Oops, we failed");
-                    SUTL_TEST_PASS();
+                    SUTL_TEST_SUCCESS();
                 }}
         },
         FailedTestSuiteSetup<Id>, // No setup, since its failure would prevent tests from running.
