@@ -72,7 +72,7 @@ namespace SimpleUnitTestLibrary
 
     namespace Internal_
     {
-        constinit std::vector<const Suite*> g_RuntimeSuiteRegistry;
+        inline constinit std::vector<const Suite*> g_RuntimeSuiteRegistry;
     }
 
     class Suite
