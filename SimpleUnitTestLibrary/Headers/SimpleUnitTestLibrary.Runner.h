@@ -1,15 +1,14 @@
 #pragma once
 
 #if !defined(SUTL_USE_MODULES)
-#include <algorithm>
-#include <ranges>
-#include <string_view>
-#include <vector>
+    #include <algorithm>
+    #include <ranges>
+    #include <string_view>
+    #include <vector>
 
-#include "APIAnnotations.h"
-#include "SimpleUnitTestLibrary.Suite.h"
+    #include "APIAnnotations.h"
+    #include "SimpleUnitTestLibrary.Suite.h"
 #endif
-
 
 namespace SimpleUnitTestLibrary
 {
@@ -43,9 +42,8 @@ namespace SimpleUnitTestLibrary
             };
 
             auto filteredSuiteRefView{
-                Internal_::g_RuntimeSuiteRegistry
-                | std::views::filter(SuiteNameFilter)
-                | std::views::transform([](const Suite* pSuite) static constexpr -> const Suite& { return *pSuite; })};
+                Internal_::g_RuntimeSuiteRegistry | std::views::filter(SuiteNameFilter) | std::views::transform([](const Suite* pSuite) constexpr -> const Suite&
+                                                                                                                { return *pSuite; })};
 
             for (const auto& suite : filteredSuiteRefView)
             {
@@ -54,6 +52,6 @@ namespace SimpleUnitTestLibrary
             return runResults;
         }
     };
-}
+}// namespace SimpleUnitTestLibrary
 
 namespace SUTL = SimpleUnitTestLibrary;

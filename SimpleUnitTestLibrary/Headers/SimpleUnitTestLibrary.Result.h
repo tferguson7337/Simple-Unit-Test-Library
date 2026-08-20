@@ -106,14 +106,21 @@ namespace SimpleUnitTestLibrary
             {
                 switch (resultType)
                 {
+                case ResultType::NotRun:
+                case ResultType::Success:
                 case ResultType::Skipped:
+                    return "Expression:"sv;
+
+                case ResultType::SetupFailure:
+                case ResultType::TestFailure:
+                case ResultType::CleanupFailure:
                     return "Reason:"sv;
 
                 case ResultType::UnhandledException:
                     return "Exception:"sv;
+                default:
+                    return "Expression:"sv;
                 }
-
-                return "Expression:"sv;
             };
 
             std::string str;
